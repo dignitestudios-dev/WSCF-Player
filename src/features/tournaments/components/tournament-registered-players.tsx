@@ -3,6 +3,19 @@
 import Link from "next/link";
 import { getDashboardPlayerProfileRoute } from "@/config/routes";
 import { useTournamentRegisteredPlayers } from "@/features/tournaments/hooks/use-tournament-registered-players";
+import { useTournamentParticipantsQuery, useTournamentDetailsQuery } from "@/features/tournaments/api/tournaments.queries";
+import { useState, useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CustomPagination } from "@/components/ui/custom-pagination";
+
+function SearchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="6" stroke="#083F92" strokeWidth="2" />
+      <path d="M12.5 12.5L16 16" stroke="#083F92" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 function BackIcon() {
   return (
@@ -25,7 +38,41 @@ interface TournamentRegisteredPlayersProps {
 }
 
 export default function TournamentRegisteredPlayers({ tournamentId }: TournamentRegisteredPlayersProps) {
-  const { tournament, players, backHref } = useTournamentRegisteredPlayers(tournamentId);
+  const { backHref } = useTournamentRegisteredPlayers(tournamentId);
+  const { data: detailsData, isPending: isDetailsPending } = useTournamentDetailsQuery(tournamentId);
+  
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+      setPage(1);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [query]);
+
+  const { data, isPending } = useTournamentParticipantsQuery(tournamentId, {
+    page,
+    limit: 10,
+    search: debouncedQuery,
+  });
+
+  const apiParticipants = data?.data.participants || [];
+  const pagination = data?.pagination;
+  const tournament = detailsData?.data.tournament;
+
+  if (isDetailsPending) {
+    return (
+      <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+        <div className="mb-6 flex flex-col gap-3">
+          <Skeleton className="h-6 w-24 rounded" />
+          <Skeleton className="h-[44px] w-64 rounded lg:h-[61px] lg:w-96" />
+        </div>
+      </div>
+    );
+  }
 
   if (!tournament) {
     return (
@@ -57,6 +104,17 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
         </h1>
       </div>
 
+      <div className="mb-8 flex h-[61px] max-w-[610px] items-center gap-3 rounded-[44px] border border-[#083F92] bg-white px-3">
+        <SearchIcon />
+        <input
+          type="text"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search players by name or user id"
+          className="w-full bg-transparent text-base font-medium text-[#151515] outline-none placeholder:text-[#ADADAD]"
+        />
+      </div>
+
       <div className="relative">
         <div className="overflow-x-auto">
           <div className="min-w-[900px]">
@@ -70,37 +128,70 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
               <span className="text-right">Action</span>
             </div>
 
-            {players.map((player, index) => (
-              <div
-                key={`${player.userId}-${index}`}
-                className={`${GRID_COLS} h-[47px] items-center border-b border-[#DADADA] bg-white px-5 text-base font-medium text-[#151515] last:border-b-0`}
-              >
-                <span>{index + 1}</span>
-                <span>{player.name}</span>
-                <span>{player.userId}</span>
-                <span>
-                  <span className="inline-flex h-8 min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white">
-                    {player.rating}
-                  </span>
-                </span>
-                <span className="text-right">
-                  <Link
-                    href={getDashboardPlayerProfileRoute(player.id)}
-                    className="text-sm font-medium leading-[19px] text-[#151515] hover:text-[#083F92]"
+            {isPending ? (
+              <div className="flex flex-col">
+                {[...Array(10)].map((_, i) => (
+                  <div
+                    key={i}
+                    className={`${GRID_COLS} h-[47px] items-center border-b border-[#DADADA] bg-white px-5 last:border-b-0`}
                   >
-                    View Profile
-                  </Link>
-                </span>
+                    <Skeleton className="h-4 w-4 rounded" />
+                    <Skeleton className="h-4 w-32 rounded" />
+                    <Skeleton className="h-4 w-24 rounded" />
+                    <Skeleton className="h-8 w-[78px] rounded-[22px]" />
+                    <Skeleton className="h-4 w-16 justify-self-end rounded" />
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : apiParticipants.length === 0 ? (
+              <div className="flex items-center justify-center h-[47px] text-sm text-[#727272]">
+                No registered players found.
+              </div>
+            ) : (
+              apiParticipants.map((participant, index) => {
+                const userId = participant.playerProfile?.membershipId || participant.user._id;
+                const rating = participant.playerProfile?.rating || 0;
+                
+                return (
+                  <div
+                    key={participant._id}
+                    className={`${GRID_COLS} h-[47px] items-center border-b border-[#DADADA] bg-white px-5 text-base font-medium text-[#151515] last:border-b-0`}
+                  >
+                    <span>{index + 1}</span>
+                    <span>{participant.user.name}</span>
+                    <span>{userId}</span>
+                    <span>
+                      <span className="inline-flex h-8 min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white">
+                        {rating}
+                      </span>
+                    </span>
+                    <span className="text-right">
+                      <Link
+                        href={getDashboardPlayerProfileRoute(participant.user._id)}
+                        className="text-sm font-medium leading-[19px] text-[#151515] hover:text-[#083F92]"
+                      >
+                        View Profile
+                      </Link>
+                    </span>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end">
-          <span className="inline-flex h-[35px] items-center justify-center rounded-full bg-[#181818] px-3 text-sm font-medium capitalize text-white">
-            Active
-          </span>
-        </div>
+        {pagination && pagination.totalPages > 0 && (
+          <div className="mt-8 flex items-center justify-between">
+            <p className="text-base text-[#083F92]">
+              You are on page {pagination.currentPage} of {pagination.totalPages} Pages
+            </p>
+            <CustomPagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={setPage}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

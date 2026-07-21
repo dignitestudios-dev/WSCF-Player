@@ -1,37 +1,52 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/hooks/use-auth";
-
-const defaultProfile: MyProfile = {
-  name: "Leo Denzin",
-  userId: "10000008",
-  gender: "Male",
-  school: "ABC School",
-  city: "Phoenix",
-  dateOfBirth: "11/27/2000",
-  email: "designer@dignitestudios.com",
-  division: "U18",
-  grade: "4",
-  avatarUrl:
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-  currentRating: 1650,
-  enrolledTournaments: 6,
-  historyScore: "7/10",
-  parent: {
-    name: "Derek Boyles",
-    email: "Derek Boyles@gmail.com",
-    phone: "0321-2589-011",
-  },
-};
+import { useAuthUserQuery, useUpdateProfileMutation } from "@/features/auth/api/auth.queries";
+import { showApiSuccessToast, showApiErrorToast } from "@/lib/api-toast";
 
 export function useMyProfile() {
-  const { user } = useAuth();
-  const [profile, setProfile] = useState<MyProfile>({
-    ...defaultProfile,
-    avatarUrl: user?.image || defaultProfile.avatarUrl,
-  });
+  const { data, isPending } = useAuthUserQuery();
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const user = data?.data?.user;
+  const playerProfile = data?.data?.playerProfile;
+  const upcomingCount = data?.data?.upcomingTournamentCount || 0;
+
+  // Extract parent - prefer primary, otherwise fallback
+  const parentObj = playerProfile?.parents;
+  const mother = parentObj?.mother;
+  const father = parentObj?.father;
+  const parent = mother?.isPrimary ? mother : (father || mother);
+
+  const profile: MyProfile = {
+    name: user?.name || "N/A",
+    userId: playerProfile?.membershipId || user?._id || "N/A",
+    gender: playerProfile?.gender || "N/A",
+    school: playerProfile?.school || "N/A",
+    city: playerProfile?.city || "N/A",
+    dateOfBirth: playerProfile?.dob
+      ? new Date(playerProfile.dob).toLocaleDateString("en-US", {
+          month: "2-digit",
+          day: "2-digit",
+          year: "numeric",
+        })
+      : "N/A",
+    email: user?.email || "N/A",
+    division: playerProfile?.division || "N/A",
+    grade: playerProfile?.grade || "N/A",
+    avatarUrl:
+      playerProfile?.profilePicture ||
+      user?.image ||
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+    currentRating: playerProfile?.rating || 0,
+    enrolledTournaments: upcomingCount,
+    historyScore: `${playerProfile?.totalWins || 0}/${playerProfile?.totalTournaments || 0}`,
+    parent: {
+      name: parent?.name || "N/A",
+      email: parent?.email || "N/A",
+      phone: parent?.phone || "N/A",
+    },
+  };
 
   function openEditProfile() {
     setIsEditOpen(true);
@@ -41,23 +56,28 @@ export function useMyProfile() {
     setIsEditOpen(false);
   }
 
-  function saveProfile(values: EditProfileFields) {
-    setProfile((prev) => ({
-      ...prev,
-      name: values.fullName,
-      email: values.email,
-      division: values.division,
-      grade: values.grade,
-      parent: {
-        name: values.parentFullName,
-        email: values.parentEmail,
-        phone: values.parentPhone,
-      },
-    }));
+  const { mutateAsync: updateProfile, isPending: isUpdating } = useUpdateProfileMutation();
+
+  async function saveProfile(values: EditProfileFields) {
+    try {
+      const response = await updateProfile({
+        name: values.fullName,
+        division: values.division,
+        grade: values.grade,
+        parentName: values.parentFullName,
+        parentNumber: values.parentPhone,
+      });
+      showApiSuccessToast(response, "Profile updated successfully");
+      setIsEditOpen(false);
+    } catch (error: any) {
+      showApiErrorToast(error, "Failed to update profile");
+    }
   }
 
   return {
     profile,
+    isPending,
+    isUpdating,
     isEditOpen,
     openEditProfile,
     closeEditProfile,

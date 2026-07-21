@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePlayerProfile } from "@/features/players/hooks/use-player-profile";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function ProfileStat({ label, value }: { label: string; value: string }) {
   return (
@@ -43,7 +44,59 @@ function RatingStarIcon({ className }: { className?: string }) {
 }
 
 export default function PlayerProfile() {
-  const { player, backHref } = usePlayerProfile();
+  const { player, backHref, isLoading } = usePlayerProfile();
+
+  if (isLoading) {
+    return (
+      <div className="relative min-h-screen overflow-hidden bg-[#F7F6FF]">
+        <div className="relative mx-auto w-full max-w-[1240px] px-6 pb-16 pt-10 xl:px-0 xl:pt-[43px]">
+          <Skeleton className="mb-[42px] h-[30px] w-24 rounded" />
+          <Skeleton className="mb-[34px] h-[61px] w-96 rounded" />
+
+          <div className="relative mb-8 min-h-[420px] sm:h-[278px] sm:min-h-0">
+            <div className="absolute left-0 right-0 top-[83px] h-[195px] rounded-[24px] bg-white max-sm:bottom-0 max-sm:top-auto" />
+            <Skeleton className="absolute left-1/2 top-0 z-10 h-[198px] w-[198px] -translate-x-1/2 rounded-full sm:left-[52px] sm:translate-x-0 border-[10px] border-[#083F92]" />
+
+            <div className="absolute left-0 right-0 top-[220px] px-2 sm:left-[282px] sm:top-[128px] sm:w-auto sm:px-0">
+              <div className="flex flex-col gap-3">
+                <Skeleton className="h-[43px] w-64 rounded" />
+                <div className="flex flex-wrap items-center gap-4">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <div className="flex flex-col gap-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-8 w-24" />
+                      </div>
+                      {i < 4 && <StatDivider />}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-6 xl:flex-row xl:gap-6">
+            <div className="w-full shrink-0 rounded-[24px] bg-white p-6 xl:w-[605px]">
+              <div className="mb-4 flex items-center gap-3">
+                <Skeleton className="h-[35px] w-[35px] rounded-full" />
+                <Skeleton className="h-[30px] w-48 rounded" />
+              </div>
+              <Skeleton className="h-[179px] w-full rounded-[24px]" />
+            </div>
+
+            <div className="w-full bg-white rounded-[24px] p-6 xl:w-[611px]">
+              <div className="flex flex-col gap-4">
+                <Skeleton className="h-12 w-full rounded" />
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={`list-${i}`} className="h-10 w-full rounded" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const stats = [
     { label: "USER ID", value: player.userId },

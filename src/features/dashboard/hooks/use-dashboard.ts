@@ -1,5 +1,7 @@
 "use client";
 
+import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
+
 export interface DashboardSummary {
   membershipStatus: string;
   validTill: string;
@@ -17,16 +19,7 @@ export interface DashboardTournament {
   price: string;
 }
 
-const summary: DashboardSummary = {
-  membershipStatus: "Active",
-  validTill: "August 31, 2026",
-  userId: "10000580",
-  currentRating: 1650,
-  lastUpdate: "10 May, 2026",
-  upcomingCount: 2,
-};
-
-const tournaments: DashboardTournament[] = [
+const defaultTournaments: DashboardTournament[] = [
   {
     id: "1",
     title: "USCF-Rated Scholastic May Summer Tournament",
@@ -58,8 +51,42 @@ const tournaments: DashboardTournament[] = [
 ];
 
 export function useDashboard() {
+  const { data: authData, isLoading } = useAuthUserQuery();
+
+  const user = authData?.data?.user;
+  const membership = authData?.data?.membership;
+  const profile = authData?.data?.playerProfile;
+  const upcomingCount = authData?.data?.upcomingTournamentCount || 0;
+
+  const validTillDate = membership?.currentPeriodEnd
+    ? new Date(membership.currentPeriodEnd).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "N/A";
+
+  const lastUpdateDate = profile?.updatedAt
+    ? new Date(profile.updatedAt).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "N/A";
+
+  const summary: DashboardSummary = {
+    membershipStatus: membership?.status === "active" ? "Active" : "Inactive",
+    validTill: validTillDate,
+    userId: profile?.membershipId || user?._id || "N/A",
+    currentRating: profile?.rating || 0,
+    lastUpdate: lastUpdateDate,
+    upcomingCount: upcomingCount,
+  };
+
   return {
     summary,
-    tournaments,
+    tournaments: defaultTournaments,
+    isLoading,
   };
 }
+

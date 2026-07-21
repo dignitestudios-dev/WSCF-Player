@@ -53,7 +53,7 @@ export function getTournamentDetailsRoute(id: string, from?: "dashboard" | "regi
 }
 
 export function getTournamentRegisteredPlayersRoute(tournamentId: string) {
-  return `${DASHBOARD_TOURNAMENT_DETAILS_ROUTE}/${tournamentId}/players`;
+  return `${DASHBOARD_TOURNAMENT_DETAILS_ROUTE}/${tournamentId}/participants`;
 }
 
 export function getDashboardTournamentParticipantsRoute(tournamentId?: string) {

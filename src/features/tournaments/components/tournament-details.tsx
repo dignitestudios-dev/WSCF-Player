@@ -7,6 +7,8 @@ import {
   getDashboardTournamentParticipantsRoute,
 } from "@/config/routes";
 import { useTournamentDetails } from "@/features/tournaments/hooks/use-tournament-details";
+import { useTournamentParticipantsQuery, useTournamentDetailsQuery } from "@/features/tournaments/api/tournaments.queries";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function BackIcon() {
   return (
@@ -29,7 +31,32 @@ interface TournamentDetailsProps {
 }
 
 function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
-  const { tournament, previewPlayers, backHref, showViewAll } = useTournamentDetails(tournamentId);
+  const { backHref } = useTournamentDetails(tournamentId);
+  const { data: detailsData, isPending: isDetailsPending } = useTournamentDetailsQuery(tournamentId);
+  const { data: participantsData, isPending: isParticipantsPending } = useTournamentParticipantsQuery(tournamentId, { page: 1, limit: 10 });
+  
+  const apiParticipants = participantsData?.data.participants || [];
+  const registeredCount = participantsData?.pagination?.totalItems ?? 0;
+  const showViewAll = (participantsData?.pagination?.totalPages ?? 0) > 1;
+  const tournament = detailsData?.data.tournament;
+
+  if (isDetailsPending) {
+    return (
+      <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+        <div className="mb-6 flex flex-col gap-3">
+          <Skeleton className="h-6 w-24 rounded" />
+          <Skeleton className="h-[44px] w-64 rounded lg:h-[61px] lg:w-96" />
+        </div>
+        <div className="relative rounded-[12px] bg-white/50 p-6 lg:p-8">
+          <div className="mb-8 flex flex-col gap-3">
+            <Skeleton className="h-[41px] w-64 rounded" />
+            <Skeleton className="h-[22px] w-48 rounded" />
+          </div>
+          <Skeleton className="h-[400px] w-full rounded" />
+        </div>
+      </div>
+    );
+  }
 
   if (!tournament) {
     return (
@@ -64,7 +91,7 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
       <div className="relative rounded-[12px] bg-white/50 p-6 lg:p-8">
         <div className="mb-8 flex flex-col gap-3">
           <h2 className="text-[30px] font-bold leading-[41px] text-[#083F92]">
-            Registered Players ({tournament.registeredCount})
+            Registered Players ({registeredCount})
           </h2>
           <p className="text-base font-medium leading-[22px] text-[#151515]">
             Players who joined this tournament
@@ -83,29 +110,55 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
               <span className="text-right">Action</span>
             </div>
 
-            {previewPlayers.map((player, index) => (
-              <div
-                key={player.userId}
-                className={`${GRID_COLS} h-[47px] items-center border-b border-[#F2F2F2] bg-white px-6 text-base font-medium text-[#151515] last:border-b-0`}
-              >
-                <span>{index + 1}</span>
-                <span>{player.name}</span>
-                <span>{player.userId}</span>
-                <span>
-                  <span className="inline-flex h-8 min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white">
-                    {player.rating}
-                  </span>
-                </span>
-                <span className="text-right">
-                  <Link
-                    href={getDashboardPlayerProfileRoute(player.id)}
-                    className="text-xs font-medium leading-4 text-[#151515] hover:text-[#083F92]"
+            {isParticipantsPending ? (
+              <div className="flex flex-col">
+                {[...Array(5)].map((_, i) => (
+                  <div
+                    key={i}
+                    className={`${GRID_COLS} h-[47px] items-center border-b border-[#F2F2F2] bg-white px-6 last:border-b-0`}
                   >
-                    View Profile
-                  </Link>
-                </span>
+                    <Skeleton className="h-4 w-4 rounded" />
+                    <Skeleton className="h-4 w-32 rounded" />
+                    <Skeleton className="h-4 w-24 rounded" />
+                    <Skeleton className="h-8 w-[78px] rounded-[22px]" />
+                    <Skeleton className="h-4 w-16 justify-self-end rounded" />
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : apiParticipants.length === 0 ? (
+              <div className="flex items-center justify-center h-[47px] text-sm text-[#727272]">
+                No registered players found.
+              </div>
+            ) : (
+              apiParticipants.map((participant, index) => {
+                const userId = participant.playerProfile?.membershipId || participant.user._id;
+                const rating = participant.playerProfile?.rating || 0;
+                
+                return (
+                  <div
+                    key={participant._id}
+                    className={`${GRID_COLS} h-[47px] items-center border-b border-[#F2F2F2] bg-white px-6 text-base font-medium text-[#151515] last:border-b-0`}
+                  >
+                    <span>{index + 1}</span>
+                    <span>{participant.user.name}</span>
+                    <span>{userId}</span>
+                    <span>
+                      <span className="inline-flex h-8 min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white">
+                        {rating}
+                      </span>
+                    </span>
+                    <span className="text-right">
+                      <Link
+                        href={getDashboardPlayerProfileRoute(participant.user._id)}
+                        className="text-xs font-medium leading-4 text-[#151515] hover:text-[#083F92]"
+                      >
+                        View Profile
+                      </Link>
+                    </span>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 

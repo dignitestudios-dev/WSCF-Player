@@ -1,8 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
-import type { UseFormRegister } from "react-hook-form";
-import { divisionOptions } from "@/features/tournaments/schemas/tournament-registration.schema";
+import { Controller } from "react-hook-form";
+import type { UseFormRegister, Control } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const inputClassName =
   "h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none placeholder:text-[#181818]/60 focus:ring-2 focus:ring-[#083F92]/15";
@@ -41,11 +49,11 @@ function FormField({
   error,
   register,
 }: {
-  id: keyof TournamentRegistrationFields;
+  id: string;
   label: string;
   type?: string;
   error?: string;
-  register: UseFormRegister<TournamentRegistrationFields>;
+  register: UseFormRegister<any>;
 }) {
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -58,60 +66,69 @@ function FormField({
   );
 }
 
-function DivisionField({
+function SelectField({
+  id,
+  label,
+  options,
   error,
-  register,
+  control,
 }: {
+  id: string;
+  label: string;
+  options: string[];
   error?: string;
-  register: UseFormRegister<TournamentRegistrationFields>;
+  control: Control<any>;
 }) {
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-2">
-      <label htmlFor="division" className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
-        Division
+      <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
+        {label}
       </label>
-      <div className="relative">
-        <select
-          id="division"
-          className={`${inputClassName} appearance-none pr-10`}
-          {...register("division")}
-        >
-          <option value="" disabled>
-            Select drop down
-          </option>
-          {divisionOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
-          <ChevronDownIcon />
-        </div>
-      </div>
+      <Controller
+        name={id}
+        control={control}
+        render={({ field }) => (
+          <Select onValueChange={field.onChange} value={field.value}>
+            <SelectTrigger id={id} className={`${inputClassName} font-normal focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0`}>
+              <SelectValue placeholder="Select drop down" />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
     </div>
   );
 }
 
-function FormRow({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-col gap-[22px] sm:flex-row">{children}</div>;
-}
-
 interface TournamentRegistrationModalProps {
   onClose: () => void;
-  onSubmit: () => void;
-  register: UseFormRegister<TournamentRegistrationFields>;
-  errors: Partial<Record<keyof TournamentRegistrationFields, { message?: string }>>;
-  handleSubmit: (callback: () => void) => (event?: React.BaseSyntheticEvent) => void;
+  onSubmit: (data: any) => void;
+  register: UseFormRegister<any>;
+  control: Control<any>;
+  errors: Partial<Record<string, { message?: string }>>;
+  handleSubmit: (callback: (data: any) => void) => (event?: React.BaseSyntheticEvent) => void;
+  fields: FormFieldApiData[];
+  isFieldsPending: boolean;
+  isRegistering?: boolean;
 }
 
 export default function TournamentRegistrationModal({
   onClose,
   onSubmit,
   register,
+  control,
   errors,
   handleSubmit,
+  fields,
+  isFieldsPending,
+  isRegistering,
 }: TournamentRegistrationModalProps) {
   useEffect(() => {
     function handleEscape(event: KeyboardEvent) {
@@ -158,82 +175,63 @@ export default function TournamentRegistrationModal({
           Tournament Registration
         </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+        {isFieldsPending ? (
           <div className="flex flex-col gap-8">
-            <FormRow>
-              <FormField
-                id="playerFirstName"
-                label="Player First Name"
-                error={errors.playerFirstName?.message}
-                register={register}
-              />
-              <FormField
-                id="playerLastName"
-                label="Player Last Name"
-                error={errors.playerLastName?.message}
-                register={register}
-              />
-            </FormRow>
-
-            <FormRow>
-              <FormField
-                id="grade"
-                label="Grade"
-                error={errors.grade?.message}
-                register={register}
-              />
-              <FormField
-                id="teamName"
-                label="Team Name"
-                error={errors.teamName?.message}
-                register={register}
-              />
-            </FormRow>
-
-            <FormRow>
-              <FormField id="city" label="City" error={errors.city?.message} register={register} />
-              <DivisionField error={errors.division?.message} register={register} />
-            </FormRow>
-
-            <FormRow>
-              <FormField
-                id="parentFirstName"
-                label="Parent/Guardian First Name"
-                error={errors.parentFirstName?.message}
-                register={register}
-              />
-              <FormField
-                id="parentLastName"
-                label="Parent/Guardian Last Name"
-                error={errors.parentLastName?.message}
-                register={register}
-              />
-            </FormRow>
-
-            <FormRow>
-              <FormField
-                id="parentPhone"
-                label="Parent/Guardian Phone Number"
-                error={errors.parentPhone?.message}
-                register={register}
-              />
-              <FormField
-                id="parentEmail"
-                label="Parent/Guardian Email Address"
-                type="email"
-                error={errors.parentEmail?.message}
-                register={register}
-              />
-            </FormRow>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[22px] gap-y-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="flex min-w-0 flex-1 flex-col gap-2">
+                  <Skeleton className="h-[19px] w-24" />
+                  <Skeleton className="h-11 w-full rounded-[24px]" />
+                </div>
+              ))}
+            </div>
+            <Skeleton className="h-12 w-full rounded-[24px]" />
           </div>
+        ) : fields.length === 0 ? (
+          <div className="flex justify-center p-8 text-[#181818]/60">
+            No registration fields found.
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[22px] gap-y-8">
+              {fields.map((field) => {
+                const errorMsg = errors[field._id]?.message;
 
-          <button
-            type="submit"
-            className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875]"
-          >
-            Submit
-          </button>
-        </form>
+                if (field.fieldType === "dropdown") {
+                  return (
+                    <SelectField
+                      key={field._id}
+                      id={field._id}
+                      label={field.fieldName}
+                      options={field.options}
+                      error={errorMsg}
+                      control={control}
+                    />
+                  );
+                }
+
+                return (
+                  <FormField
+                    key={field._id}
+                    id={field._id}
+                    label={field.fieldName}
+                    type={field.fieldType === "number" ? "number" : "text"}
+                    error={errorMsg}
+                    register={register}
+                  />
+                );
+              })}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isRegistering}
+              className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isRegistering ? "Submitting..." : "Submit"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

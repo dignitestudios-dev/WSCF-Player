@@ -66,12 +66,19 @@ export function useVerifyOtp() {
               user: response.user,
               accessToken: response.accessToken,
               dispatch,
-              setCookie: from !== "register",
+              setCookie: from !== "register" && from !== "forgot-password",
             });
           }
 
           if (from === "register") {
             router.push(EMAIL_VERIFIED_ROUTE);
+            return;
+          }
+
+          if (from === "forgot-password") {
+            router.push(
+              `${SET_NEW_PASSWORD_ROUTE}?email=${encodeURIComponent(email)}&token=${encodeURIComponent(response.accessToken ?? "")}`
+            );
             return;
           }
 

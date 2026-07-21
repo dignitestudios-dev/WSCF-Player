@@ -5,6 +5,7 @@ import Link from "next/link";
 import EditProfileModal from "@/features/dashboard/components/edit-profile-modal";
 import { MY_HISTORY_ROUTE, REGISTERED_TOURNAMENTS_ROUTE } from "@/config/routes";
 import { useMyProfile } from "@/features/dashboard/hooks/use-my-profile";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function ProfileStat({ label, value }: { label: string; value: string }) {
   return (
@@ -113,7 +114,7 @@ function SummaryCard({
 }
 
 export default function MyProfile() {
-  const { profile, isEditOpen, openEditProfile, closeEditProfile, saveProfile } = useMyProfile();
+  const { profile, isPending, isUpdating, isEditOpen, openEditProfile, closeEditProfile, saveProfile } = useMyProfile();
 
   const stats = [
     { label: "USER ID", value: profile.userId },
@@ -149,42 +150,69 @@ export default function MyProfile() {
         </button>
 
         <div className="relative z-10 mx-auto mt-12 h-[198px] w-[198px] overflow-hidden rounded-full border-[10px] border-[#083F92] bg-[#eaeaea] lg:absolute lg:left-[52px] lg:top-0 lg:mx-0 lg:mt-0">
-          <Image
-            src={profile.avatarUrl}
-            alt={profile.name}
-            fill
-            className="object-cover"
-            sizes="198px"
-          />
+          {isPending ? (
+             <Skeleton className="h-full w-full rounded-full" />
+          ) : (
+            <Image
+              src={profile.avatarUrl}
+              alt={profile.name}
+              fill
+              className="object-cover"
+              sizes="198px"
+            />
+          )}
         </div>
 
         <div className="relative mt-6 rounded-[12px] bg-white p-6 lg:absolute lg:left-[282px] lg:top-[108px] lg:mt-0 lg:bg-transparent lg:p-0">
-          <h2 className="text-[32px] font-semibold leading-[43px] text-[#292D32]">{profile.name}</h2>
+          {isPending ? (
+            <Skeleton className="h-[43px] w-64 mb-3" />
+          ) : (
+            <h2 className="text-[32px] font-semibold leading-[43px] text-[#292D32]">{profile.name}</h2>
+          )}
 
           <div className="mt-3 flex flex-wrap items-center gap-4">
-            {stats.map((stat, index) => (
-              <div key={stat.label} className="flex items-center gap-4">
-                <ProfileStat label={stat.label} value={stat.value} />
-                {index < stats.length - 1 && <StatDivider />}
-              </div>
-            ))}
+            {isPending
+              ? [...Array(5)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="flex flex-col gap-2">
+                      <Skeleton className="h-[19px] w-16" />
+                      <Skeleton className="h-[32px] w-24" />
+                    </div>
+                    {i < 4 && <StatDivider />}
+                  </div>
+                ))
+              : stats.map((stat, index) => (
+                  <div key={stat.label} className="flex items-center gap-4">
+                    <ProfileStat label={stat.label} value={stat.value} />
+                    {index < stats.length - 1 && <StatDivider />}
+                  </div>
+                ))}
           </div>
         </div>
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <SummaryCard
-          icon={<TournamentIcon />}
-          title="Enrolled Tournaments"
-          value={String(profile.enrolledTournaments).padStart(2, "0")}
-          href={REGISTERED_TOURNAMENTS_ROUTE}
-        />
-        <SummaryCard
-          icon={<HistoryIcon />}
-          title="My History"
-          value={profile.historyScore}
-          href={MY_HISTORY_ROUTE}
-        />
+        {isPending ? (
+          <>
+            <Skeleton className="h-[207px] w-full rounded-[12px]" />
+            <Skeleton className="h-[207px] w-full rounded-[12px]" />
+          </>
+        ) : (
+          <>
+            <SummaryCard
+              icon={<TournamentIcon />}
+              title="Enrolled Tournaments"
+              value={String(profile.enrolledTournaments).padStart(2, "0")}
+              href={REGISTERED_TOURNAMENTS_ROUTE}
+            />
+            <SummaryCard
+              icon={<HistoryIcon />}
+              title="My History"
+              value={profile.historyScore}
+              href={MY_HISTORY_ROUTE}
+            />
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -197,14 +225,22 @@ export default function MyProfile() {
           </div>
 
           <div className="flex flex-1 flex-col overflow-hidden bg-[#D2D2D2]">
-            {parentRows.map((row) => (
-              <div
-                key={row.label}
-                className={`flex flex-1 items-center px-[15px] text-lg font-medium leading-6 text-[#292D32] ${row.bg}`}
-              >
-                {row.label}
-              </div>
-            ))}
+            {isPending ? (
+              [...Array(3)].map((_, i) => (
+                <div key={i} className={`flex flex-1 items-center px-[15px] ${i % 2 === 0 ? "bg-[#F2F7FF]" : "bg-[#DFEBFF]"}`}>
+                   <Skeleton className="h-[24px] w-48" />
+                </div>
+              ))
+            ) : (
+              parentRows.map((row) => (
+                <div
+                  key={row.label}
+                  className={`flex flex-1 items-center px-[15px] text-lg font-medium leading-6 text-[#292D32] ${row.bg}`}
+                >
+                  {row.label}
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -220,16 +256,22 @@ export default function MyProfile() {
             <div className="absolute right-[43px] top-[43px] flex h-[188px] w-[188px] items-center justify-center rounded-full bg-[rgba(244,244,244,0.1)]">
               <RatingStarIcon className="h-[102px] w-[102px] text-[#083F92]" />
             </div>
-            <p className="absolute inset-0 flex items-center justify-center text-[36px] font-semibold leading-[49px] text-white">
-              {profile.currentRating}
-            </p>
+            {isPending ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Skeleton className="h-[49px] w-24 bg-white/40" />
+              </div>
+            ) : (
+              <p className="absolute inset-0 flex items-center justify-center text-[36px] font-semibold leading-[49px] text-white">
+                {profile.currentRating}
+              </p>
+            )}
           </div>
         </div>
       </div>
     </div>
 
       {isEditOpen ? (
-        <EditProfileModal profile={profile} onClose={closeEditProfile} onSave={saveProfile} />
+        <EditProfileModal profile={profile} isUpdating={isUpdating} onClose={closeEditProfile} onSave={saveProfile} />
       ) : null}
     </>
   );

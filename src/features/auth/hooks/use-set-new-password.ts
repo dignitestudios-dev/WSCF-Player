@@ -6,12 +6,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSetNewPasswordMutation } from "@/features/auth/api/auth.mutations";
 import { setNewPasswordSchema } from "@/features/auth/schemas/set-new-password.schema";
-import { MEMBER_LOGIN_ROUTE } from "@/config/routes";
+import { AUTH_REDIRECT } from "@/config/routes";
 
 export function useSetNewPassword() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "";
+  const token = searchParams.get("token") ?? "";
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -27,7 +28,7 @@ export function useSetNewPassword() {
     if (!email) return;
 
     updatePassword(
-      { email, password: data.password, confirmPassword: data.confirmPassword },
+      { email, password: data.password, confirmPassword: data.confirmPassword, token },
       {
         onSuccess: () => {
           setIsSuccessModalOpen(true);
@@ -50,7 +51,7 @@ export function useSetNewPassword() {
 
   function handleSuccessContinue() {
     setIsSuccessModalOpen(false);
-    router.push(MEMBER_LOGIN_ROUTE);
+    router.push(AUTH_REDIRECT);
   }
 
   return {

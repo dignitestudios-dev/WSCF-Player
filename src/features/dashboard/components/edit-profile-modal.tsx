@@ -9,6 +9,7 @@ interface EditProfileModalProps {
   profile: MyProfile;
   onClose: () => void;
   onSave: (values: EditProfileFields) => void;
+  isUpdating?: boolean;
 }
 
 const inputClassName =
@@ -55,20 +56,22 @@ function FormField({
   label,
   type = "text",
   error,
+  disabled,
   register,
 }: {
   id: keyof EditProfileFields;
   label: string;
   type?: string;
   error?: string;
+  disabled?: boolean;
   register: UseFormRegister<EditProfileFields>;
 }) {
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
+      <label htmlFor={id} className={`text-sm font-medium capitalize leading-[19px] text-[#181818] ${disabled ? "opacity-50" : ""}`}>
         {label}
       </label>
-      <input id={id} type={type} className={inputClassName} {...register(id)} />
+      <input id={id} type={type} disabled={disabled} className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`} {...register(id)} />
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
     </div>
   );
@@ -95,7 +98,7 @@ function FormRow({ children }: { children: React.ReactNode }) {
   return <div className="flex flex-col gap-[23px] sm:flex-row sm:gap-10">{children}</div>;
 }
 
-export default function EditProfileModal({ profile, onClose, onSave }: EditProfileModalProps) {
+export default function EditProfileModal({ profile, isUpdating, onClose, onSave }: EditProfileModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { form, onSubmit } = useEditProfile({ profile, onSave, onClose });
 
@@ -107,7 +110,7 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
 
   useEffect(() => {
     function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !isUpdating) {
         onClose();
       }
     }
@@ -119,12 +122,14 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = "";
     };
-  }, [onClose]);
+  }, [onClose, isUpdating]);
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
+      onClick={() => {
+        if (!isUpdating) onClose();
+      }}
       role="presentation"
     >
       <div
@@ -141,7 +146,8 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center text-[#181818]"
+          disabled={isUpdating}
+          className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center text-[#181818] disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Close"
         >
           <CloseIcon />
@@ -182,8 +188,9 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
               />
               <button
                 type="button"
+                disabled={isUpdating}
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[2px_8px_12px_rgba(0,0,0,0.06)]"
+                className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[2px_8px_12px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="Change profile photo"
               >
                 <EditAvatarIcon />
@@ -199,12 +206,14 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
                     id="fullName"
                     label="Full Name"
                     error={errors.fullName?.message}
+                    disabled={isUpdating}
                     register={register}
                   />
                   <FormField
                     id="division"
                     label="Division"
                     error={errors.division?.message}
+                    disabled={isUpdating}
                     register={register}
                   />
                 </FormRow>
@@ -214,12 +223,14 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
                     label="Email"
                     type="email"
                     error={errors.email?.message}
+                    disabled={isUpdating}
                     register={register}
                   />
                   <FormField
                     id="grade"
                     label="Grade"
                     error={errors.grade?.message}
+                    disabled={isUpdating}
                     register={register}
                   />
                 </FormRow>
@@ -231,12 +242,14 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
                     id="parentFullName"
                     label="Full Name"
                     error={errors.parentFullName?.message}
+                    disabled={isUpdating}
                     register={register}
                   />
                   <FormField
                     id="parentPhone"
                     label="Phone"
                     error={errors.parentPhone?.message}
+                    disabled={isUpdating}
                     register={register}
                   />
                 </FormRow>
@@ -246,6 +259,7 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
                     label="Email"
                     type="email"
                     error={errors.parentEmail?.message}
+                    disabled={isUpdating}
                     register={register}
                   />
                 </div>
@@ -254,9 +268,10 @@ export default function EditProfileModal({ profile, onClose, onSave }: EditProfi
 
             <button
               type="submit"
-              className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875]"
+              disabled={isUpdating}
+              className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Save Profile
+              {isUpdating ? "Saving..." : "Save Profile"}
             </button>
           </form>
         </div>

@@ -12,6 +12,8 @@ import {
 import { useDashboard } from "@/features/dashboard/hooks/use-dashboard";
 import type { DashboardTournament } from "@/features/dashboard/hooks/use-dashboard";
 import TournamentRegistrationFlow from "@/features/tournaments/components/tournament-registration-flow";
+import { useTournamentsQuery } from "@/features/tournaments/api/tournaments.queries";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function SearchIcon() {
   return (
@@ -118,8 +120,17 @@ function TournamentCard({
 }
 
 export default function DashboardOverview() {
-  const { summary, tournaments } = useDashboard();
+  const { summary, isLoading: isSummaryLoading } = useDashboard();
+  const { data: tournamentsData, isPending } = useTournamentsQuery({ page: 1, limit: 4 });
   const [registrationTournament, setRegistrationTournament] = useState<DashboardTournament | null>(null);
+
+  const mappedTournaments: DashboardTournament[] = (tournamentsData?.data.tournaments || []).map(t => ({
+    id: t._id,
+    title: t.title,
+    location: t.location,
+    date: new Date(t.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+    price: t.entryFee === 0 ? "Free" : `$${t.entryFee}`,
+  }));
 
   return (
     <>
@@ -150,17 +161,29 @@ export default function DashboardOverview() {
           <div className="relative z-10 flex flex-col gap-4">
             <div className="flex flex-col gap-2.5">
               <h2 className="text-[22px] font-semibold leading-[30px] text-white">Membership Status</h2>
-              <span className="inline-flex w-fit rounded-full bg-white px-3 py-2 text-sm font-medium capitalize text-[#083F92]">
-                {summary.membershipStatus}
-              </span>
+              {isSummaryLoading ? (
+                <Skeleton className="h-[36px] w-[82px] rounded-full bg-white/40" />
+              ) : (
+                <span className="inline-flex w-fit rounded-full bg-white px-3 py-2 text-sm font-medium capitalize text-[#083F92]">
+                  {summary.membershipStatus}
+                </span>
+              )}
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="text-xl leading-[27px] text-[#DFEBF9]">Valid Till</span>
-              <span className="text-[22px] leading-[30px] text-white">{summary.validTill}</span>
+              {isSummaryLoading ? (
+                <Skeleton className="h-[30px] w-32 bg-white/40" />
+              ) : (
+                <span className="text-[22px] leading-[30px] text-white">{summary.validTill}</span>
+              )}
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="text-xl leading-[27px] text-[#DFEBF9]">USER ID</span>
-              <span className="text-[22px] leading-[30px] text-white">{summary.userId}</span>
+              {isSummaryLoading ? (
+                <Skeleton className="h-[30px] w-24 bg-white/40" />
+              ) : (
+                <span className="text-[22px] leading-[30px] text-white">{summary.userId}</span>
+              )}
             </div>
           </div>
           <div className="pointer-events-none absolute -right-8 top-8 opacity-50">
@@ -170,16 +193,28 @@ export default function DashboardOverview() {
 
         <div className="rounded-[24px] border border-[#083F92] bg-white p-[22px]">
           <h2 className="text-[22px] font-semibold leading-[30px] text-[#083F92]">Current Rating</h2>
-          <p className="mt-2 text-[40px] font-semibold leading-[54px] text-[#083F92]">{summary.currentRating}</p>
+          {isSummaryLoading ? (
+            <Skeleton className="mt-2 h-[54px] w-24" />
+          ) : (
+            <p className="mt-2 text-[40px] font-semibold leading-[54px] text-[#083F92]">{summary.currentRating}</p>
+          )}
           <div className="mt-6 flex flex-col gap-3">
-            <span className="text-xl leading-[27px] text-[#727272]">{summary.lastUpdate}</span>
+            {isSummaryLoading ? (
+              <Skeleton className="h-[27px] w-32" />
+            ) : (
+              <span className="text-xl leading-[27px] text-[#727272]">{summary.lastUpdate}</span>
+            )}
             <span className="text-[22px] font-bold leading-[30px] text-[#083F92]">Last Update</span>
           </div>
         </div>
 
         <div className="rounded-[24px] border border-[#083F92] bg-white p-[22px]">
           <h2 className="text-[22px] font-semibold leading-[30px] text-[#083F92]">Upcoming Tournaments</h2>
-          <p className="mt-2 text-[40px] font-semibold leading-[54px] text-[#083F92]">{summary.upcomingCount}</p>
+          {isSummaryLoading ? (
+            <Skeleton className="mt-2 h-[54px] w-16" />
+          ) : (
+            <p className="mt-2 text-[40px] font-semibold leading-[54px] text-[#083F92]">{summary.upcomingCount}</p>
+          )}
           <div className="mt-6 flex flex-col justify-between gap-4">
             <p className="text-[22px] font-medium leading-[30px] text-[#083F92]">
               Your next tournaments are scheduled through Next Week.
@@ -197,13 +232,38 @@ export default function DashboardOverview() {
         </h2>
 
         <div className="flex max-h-[646px] flex-col gap-4 overflow-y-auto pr-1">
-          {tournaments.map((tournament) => (
-            <TournamentCard
-              key={tournament.id}
-              tournament={tournament}
-              onRegister={setRegistrationTournament}
-            />
-          ))}
+          {isPending ? (
+            <>
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="relative rounded-[12px] border border-gray-200 bg-white p-6 shadow-sm">
+                  <div className="flex flex-col gap-4 pr-44 sm:pr-52">
+                    <div className="flex items-start gap-4">
+                      <Skeleton className="h-[53px] w-[53px] shrink-0 rounded-full" />
+                      <div className="flex min-w-0 flex-1 flex-col justify-center">
+                        <Skeleton className="h-6 w-48 mb-4" />
+                        <div className="flex flex-wrap items-center gap-4">
+                          <Skeleton className="h-[19px] w-24" />
+                          <Skeleton className="h-[19px] w-24" />
+                          <Skeleton className="h-[19px] w-24" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <Skeleton className="absolute right-6 top-1/2 h-14 w-[136px] -translate-y-1/2 rounded-full px-8" />
+                </div>
+              ))}
+            </>
+          ) : mappedTournaments.length === 0 ? (
+            <p className="text-sm text-[#727272]">No upcoming tournaments found.</p>
+          ) : (
+            mappedTournaments.map((tournament) => (
+              <TournamentCard
+                key={tournament.id}
+                tournament={tournament}
+                onRegister={setRegistrationTournament}
+              />
+            ))
+          )}
         </div>
 
         <div className="mt-6 flex justify-end">

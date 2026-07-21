@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { getDashboardPlayerProfileRoute } from "@/config/routes";
 import { useDashboardPlayersRatingLookup } from "@/features/dashboard/hooks/use-dashboard-players-rating-lookup";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CustomPagination } from "@/components/ui/custom-pagination";
 
 function BackIcon() {
   return (
@@ -42,7 +44,7 @@ function ClearIcon() {
 }
 
 export default function DashboardPlayersRatingLookup() {
-  const { query, setQuery, filteredPlayers, backHref } = useDashboardPlayersRatingLookup();
+  const { query, setQuery, filteredPlayers, isPending, setPage, pagination, backHref } = useDashboardPlayersRatingLookup();
 
   return (
     <div className="mx-auto max-w-[80em] px-6 pb-12 pt-8 lg:px-0">
@@ -78,23 +80,57 @@ export default function DashboardPlayersRatingLookup() {
         </div>
       </div>
 
-      {filteredPlayers.length > 0 && (
-        <div className="mt-4 overflow-hidden rounded-[12px] border border-[#DADADA] bg-white">
-          {filteredPlayers.map((player, index) => (
-            <Link
-              key={player.id}
-              href={getDashboardPlayerProfileRoute(player.id)}
-              className={`flex min-h-[68px] items-center justify-between gap-4 px-5 py-3 transition hover:bg-[#F7F6FF] ${
-                index < filteredPlayers.length - 1 ? "border-b border-[#DADADA]" : ""
-              }`}
-            >
-              <div className="min-w-0">
-                <p className="truncate text-base font-medium text-[#151515]">{player.name}</p>
-                <p className="mt-1 text-sm text-[#727272]">USER ID: {player.userId}</p>
+      <div className="mt-4">
+        {isPending ? (
+          <div className="overflow-hidden rounded-[12px] border border-[#DADADA] bg-white">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className={`flex min-h-[68px] items-center justify-between gap-4 px-5 py-3 ${
+                  i < 4 ? "border-b border-[#DADADA]" : ""
+                }`}
+              >
+                <div className="min-w-0 flex-1">
+                  <Skeleton className="h-5 w-48 mb-2" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+                <Skeleton className="h-5 w-24 shrink-0" />
               </div>
-              <span className="shrink-0 text-sm font-medium text-[#083F92]">View Profile</span>
-            </Link>
-          ))}
+            ))}
+          </div>
+        ) : filteredPlayers.length > 0 ? (
+          <div className="overflow-hidden rounded-[12px] border border-[#DADADA] bg-white">
+            {filteredPlayers.map((player, index) => (
+              <Link
+                key={player.id}
+                href={getDashboardPlayerProfileRoute(player.id)}
+                className={`flex min-h-[68px] items-center justify-between gap-4 px-5 py-3 transition hover:bg-[#F7F6FF] ${
+                  index < filteredPlayers.length - 1 ? "border-b border-[#DADADA]" : ""
+                }`}
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-base font-medium text-[#151515]">{player.name}</p>
+                  <p className="mt-1 text-sm text-[#727272]">USER ID: {player.userId}</p>
+                </div>
+                <span className="shrink-0 text-sm font-medium text-[#083F92]">View Profile</span>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-6 text-center text-sm text-[#727272]">No players found.</p>
+        )}
+      </div>
+
+      {pagination && pagination.totalPages > 0 && (
+        <div className="mt-8 flex items-center justify-between">
+          <p className="text-base text-[#083F92]">
+            You are on page {pagination.currentPage} of {pagination.totalPages} Pages
+          </p>
+          <CustomPagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPageChange={setPage}
+          />
         </div>
       )}
     </div>

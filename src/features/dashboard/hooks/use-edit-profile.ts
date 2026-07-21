@@ -30,9 +30,8 @@ export function useEditProfile({
     defaultValues: profileToFormValues(profile),
   });
 
-  function onSubmit(values: EditProfileFields) {
-    onSave(values);
-    onClose();
+  async function onSubmit(values: EditProfileFields) {
+    await onSave(values);
   }
 
   return {

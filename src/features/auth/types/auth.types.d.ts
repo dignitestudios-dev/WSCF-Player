@@ -96,6 +96,7 @@ interface SetNewPasswordFormData {
   email: string;
   password: string;
   confirmPassword: string;
+  token?: string;
 }
 
 interface SetNewPasswordFields {
@@ -107,4 +108,9 @@ interface ChangePasswordFields {
   currentPassword: string;
   password: string;
   confirmPassword: string;
+}
+
+interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
 }

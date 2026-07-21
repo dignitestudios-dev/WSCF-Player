@@ -5,6 +5,7 @@ import {
   registerMember,
   registerUser,
   resendOtp,
+  changePassword,
   setNewPassword,
   signInMember,
   verifyOtp,
@@ -57,5 +58,11 @@ export function useResendOtpMutation() {
 export function useSetNewPasswordMutation() {
   return useMutation({
     mutationFn: (payload: SetNewPasswordFormData) => setNewPassword(payload),
+  });
+}
+
+export function useChangePasswordMutation() {
+  return useMutation({
+    mutationFn: (payload: ChangePasswordPayload) => changePassword(payload),
   });
 }

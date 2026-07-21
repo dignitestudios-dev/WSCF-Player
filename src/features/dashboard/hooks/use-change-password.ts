@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSetNewPasswordMutation } from "@/features/auth/api/auth.mutations";
+import { useChangePasswordMutation } from "@/features/auth/api/auth.mutations";
 import { changePasswordSchema } from "@/features/dashboard/schemas/change-password.schema";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -14,7 +14,7 @@ export function useChangePassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
-  const { mutate: updatePassword, isPending, error } = useSetNewPasswordMutation();
+  const { mutate: updatePassword, isPending, error } = useChangePasswordMutation();
 
   const form = useForm<ChangePasswordFields>({
     resolver: zodResolver(changePasswordSchema),
@@ -30,9 +30,8 @@ export function useChangePassword() {
 
     updatePassword(
       {
-        email: user.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
+        currentPassword: data.currentPassword,
+        newPassword: data.password,
       },
       {
         onSuccess: () => {

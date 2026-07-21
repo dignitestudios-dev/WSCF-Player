@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { getTournamentDetailsRoute } from "@/config/routes";
 import { useRegisteredTournaments } from "@/features/dashboard/hooks/use-registered-tournaments";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CustomPagination } from "@/components/ui/custom-pagination";
 
 function BackIcon() {
   return (
@@ -87,7 +89,7 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
 }
 
 export default function RegisteredTournaments() {
-  const { tournaments, backHref } = useRegisteredTournaments();
+  const { tournaments, isPending, setPage, pagination, backHref } = useRegisteredTournaments();
 
   return (
     <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
@@ -101,14 +103,48 @@ export default function RegisteredTournaments() {
 
       <div className="rounded-[12px] bg-white p-8">
         <h1 className="text-[30px] font-bold leading-[41px] text-[#083F92]">
-          Your Registered Tournaments ({tournaments.length})
+          Your Registered Tournaments ({pagination?.totalItems ?? tournaments.length})
         </h1>
 
         <div className="mt-[41px] flex flex-col gap-4">
-          {tournaments.map((tournament) => (
-            <RegisteredTournamentCard key={tournament.id} tournament={tournament} />
-          ))}
+          {isPending ? (
+            [...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="relative flex min-h-[108px] items-center rounded-[12px] border border-[#083F92] bg-white px-8 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
+              >
+                <Skeleton className="h-[53px] w-[53px] shrink-0 rounded-full" />
+                <div className="ml-4 min-w-0 flex-1 pr-36 sm:pr-44">
+                  <Skeleton className="mb-2 h-6 w-64" />
+                  <div className="mt-4 flex flex-wrap items-center gap-4">
+                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-5 w-32" />
+                  </div>
+                </div>
+                <Skeleton className="absolute right-8 top-1/2 h-12 w-[136px] -translate-y-1/2 rounded-full" />
+              </div>
+            ))
+          ) : tournaments.length > 0 ? (
+            tournaments.map((tournament) => (
+              <RegisteredTournamentCard key={tournament.id} tournament={tournament} />
+            ))
+          ) : (
+            <p className="text-center text-sm text-[#727272]">No registered tournaments found.</p>
+          )}
         </div>
+
+        {pagination && pagination.totalPages > 0 && (
+          <div className="mt-8 flex items-center justify-between">
+            <p className="text-base text-[#083F92]">
+              You are on page {pagination.currentPage} of {pagination.totalPages} Pages
+            </p>
+            <CustomPagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={setPage}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -3,9 +3,12 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { getTournamentDetailsRoute } from "@/config/routes";
-import { useDashboard } from "@/features/dashboard/hooks/use-dashboard";
 import type { DashboardTournament } from "@/features/dashboard/hooks/use-dashboard";
 import TournamentRegistrationFlow from "@/features/tournaments/components/tournament-registration-flow";
+import { useTournamentsQuery } from "@/features/tournaments/api/tournaments.queries";
+import { useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CustomPagination } from "@/components/ui/custom-pagination";
 
 function SearchIcon() {
   return (
@@ -113,26 +116,35 @@ function TournamentCard({
 }
 
 export default function Tournaments() {
-  const { tournaments } = useDashboard();
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [page, setPage] = useState(1);
   const [registrationTournament, setRegistrationTournament] = useState<DashboardTournament | null>(null);
 
-  const allTournaments = useMemo(
-    () => [...tournaments, ...tournaments, ...tournaments.slice(0, 2)],
-    [tournaments]
-  );
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+      setPage(1);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [query]);
 
-  const filtered = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return allTournaments;
+  const { data, isPending } = useTournamentsQuery({
+    page,
+    limit: 8,
+    search: debouncedQuery,
+  });
 
-    return allTournaments.filter(
-      (tournament) =>
-        tournament.title.toLowerCase().includes(normalized) ||
-        tournament.location.toLowerCase().includes(normalized) ||
-        tournament.date.toLowerCase().includes(normalized)
-    );
-  }, [allTournaments, query]);
+  const apiTournaments = data?.data.tournaments || [];
+  const pagination = data?.pagination;
+
+  const mappedTournaments: DashboardTournament[] = apiTournaments.map(t => ({
+    id: t._id,
+    title: t.title,
+    location: t.location,
+    date: new Date(t.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+    price: t.entryFee === 0 ? "Free" : `$${t.entryFee}`,
+  }));
 
   return (
     <>
@@ -156,31 +168,50 @@ export default function Tournaments() {
         </div>
 
         <div className="flex flex-col gap-4">
-          {filtered.map((tournament, index) => (
-            <TournamentCard
-              key={`${tournament.id}-${index}`}
-              tournament={tournament}
-              onRegister={setRegistrationTournament}
-            />
-          ))}
+          {isPending ? (
+            <>
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="relative h-[108px] rounded-[12px] border border-gray-200 bg-white p-6 shadow-sm">
+                  <div className="flex items-start gap-6 pr-40">
+                    <Skeleton className="h-[53px] w-[53px] shrink-0 rounded-full" />
+                    <div className="flex min-w-0 flex-1 flex-col justify-center">
+                      <Skeleton className="h-6 w-48 mb-4" />
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Skeleton className="h-[19px] w-24" />
+                        <Skeleton className="h-[19px] w-24" />
+                        <Skeleton className="h-[19px] w-24" />
+                      </div>
+                    </div>
+                  </div>
+                  <Skeleton className="absolute right-6 top-1/2 h-12 w-[136px] -translate-y-1/2 rounded-full" />
+                </div>
+              ))}
+            </>
+          ) : mappedTournaments.length === 0 ? (
+            <p className="text-[#727272]">No tournaments found.</p>
+          ) : (
+            mappedTournaments.map((tournament) => (
+              <TournamentCard
+                key={tournament.id}
+                tournament={tournament}
+                onRegister={setRegistrationTournament}
+              />
+            ))
+          )}
         </div>
 
-        <div className="mt-8 flex items-center justify-between">
-          <p className="text-base text-[#083F92]">You have {filtered.length} of 24 Pages</p>
-          <div className="rounded-full bg-white p-2">
-            <div className="flex h-[43px] items-center rounded-full bg-[#EDEDED] px-2">
-              <button type="button" className="h-[33px] w-[33px] rounded-full bg-[#083F92] text-white">
-                1
-              </button>
-              <button type="button" className="h-[33px] w-[33px] text-[#636363]">
-                2
-              </button>
-              <button type="button" className="h-[33px] w-[33px] text-[#636363]">
-                3
-              </button>
-            </div>
+        {pagination && pagination.totalPages > 0 && (
+          <div className="mt-8 flex items-center justify-between">
+            <p className="text-base text-[#083F92]">
+              You are on page {pagination.currentPage} of {pagination.totalPages} Pages
+            </p>
+            <CustomPagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={setPage}
+            />
           </div>
-        </div>
+        )}
       </div>
 
       {registrationTournament ? (

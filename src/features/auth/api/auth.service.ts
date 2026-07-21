@@ -134,8 +134,16 @@ export async function registerUser(
 export async function forgotPassword(
   payload: ForgotPasswordFormData
 ): Promise<{ message: string }> {
-  await new Promise((resolve) => setTimeout(resolve, 600));
-  return { message: `OTP sent to ${payload.email}` };
+  const { data } = await axiosInstance.post<SignInApiResponse>(
+    "/auth/forgot-password",
+    payload
+  );
+
+  if (data.success === false) {
+    throw new Error(data.message ?? "Failed to send OTP");
+  }
+
+  return { message: data.message ?? "OTP Sent Successfully" };
 }
 
 export async function verifyOtp(
@@ -188,6 +196,53 @@ export async function resendOtp(
 export async function setNewPassword(
   payload: SetNewPasswordFormData
 ): Promise<{ message: string }> {
-  await new Promise((resolve) => setTimeout(resolve, 600));
-  return { message: `Password updated for ${payload.email}` };
+  const { data } = await axiosInstance.post<SignInApiResponse>(
+    "/auth/reset-password",
+    { password: payload.password },
+    {
+      headers: {
+        ...(payload.token ? { Authorization: `Bearer ${payload.token}` } : {}),
+      },
+    }
+  );
+
+  if (data.success === false) {
+    throw new Error(data.message ?? "Failed to reset password");
+  }
+
+  return { message: data.message ?? "Password updated successfully" };
 }
+
+export async function changePassword(
+  payload: ChangePasswordPayload
+): Promise<{ message: string }> {
+  const { data } = await axiosInstance.post<SignInApiResponse>(
+    "/auth/change-password",
+    payload
+  );
+
+  if (data.success === false) {
+    throw new Error(data.message ?? "Failed to change password");
+  }
+
+  return { message: data.message ?? "Password changed successfully" };
+}
+
+export async function getMe() {
+  const { data } = await axiosInstance.get("/user/me");
+  return data;
+}
+
+export interface UpdateUserProfilePayload {
+  name?: string;
+  division?: string;
+  grade?: string;
+  parentName?: string;
+  parentNumber?: string;
+}
+
+export async function updateProfile(payload: UpdateUserProfilePayload) {
+  const { data } = await axiosInstance.put("/user/profile", payload);
+  return data;
+}
+
