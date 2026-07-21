@@ -165,7 +165,7 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
         {showViewAll ? (
           <div className="mt-6 flex justify-end">
             <Link
-              href={getDashboardTournamentParticipantsRoute(tournament.id)}
+              href={getDashboardTournamentParticipantsRoute(tournament._id)}
               className="inline-flex h-[39px] items-center justify-center rounded-[8px] bg-[#083F92] px-2.5 text-sm font-medium text-white"
             >
               View All

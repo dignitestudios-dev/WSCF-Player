@@ -19,12 +19,13 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
   const dynamicSchema = useMemo(() => {
     const schemaShape: Record<string, any> = {};
     for (const field of fields) {
-      let fieldSchema = z.string({ required_error: `${field.fieldName} is required` });
+      let baseSchema = z.string({ required_error: `${field.fieldName} is required` });
+      let fieldSchema: z.ZodTypeAny;
       
       if (field.nature === "mandatory") {
-        fieldSchema = fieldSchema.min(field.minLength || 1, `${field.fieldName} is required`);
+        fieldSchema = baseSchema.min(field.minLength || 1, `${field.fieldName} is required`);
       } else {
-        fieldSchema = fieldSchema.optional().or(z.literal(""));
+        fieldSchema = baseSchema.optional().or(z.literal(""));
       }
       
       schemaShape[field._id] = fieldSchema;

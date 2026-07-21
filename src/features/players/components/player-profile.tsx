@@ -202,7 +202,7 @@ export default function PlayerProfile() {
               <span className="ml-auto w-[109px] shrink-0 text-right">Rating change</span>
             </div>
 
-            {player.tournaments.map((tournament, index) => (
+            {player.tournaments.map((tournament: any, index: number) => (
               <div
                 key={tournament.id}
                 className={`flex items-center gap-8 px-5 py-[11px] text-base font-semibold leading-[22px] text-[#151515] ${
