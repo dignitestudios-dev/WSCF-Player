@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { DASHBOARD_PLAYERS_RATING_ROUTE, PLAYERS_RATING_ROUTE } from "@/config/routes";
 import {
   useUserProfileQuery,
@@ -10,8 +10,10 @@ import {
 export function usePlayerProfile() {
   const params = useParams();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const playerId = params.id as string;
   const fromDashboard = pathname.startsWith("/dashboard/player-profile");
+  const backHrefParam = searchParams.get("backHref");
 
   const { data: userProfileData, isLoading: isLoadingProfile } = useUserProfileQuery(playerId);
   const { data: historyData, isLoading: isLoadingHistory } = useUserTournamentHistoryQuery(
@@ -50,6 +52,6 @@ export function usePlayerProfile() {
   return {
     player,
     isLoading: isLoadingProfile || isLoadingHistory,
-    backHref: fromDashboard ? DASHBOARD_PLAYERS_RATING_ROUTE : PLAYERS_RATING_ROUTE,
+    backHref: backHrefParam || (fromDashboard ? DASHBOARD_PLAYERS_RATING_ROUTE : PLAYERS_RATING_ROUTE),
   };
 }

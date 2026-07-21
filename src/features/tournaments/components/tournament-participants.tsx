@@ -1,13 +1,16 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   getDashboardPlayerProfileRoute,
   getPlayerProfileRoute,
 } from "@/config/routes";
 import { useTournamentParticipants } from "@/features/tournaments/hooks/use-tournament-participants";
+import { useTournamentDetailsQuery } from "@/features/tournaments/api/tournaments.queries";
+import UpcomingTournamentsModal from "@/features/tournaments/components/upcoming-tournaments-modal";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function SortArrows() {
   return (
@@ -25,14 +28,14 @@ function SortArrows() {
 function SearchButtonIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" stroke="white" strokeWidth="2" />
-      <path d="M16 16L21 21" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+      <path d="M16 16L21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
 
 const gridCols =
-  "grid-cols-[100px_120px_50px_50px_1fr_80px_126px]";
+  "grid-cols-[100px_minmax(120px,1.5fr)_80px_80px_minmax(150px,2fr)_100px_100px]";
 
 function TournamentParticipantsContent({
   context = "auth",
@@ -40,9 +43,19 @@ function TournamentParticipantsContent({
   context?: "auth" | "dashboard";
 }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const tournamentId = searchParams.get("tournamentId");
-  const { query, setQuery, participants, page, totalPages, setPage, backHref, context: resolvedContext } =
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { query, setQuery, participants, page, totalPages, setPage, backHref, context: resolvedContext, isPending } =
     useTournamentParticipants({ context, tournamentId });
+
+  const { data: detailsData } = useTournamentDetailsQuery(tournamentId || "");
+  const tournamentTitle = detailsData?.data?.tournament?.title;
+
+  const currentParams = searchParams.toString();
+  const currentUrl = `${pathname}${currentParams ? `?${currentParams}` : ""}`;
 
   const getProfileRoute =
     resolvedContext === "dashboard" ? getDashboardPlayerProfileRoute : getPlayerProfileRoute;
@@ -85,138 +98,193 @@ function TournamentParticipantsContent({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search"
-              className="h-12 w-full rounded-[24px] border border-[#3D3775] bg-white pl-6 pr-14 text-sm font-light text-[#808080] outline-none"
+              disabled={!tournamentId}
+              className="h-12 w-full rounded-[24px] border border-[#3D3775] bg-white pl-6 pr-14 text-sm font-light text-[#808080] outline-none disabled:opacity-60"
             />
             <button
               type="button"
-              className="absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-[#083F92]"
+              className="absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-[#083F92] text-white disabled:opacity-60"
               aria-label="Search"
+              disabled={!tournamentId}
             >
               <SearchButtonIcon />
             </button>
           </div>
         </div>
 
-        <button
-          type="button"
-          className="mb-6 flex items-center gap-2 rounded-full border border-[#F3F4F6] bg-white px-4 py-2 text-sm font-medium text-[#121111] shadow-[0px_1px_3px_rgba(0,0,0,0.1),0px_1px_2px_-1px_rgba(0,0,0,0.1)]"
-        >
-          Upcoming Tournaments
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path
-              d="M7 8L10 11L13 8"
-              stroke="#3D3D3D"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+        <div className="mb-6 flex flex-col items-start gap-1">
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 rounded-full border border-[#F3F4F6] bg-white px-4 py-2 text-sm font-medium text-[#121111] shadow-[0px_1px_3px_rgba(0,0,0,0.1),0px_1px_2px_-1px_rgba(0,0,0,0.1)] transition hover:bg-gray-50"
+          >
+            Upcoming Tournaments
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M7 8L10 11L13 8"
+                stroke="#3D3D3D"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          
+          {tournamentTitle && (
+            <p className="ml-2 mt-1 text-sm font-semibold text-[#083F92]">
+              Selected: <span className="text-[#151515]">{tournamentTitle}</span>
+            </p>
+          )}
+        </div>
 
-        <div className="relative overflow-hidden rounded-[24px] border border-[#DADADA] bg-white pb-20">
-          <div className={`grid ${gridCols} items-center border-b-4 border-[#F4F4F4] bg-[#083F92] px-6 py-4 text-[13px] font-bold leading-5 text-white`}>
-            <span>UserId</span>
-            <span>Name</span>
-            <span className="flex items-center">
-              Grade
-              <SortArrows />
-            </span>
-            <span className="flex items-center">
-              Rating
-              <SortArrows />
-            </span>
-            <span className="flex items-center">
-              Team
-              <SortArrows />
-            </span>
-            <span className="flex items-center">
-              Division
-              <SortArrows />
-            </span>
-            <span className="text-right">Action</span>
+        {!tournamentId ? (
+          <div className="flex flex-col items-center justify-center rounded-[24px] border border-[#DADADA] bg-white py-20">
+            <p className="text-lg font-medium text-[#151515]">No tournament selected.</p>
+            <p className="mt-2 text-sm text-[#727272]">Click &quot;Upcoming Tournaments&quot; to select a tournament and view its participants.</p>
           </div>
-
-          {participants.map((participant, index) => (
-            <div
-              key={participant.userId}
-              className={`grid ${gridCols} items-center px-6 py-[15px] text-[13px] leading-5 text-[#636363] ${
-                index % 2 === 1 ? "bg-[rgba(8,63,146,0.1)]" : "bg-white"
-              }`}
-            >
-              <span className="font-semibold">{participant.userId}</span>
-              <span className={participant.highlightName ? "font-bold" : "font-semibold"}>
-                {participant.name}
+        ) : (
+          <div className="relative overflow-hidden rounded-[24px] border border-[#DADADA] bg-white pb-20">
+            <div className={`grid ${gridCols} items-center border-b-4 border-[#F4F4F4] bg-[#083F92] px-6 py-4 text-[13px] font-bold leading-5 text-white`}>
+              <span>UserId</span>
+              <span>Name</span>
+              <span className="flex items-center">
+                Grade
+                <SortArrows />
               </span>
-              <span className={participant.highlightName ? "font-bold" : "font-semibold"}>
-                {participant.grade}
+              <span className="flex items-center">
+                Rating
+                <SortArrows />
               </span>
-              <span className="font-semibold">{participant.rating}</span>
-              <span className="font-semibold tracking-[-0.02em]">{participant.team}</span>
-              <span className="font-semibold">{participant.division}</span>
-              <Link
-                href={getProfileRoute(participant.id)}
-                className="text-right font-semibold tracking-[-0.02em] text-[#636363] underline"
-              >
-                View Profile
-              </Link>
+              <span className="flex items-center">
+                Team
+                <SortArrows />
+              </span>
+              <span className="flex items-center">
+                Division
+                <SortArrows />
+              </span>
+              <span className="text-right">Action</span>
             </div>
-          ))}
 
-          <div className="absolute bottom-4 right-6 flex items-center gap-3 rounded-full bg-white px-5 py-3 shadow-sm">
-            <button
-              type="button"
-              onClick={() => setPage(Math.max(1, page - 1))}
-              disabled={page === 1}
-              className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[#EDEDED] disabled:opacity-50"
-              aria-label="Previous page"
-            >
-              <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true">
-                <path
-                  d="M7 1L1 7L7 13"
-                  stroke="#919191"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-
-            <div className="flex items-center overflow-hidden rounded-full bg-[#EDEDED]">
-              {pages.map((pageNumber) => (
-                <button
-                  key={pageNumber}
-                  type="button"
-                  onClick={() => setPage(pageNumber)}
-                  className={`min-w-[43px] px-4 py-2 text-sm font-bold capitalize ${
-                    pageNumber === page
-                      ? "rounded-full bg-[#083F92] text-white"
-                      : "text-[#636363]"
+            {isPending ? (
+              <div className="flex flex-col">
+                {[...Array(5)].map((_, i) => (
+                  <div
+                    key={i}
+                    className={`grid ${gridCols} items-center px-6 py-[15px] ${
+                      i % 2 === 1 ? "bg-[rgba(8,63,146,0.1)]" : "bg-white"
+                    }`}
+                  >
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-12" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-20 justify-self-end" />
+                  </div>
+                ))}
+              </div>
+            ) : participants.length === 0 ? (
+              <div className="flex items-center justify-center py-12 text-sm text-[#727272]">
+                No participants found.
+              </div>
+            ) : (
+              participants.map((participant, index) => (
+                <div
+                  key={participant.id}
+                  className={`grid ${gridCols} items-center px-6 py-[15px] text-[13px] leading-5 text-[#636363] ${
+                    index % 2 === 1 ? "bg-[rgba(8,63,146,0.1)]" : "bg-white"
                   }`}
                 >
-                  {pageNumber}
-                </button>
-              ))}
-            </div>
+                  <span className="font-semibold">{participant.userId}</span>
+                  <span className={participant.highlightName ? "font-bold" : "font-semibold"}>
+                    {participant.name}
+                  </span>
+                  <span className={participant.highlightName ? "font-bold" : "font-semibold"}>
+                    {participant.grade}
+                  </span>
+                  <span className="font-semibold">{participant.rating}</span>
+                  <span className="font-semibold tracking-[-0.02em]">{participant.team}</span>
+                  <span className="font-semibold">{participant.division}</span>
+                  <Link
+                    href={`${getProfileRoute(participant.id)}?backHref=${encodeURIComponent(currentUrl)}`}
+                    className="text-right font-semibold tracking-[-0.02em] text-[#636363] underline hover:text-[#083F92]"
+                  >
+                    View Profile
+                  </Link>
+                </div>
+              ))
+            )}
 
-            <button
-              type="button"
-              onClick={() => setPage(Math.min(totalPages, page + 1))}
-              disabled={page === totalPages}
-              className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[#EDEDED] disabled:opacity-50"
-              aria-label="Next page"
-            >
-              <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true">
-                <path
-                  d="M1 1L7 7L1 13"
-                  stroke="#000000"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
+            {totalPages > 1 && (
+              <div className="absolute bottom-4 right-6 flex items-center gap-3 rounded-full bg-white px-5 py-3 shadow-sm border border-[#DADADA]">
+                <button
+                  type="button"
+                  onClick={() => setPage(Math.max(1, page - 1))}
+                  disabled={page === 1}
+                  className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[#EDEDED] disabled:opacity-50 transition hover:bg-[#E0E0E0]"
+                  aria-label="Previous page"
+                >
+                  <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true">
+                    <path
+                      d="M7 1L1 7L7 13"
+                      stroke="#919191"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+
+                <div className="flex items-center overflow-hidden rounded-full bg-[#EDEDED]">
+                  {pages.map((pageNumber) => (
+                    <button
+                      key={pageNumber}
+                      type="button"
+                      onClick={() => setPage(pageNumber)}
+                      className={`min-w-[43px] px-4 py-2 text-sm font-bold capitalize transition ${
+                        pageNumber === page
+                          ? "rounded-full bg-[#083F92] text-white"
+                          : "text-[#636363] hover:bg-[#E0E0E0]"
+                      }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setPage(Math.min(totalPages, page + 1))}
+                  disabled={page === totalPages}
+                  className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[#EDEDED] disabled:opacity-50 transition hover:bg-[#E0E0E0]"
+                  aria-label="Next page"
+                >
+                  <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true">
+                    <path
+                      d="M1 1L7 7L1 13"
+                      stroke="#000000"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
-        </div>
+        )}
+
+        {isModalOpen && (
+          <UpcomingTournamentsModal
+            onClose={() => setIsModalOpen(false)}
+            onSelect={(id) => {
+              setIsModalOpen(false);
+              router.push(`${pathname}?tournamentId=${id}`);
+            }}
+          />
+        )}
       </div>
     </div>
   );
