@@ -62,7 +62,7 @@ export default function UpcomingTournamentsModal({
     <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent 
         showCloseButton={false}
-        className="relative flex max-h-[90vh] w-full max-w-[800px] flex-col gap-6 overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        className="flex max-h-[90vh] w-full max-w-[800px] flex-col gap-6 overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
       >
         <button
           type="button"

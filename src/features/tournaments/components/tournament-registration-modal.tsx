@@ -46,12 +46,14 @@ function FormField({
   id,
   label,
   type = "text",
+  placeholder,
   error,
   register,
 }: {
   id: string;
   label: string;
   type?: string;
+  placeholder?: string;
   error?: string;
   register: UseFormRegister<any>;
 }) {
@@ -60,7 +62,7 @@ function FormField({
       <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
         {label}
       </label>
-      <input id={id} type={type} className={inputClassName} {...register(id)} />
+      <input id={id} type={type} placeholder={placeholder} className={inputClassName} {...register(id)} />
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
     </div>
   );
@@ -70,12 +72,14 @@ function SelectField({
   id,
   label,
   options,
+  placeholder,
   error,
   control,
 }: {
   id: string;
   label: string;
   options: string[];
+  placeholder?: string;
   error?: string;
   control: Control<any>;
 }) {
@@ -90,7 +94,7 @@ function SelectField({
         render={({ field }) => (
           <Select onValueChange={field.onChange} value={field.value}>
             <SelectTrigger id={id} className={`${inputClassName} font-normal focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0`}>
-              <SelectValue placeholder="Select drop down" />
+              <SelectValue placeholder={placeholder || "Select drop down"} />
             </SelectTrigger>
             <SelectContent>
               {options.map((option) => (
@@ -132,9 +136,9 @@ export default function TournamentRegistrationModal({
 }: TournamentRegistrationModalProps) {
   return (
     <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent 
+      <DialogContent
         showCloseButton={false}
-        className="relative flex max-h-[90vh] w-full max-w-[626px] flex-col gap-[42px] overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        className="flex max-h-[90vh] w-full max-w-[626px]! flex-col gap-[42px] overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
       >
         <button
           type="button"
@@ -180,6 +184,7 @@ export default function TournamentRegistrationModal({
                       key={field._id}
                       id={field._id}
                       label={field.fieldName}
+                      placeholder={`Select ${field.fieldName}`}
                       options={field.options}
                       error={errorMsg}
                       control={control}
@@ -192,6 +197,7 @@ export default function TournamentRegistrationModal({
                     key={field._id}
                     id={field._id}
                     label={field.fieldName}
+                    placeholder={`Enter ${field.fieldName}`}
                     type={field.fieldType === "number" ? "number" : "text"}
                     error={errorMsg}
                     register={register}
