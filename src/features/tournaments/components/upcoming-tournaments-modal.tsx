@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTournamentsQuery } from "@/features/tournaments/api/tournaments.queries";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 
@@ -48,20 +49,6 @@ export default function UpcomingTournamentsModal({
     return () => clearTimeout(handler);
   }, [search]);
 
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [onClose]);
-
   const { data, isPending } = useTournamentsQuery({
     page,
     limit: 10,
@@ -72,17 +59,10 @@ export default function UpcomingTournamentsModal({
   const pagination = data?.pagination;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className="relative flex max-h-[90vh] w-full max-w-[800px] flex-col gap-6 overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px]"
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="upcoming-tournaments-title"
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="relative flex max-h-[90vh] w-full max-w-[800px] flex-col gap-6 overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
       >
         <button
           type="button"
@@ -156,7 +136,7 @@ export default function UpcomingTournamentsModal({
             />
           </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

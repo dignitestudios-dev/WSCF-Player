@@ -5,6 +5,7 @@ import {
   EyeIcon,
 } from "@/features/auth/components/set-new-password-icons";
 import { useSetNewPassword } from "@/features/auth/hooks/use-set-new-password";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function SetNewPasswordForm() {
   const {
@@ -123,17 +124,10 @@ export default function SetNewPasswordForm() {
       </div>
 
       {isSuccessModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-          onClick={closeSuccessModal}
-          role="presentation"
-        >
-          <div
-            className="flex w-full max-w-[482px] flex-col items-center gap-[25px] rounded-xl bg-white px-4 py-[26px]"
-            onClick={(event) => event.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="password-updated-title"
+        <Dialog open={true} onOpenChange={(open) => { if (!open) closeSuccessModal(); }}>
+          <DialogContent 
+            showCloseButton={false}
+            className="flex w-full max-w-[482px] flex-col items-center gap-[25px] rounded-xl bg-white px-4 py-[26px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
           >
             <div className="flex h-[107px] w-[107px] items-center justify-center rounded-full bg-[#083F92]">
               <svg width="40" height="30" viewBox="0 0 40 30" fill="none" aria-hidden="true">
@@ -166,8 +160,8 @@ export default function SetNewPasswordForm() {
             >
               Continue
             </button>
-          </div>
-        </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

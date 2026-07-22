@@ -2,7 +2,7 @@ interface SettingsItem {
   id: string;
   label: string;
   href?: string;
-  action?: "logout" | "terms" | "privacy" | "change-password" | "notification" | "delete-account";
+  action?: "logout" | "terms" | "privacy" | "change-password" | "notification" | "renew-membership";
   danger?: boolean;
 }
 

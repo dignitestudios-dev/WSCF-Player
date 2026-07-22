@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface LogoutConfirmModalProps {
   onClose: () => void;
@@ -8,52 +15,29 @@ interface LogoutConfirmModalProps {
 }
 
 export default function LogoutConfirmModal({ onClose, onConfirm }: LogoutConfirmModalProps) {
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [onClose]);
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className="flex w-full max-w-[462px] flex-col items-center justify-center gap-[26px] rounded-[12px] px-5 py-[50px]"
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="flex w-full max-w-[462px] flex-col items-center justify-center gap-[26px] rounded-[12px] px-5 py-[50px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
         }}
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="logout-confirm-title"
       >
-        <div className="flex w-full max-w-[422px] flex-col items-center gap-2 text-center">
-          <h2
+        <DialogHeader className="flex w-full max-w-[422px] flex-col items-center gap-2 text-center">
+          <DialogTitle
             id="logout-confirm-title"
             className="w-full text-[32px] font-bold capitalize leading-[43px] tracking-[-0.0041em] text-[#181818]"
           >
             Log Out
-          </h2>
-          <p className="w-full text-2xl leading-[34px] tracking-[-0.008em] text-[rgba(24,24,24,0.5)]">
+          </DialogTitle>
+          <DialogDescription className="w-full text-2xl leading-[34px] tracking-[-0.008em] text-[rgba(24,24,24,0.5)]">
             Are you sure you want to log out?
-          </p>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="flex w-full max-w-[422px] gap-2">
+        <DialogFooter className="flex w-full max-w-[422px] gap-2 sm:justify-center border-none bg-transparent p-0 m-0">
           <button
             type="button"
             onClick={onClose}
@@ -68,8 +52,8 @@ export default function LogoutConfirmModal({ onClose, onConfirm }: LogoutConfirm
           >
             Log Out
           </button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

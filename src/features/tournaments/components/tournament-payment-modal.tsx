@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 function CloseIcon() {
   return (
@@ -41,38 +41,15 @@ export default function TournamentPaymentModal({
   onClose,
   onPay,
 }: TournamentPaymentModalProps) {
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [onClose]);
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className="relative flex w-full max-w-[515px] flex-col rounded-[12px] p-10"
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="relative flex w-full max-w-[515px] flex-col rounded-[12px] p-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
         }}
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="tournament-payment-title"
       >
         <button
           type="button"
@@ -120,7 +97,7 @@ export default function TournamentPaymentModal({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

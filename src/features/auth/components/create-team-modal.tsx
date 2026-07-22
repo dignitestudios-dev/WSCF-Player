@@ -1,5 +1,7 @@
 "use client";
 
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+
 interface CreateTeamModalProps {
   open: boolean;
   onClose: () => void;
@@ -9,17 +11,10 @@ export default function CreateTeamModal({ open, onClose }: CreateTeamModalProps)
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className="relative flex h-[24em] w-full max-w-[588px] flex-col items-center gap-[25px] rounded-xl bg-white px-4 py-[26px]"
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="create-team-title"
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="relative flex h-[24em] w-full max-w-[588px] flex-col items-center gap-[25px] rounded-xl bg-white px-4 py-[26px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
       >
         <button
           type="button"
@@ -60,7 +55,7 @@ export default function CreateTeamModal({ open, onClose }: CreateTeamModalProps)
         >
           Redirecting Link For Team Creation
         </a>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

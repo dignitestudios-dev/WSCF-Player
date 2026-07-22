@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import ChangePasswordModal from "@/features/dashboard/components/change-password-modal";
-import DeleteAccountFlow from "@/features/dashboard/components/delete-account-flow";
+import RenewMembershipConfirmModal from "@/features/dashboard/components/renew-membership-confirm-modal";
 import LogoutConfirmModal from "@/features/dashboard/components/logout-confirm-modal";
 import NotificationSettingsModal from "@/features/dashboard/components/notification-settings-modal";
 import PolicyModal from "@/features/dashboard/components/policy-modal";
@@ -28,14 +28,14 @@ function SettingsRow({
   onOpenPolicy,
   onOpenChangePassword,
   onOpenNotificationSettings,
-  onOpenDeleteAccount,
+  onOpenRenewMembership,
 }: {
   item: SettingsItem;
   onOpenLogout: () => void;
   onOpenPolicy: (type: PolicyModalType) => void;
   onOpenChangePassword: () => void;
   onOpenNotificationSettings: () => void;
-  onOpenDeleteAccount: () => void;
+  onOpenRenewMembership: () => void;
 }) {
   const className =
     "flex h-[60px] w-full items-center justify-between rounded-[8px] bg-white px-4 py-[15px] text-lg font-medium capitalize leading-6 tracking-[-0.0041em] text-[#212935]";
@@ -51,9 +51,9 @@ function SettingsRow({
     );
   }
 
-  if (item.action === "delete-account") {
+  if (item.action === "renew-membership") {
     return (
-      <button type="button" onClick={onOpenDeleteAccount} className={className}>
+      <button type="button" onClick={onOpenRenewMembership} className={className}>
         <span className={labelClassName}>{item.label}</span>
         <ArrowRightIcon />
       </button>
@@ -122,9 +122,9 @@ export default function Settings() {
     openLogout,
     closeLogout,
     confirmLogout,
-    isDeleteAccountOpen,
-    openDeleteAccount,
-    closeDeleteAccount,
+    isRenewMembershipOpen,
+    openRenewMembership,
+    closeRenewMembership,
   } = useSettings();
 
   return (
@@ -141,10 +141,10 @@ export default function Settings() {
               key={item.id}
               item={item}
               onOpenLogout={openLogout}
-              onOpenDeleteAccount={openDeleteAccount}
               onOpenPolicy={openPolicy}
               onOpenChangePassword={openChangePassword}
               onOpenNotificationSettings={openNotificationSettings}
+              onOpenRenewMembership={openRenewMembership}
             />
           ))}
         </div>
@@ -158,7 +158,7 @@ export default function Settings() {
       {isLogoutOpen ? (
         <LogoutConfirmModal onClose={closeLogout} onConfirm={confirmLogout} />
       ) : null}
-      {isDeleteAccountOpen ? <DeleteAccountFlow onClose={closeDeleteAccount} /> : null}
+      {isRenewMembershipOpen ? <RenewMembershipConfirmModal onClose={closeRenewMembership} /> : null}
     </>
   );
 }

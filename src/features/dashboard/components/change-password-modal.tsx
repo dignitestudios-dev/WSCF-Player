@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
-import type { FieldErrors, UseFormRegister } from "react-hook-form";
+import type { UseFormRegister } from "react-hook-form";
 import { EyeIcon } from "@/features/auth/components/set-new-password-icons";
 import PasswordUpdatedModal from "@/features/dashboard/components/password-updated-modal";
 import { useChangePassword } from "@/features/dashboard/hooks/use-change-password";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface ChangePasswordModalProps {
   onClose: () => void;
@@ -86,22 +86,6 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
     formState: { errors },
   } = form;
 
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape" && !isSuccessOpen) {
-        onClose();
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [onClose, isSuccessOpen]);
-
   function handleSuccessClose() {
     closeSuccess();
     onClose();
@@ -109,23 +93,15 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
 
   return (
     <>
-      {!isSuccessOpen ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-          onClick={onClose}
-          role="presentation"
+      <Dialog open={!isSuccessOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <DialogContent 
+          showCloseButton={false}
+          className="relative w-full max-w-[588px] rounded-[12px] px-[60px] pb-[60px] pt-[60px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+          style={{
+            background:
+              "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
+          }}
         >
-          <div
-            className="relative w-full max-w-[588px] rounded-[12px] px-[60px] pb-[60px] pt-[60px]"
-            style={{
-              background:
-                "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
-            }}
-            onClick={(event) => event.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="change-password-title"
-          >
             <button
               type="button"
               onClick={onClose}
@@ -188,9 +164,8 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
                 {isPending ? "Saving..." : "Submit"}
               </button>
             </form>
-          </div>
-        </div>
-      ) : null}
+          </DialogContent>
+      </Dialog>
 
       {isSuccessOpen ? <PasswordUpdatedModal onClose={handleSuccessClose} /> : null}
     </>

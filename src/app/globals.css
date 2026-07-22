@@ -4,6 +4,16 @@
   --color-wscf-bg: #f7f6ff;
   --color-wscf-purple: #3d3775;
   --font-sans: "General Sans", "Geist", sans-serif;
+  
+  --color-background: #ffffff;
+  --color-foreground: #09090b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #09090b;
+  --color-primary: var(--color-brand);
+  --color-primary-foreground: #ffffff;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-ring: var(--color-brand);
 }
 
 * {

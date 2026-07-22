@@ -1,5 +1,7 @@
 "use client";
 
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+
 interface SubscriptionSuccessModalProps {
   open: boolean;
   onContinue: () => void;
@@ -12,16 +14,10 @@ export default function SubscriptionSuccessModal({
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      role="presentation"
-    >
-      <div
-        className="flex w-full max-w-[515px] flex-col items-center gap-[22px] rounded-xl bg-white px-[44px] py-[43px]"
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="subscription-success-title"
+    <Dialog open={open}>
+      <DialogContent 
+        showCloseButton={false}
+        className="flex w-full max-w-[515px] flex-col items-center gap-[22px] rounded-xl bg-white px-[44px] py-[43px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
       >
         <div className="flex w-full max-w-[428px] flex-col items-center gap-8">
           <div className="flex h-[120px] w-[120px] items-center justify-center rounded-full bg-[#083F92]">
@@ -56,7 +52,7 @@ export default function SubscriptionSuccessModal({
         >
           Continue
         </button>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

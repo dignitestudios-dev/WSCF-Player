@@ -29,7 +29,7 @@ function SearchIcon() {
 }
 
 export default function PlayersRatingLookup() {
-  const { query, setQuery, filteredPlayers, backHref } = usePlayersRatingLookup();
+  const { query, setQuery, filteredPlayers, isPending, backHref } = usePlayersRatingLookup();
 
   return (
     <LoginShell
@@ -64,21 +64,31 @@ export default function PlayersRatingLookup() {
         </div>
 
         <div className="overflow-hidden rounded-[12px] border border-[#DADADA] bg-white">
-          {filteredPlayers.map((player, index) => (
-            <Link
-              key={player.id}
-              href={getPlayerProfileRoute(player.id)}
-              className={`flex min-h-[68px] items-center justify-between gap-4 px-5 py-3 transition hover:bg-[#F7F6FF] ${
-                index % 2 === 1 ? "bg-white/50" : "bg-white"
-              }`}
-            >
-              <div className="min-w-0">
-                <p className="truncate text-base font-medium text-[#151515]">{player.name}</p>
-                <p className="mt-1 text-sm text-[#727272]">USER ID: {player.userId}</p>
-              </div>
-              <span className="shrink-0 text-sm font-medium text-[#083F92]">View Profile</span>
-            </Link>
-          ))}
+          {isPending ? (
+            <div className="flex min-h-[68px] items-center justify-center p-5 text-sm text-[#727272]">
+              Loading players...
+            </div>
+          ) : filteredPlayers.length === 0 ? (
+            <div className="flex min-h-[68px] items-center justify-center p-5 text-sm text-[#727272]">
+              No players found.
+            </div>
+          ) : (
+            filteredPlayers.map((player: {id: string, name: string, userId: string}, index: number) => (
+              <Link
+                key={player.id}
+                href={getPlayerProfileRoute(player.id)}
+                className={`flex min-h-[68px] items-center justify-between gap-4 px-5 py-3 transition hover:bg-[#F7F6FF] ${
+                  index % 2 === 1 ? "bg-white/50" : "bg-white"
+                }`}
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-base font-medium text-[#151515]">{player.name}</p>
+                  <p className="mt-1 text-sm text-[#727272]">USER ID: {player.userId}</p>
+                </div>
+                <span className="shrink-0 text-sm font-medium text-[#083F92]">View Profile</span>
+              </Link>
+            ))
+          )}
         </div>
       </div>
     </LoginShell>

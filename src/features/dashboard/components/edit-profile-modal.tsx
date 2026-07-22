@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import type { UseFormRegister } from "react-hook-form";
 import { useEditProfile } from "@/features/dashboard/hooks/use-edit-profile";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface EditProfileModalProps {
   profile: MyProfile;
@@ -108,40 +109,15 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
     formState: { errors },
   } = form;
 
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape" && !isUpdating) {
-        onClose();
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [onClose, isUpdating]);
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={() => {
-        if (!isUpdating) onClose();
-      }}
-      role="presentation"
-    >
-      <div
-        className="relative flex max-h-[90vh] w-full max-w-[759px] flex-col overflow-y-auto rounded-[12px] px-6 py-[60px] sm:px-10"
+    <Dialog open={true} onOpenChange={(open) => { if (!open && !isUpdating) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="relative flex max-h-[90vh] w-full max-w-[759px] flex-col overflow-y-auto rounded-[12px] px-6 py-[60px] sm:px-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #F7F6FF",
         }}
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="edit-profile-title"
       >
         <button
           type="button"
@@ -275,7 +251,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
             </button>
           </form>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
