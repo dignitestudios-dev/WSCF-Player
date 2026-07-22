@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface PasswordUpdatedModalProps {
   onClose: () => void;
@@ -20,29 +20,11 @@ function CloseIcon() {
 }
 
 export default function PasswordUpdatedModal({ onClose }: PasswordUpdatedModalProps) {
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [onClose]);
-
   return (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className="relative flex w-full max-w-[515px] flex-col items-center gap-8 rounded-[12px] bg-white px-6 py-10"
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="password-updated-title"
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="relative flex w-full max-w-[515px] flex-col items-center gap-8 rounded-[12px] bg-white px-6 py-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
       >
         <button
           type="button"
@@ -76,7 +58,7 @@ export default function PasswordUpdatedModal({ onClose }: PasswordUpdatedModalPr
             Your password has been updated successfully.
           </p>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

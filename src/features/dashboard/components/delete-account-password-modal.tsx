@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon } from "@/features/auth/components/set-new-password-icons";
 import { setNewPasswordSchema } from "@/features/auth/schemas/set-new-password.schema";
 import { useAuth } from "@/hooks/use-auth";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface DeleteAccountPasswordModalProps {
   onClose: () => void;
@@ -68,42 +69,19 @@ export default function DeleteAccountPasswordModal({ onClose }: DeleteAccountPas
     formState: { errors },
   } = form;
 
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [onClose]);
-
   function onSubmit() {
     logout();
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className="flex w-full max-w-[515px] flex-col gap-[26px] rounded-[12px] p-[60px]"
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="flex w-full max-w-[515px] flex-col gap-[26px] rounded-[12px] p-[60px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
         }}
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="delete-account-password-title"
       >
         <h2
           id="delete-account-password-title"
@@ -138,7 +116,7 @@ export default function DeleteAccountPasswordModal({ onClose }: DeleteAccountPas
             Submit
           </button>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

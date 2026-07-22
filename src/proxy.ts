@@ -21,10 +21,7 @@ export function proxy(request: NextRequest) {
       "/auth/set-new-password",
       "/auth/register",
       "/auth/email-verified",
-      "/auth/membership-validation",
       "/auth/tournament-participants",
-      "/membership/success",
-      "/membership/cancel",
     ].includes(pathname) || pathname.startsWith("/auth/player-profile/");
 
   if (isProtected && !token) {

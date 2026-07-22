@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { policyContent } from "@/features/dashboard/data/settings-policy-content";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface PolicyModalProps {
   type: PolicyModalType;
@@ -56,39 +56,16 @@ function PolicySectionBlock({ section }: { section: PolicySection }) {
 export default function PolicyModal({ type, onClose }: PolicyModalProps) {
   const content = policyContent[type];
 
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [onClose]);
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className="relative flex w-full max-w-[761px] flex-col overflow-hidden rounded-[12px]"
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="relative flex w-full max-w-[761px] flex-col overflow-hidden rounded-[12px] p-0 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
           maxHeight: "min(812px, 90vh)",
         }}
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="policy-modal-title"
       >
         <button
           type="button"
@@ -113,7 +90,7 @@ export default function PolicyModal({ type, onClose }: PolicyModalProps) {
             ))}
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

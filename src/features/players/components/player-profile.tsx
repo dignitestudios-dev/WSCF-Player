@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePlayerProfile } from "@/features/players/hooks/use-player-profile";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -44,7 +44,8 @@ function RatingStarIcon({ className }: { className?: string }) {
 }
 
 export default function PlayerProfile() {
-  const { player, backHref, isLoading } = usePlayerProfile();
+  const router = useRouter();
+  const { player, isLoading } = usePlayerProfile();
 
   if (isLoading) {
     return (
@@ -117,9 +118,10 @@ export default function PlayerProfile() {
       />
 
       <div className="relative mx-auto w-full max-w-[1240px] px-6 pb-16 pt-10 xl:px-0 xl:pt-[43px]">
-        <Link
-          href={backHref}
-          className="mb-[42px] inline-flex items-center gap-3 text-[22px] font-medium leading-[30px] text-[#083F92]"
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="mb-[42px] inline-flex items-center gap-3 text-[22px] font-medium leading-[30px] text-[#083F92] hover:opacity-80 transition-opacity"
         >
           <svg width="15" height="27" viewBox="0 0 15 27" fill="none" aria-hidden="true">
             <path
@@ -131,7 +133,7 @@ export default function PlayerProfile() {
             />
           </svg>
           Back
-        </Link>
+        </button>
 
         <h1 className="mb-[34px] text-[45px] font-bold leading-[61px] text-[#083F92]">
           Player Rating Lookup

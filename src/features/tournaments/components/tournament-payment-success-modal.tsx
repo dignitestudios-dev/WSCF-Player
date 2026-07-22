@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface TournamentPaymentSuccessModalProps {
   tournament: TournamentRegistrationTarget;
@@ -11,38 +11,15 @@ export default function TournamentPaymentSuccessModal({
   tournament,
   onClose,
 }: TournamentPaymentSuccessModalProps) {
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [onClose]);
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className="flex w-full max-w-[515px] flex-col items-center gap-[18px] rounded-[12px] px-10 py-[43px]"
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="flex w-full max-w-[515px] flex-col items-center gap-[18px] rounded-[12px] px-10 py-[43px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
         }}
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="tournament-payment-success-title"
       >
         <div className="flex w-full max-w-[428px] flex-col items-center justify-between gap-[22px]">
           <div className="flex flex-col items-center gap-8">
@@ -83,7 +60,7 @@ export default function TournamentPaymentSuccessModal({
         <p className="text-center text-base font-medium leading-[22px] tracking-[-0.014em] text-[#565656]">
           Thank you for the payment
         </p>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

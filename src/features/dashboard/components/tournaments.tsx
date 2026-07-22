@@ -9,6 +9,8 @@ import { useTournamentsQuery } from "@/features/tournaments/api/tournaments.quer
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomPagination } from "@/components/ui/custom-pagination";
+import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
+import MembershipRequiredDialog from "@/features/tournaments/components/membership-required-dialog";
 
 function SearchIcon() {
   return (
@@ -120,6 +122,16 @@ export default function Tournaments() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [page, setPage] = useState(1);
   const [registrationTournament, setRegistrationTournament] = useState<DashboardTournament | null>(null);
+  const [isMembershipRequiredOpen, setIsMembershipRequiredOpen] = useState(false);
+  const { data: authData } = useAuthUserQuery();
+
+  function handleRegisterClick(tournament: DashboardTournament) {
+    if (authData?.data?.membership?.status !== "active") {
+      setIsMembershipRequiredOpen(true);
+      return;
+    }
+    setRegistrationTournament(tournament);
+  }
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -194,7 +206,7 @@ export default function Tournaments() {
               <TournamentCard
                 key={tournament.id}
                 tournament={tournament}
-                onRegister={setRegistrationTournament}
+                onRegister={handleRegisterClick}
               />
             ))
           )}
@@ -220,6 +232,11 @@ export default function Tournaments() {
           onClose={() => setRegistrationTournament(null)}
         />
       ) : null}
+
+      <MembershipRequiredDialog 
+        open={isMembershipRequiredOpen} 
+        onOpenChange={setIsMembershipRequiredOpen} 
+      />
     </>
   );
 }

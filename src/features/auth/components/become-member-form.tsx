@@ -1,7 +1,12 @@
 "use client";
 
-import type { UseFormRegister } from "react-hook-form";
-import { useWatch } from "react-hook-form";
+import type { UseFormRegister, Control } from "react-hook-form";
+import { useWatch, Controller } from "react-hook-form";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { EyeIcon } from "@/features/auth/components/set-new-password-icons";
 import { useBecomeMember } from "@/features/auth/hooks/use-become-member";
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
@@ -16,6 +21,8 @@ function FormField({
   placeholder,
   error,
   register,
+  numericOnly,
+  maxLength,
 }: {
   id: keyof Pick<
     BecomeMemberFormData,
@@ -35,6 +42,8 @@ function FormField({
   placeholder?: string;
   error?: string;
   register: UseFormRegister<BecomeMemberFormData>;
+  numericOnly?: boolean;
+  maxLength?: number;
 }) {
   return (
     <div className="flex w-full flex-col gap-2 sm:w-[309px]">
@@ -44,9 +53,63 @@ function FormField({
       <input
         id={id}
         type={type}
+        inputMode={numericOnly ? "numeric" : undefined}
+        maxLength={maxLength}
         placeholder={placeholder}
         className={inputClassName}
-        {...register(id)}
+        {...register(id, {
+          onChange: numericOnly
+            ? (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
+              }
+            : undefined,
+        })}
+      />
+      {error && <p className="text-xs text-red-600">{error}</p>}
+    </div>
+  );
+}
+
+function DateField({
+  id,
+  label,
+  error,
+  control,
+}: {
+  id: "birthDate";
+  label: string;
+  error?: string;
+  control: Control<BecomeMemberFormData>;
+}) {
+  return (
+    <div className="flex w-full flex-col gap-2 sm:w-[309px]">
+      <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
+        {label}
+      </label>
+      <Controller
+        name={id}
+        control={control}
+        render={({ field }) => (
+          <Popover>
+            <PopoverTrigger
+              className={cn(
+                "flex h-11 w-full items-center justify-between rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15",
+                !field.value && "text-[#181818]/60"
+              )}
+            >
+              {field.value ? format(new Date(field.value), "MM/dd/yyyy") : <span>Pick a date</span>}
+              <CalendarIcon className="h-4 w-4 opacity-50" />
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={field.value ? new Date(field.value) : undefined}
+                onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")}
+                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+              />
+            </PopoverContent>
+          </Popover>
+        )}
       />
       {error && <p className="text-xs text-red-600">{error}</p>}
     </div>
@@ -60,6 +123,7 @@ function PasswordField({
   onToggle,
   error,
   register,
+  maxLength,
 }: {
   id: "password" | "confirmPassword";
   label: string;
@@ -67,6 +131,7 @@ function PasswordField({
   onToggle: () => void;
   error?: string;
   register: UseFormRegister<BecomeMemberFormData>;
+  maxLength?: number;
 }) {
   return (
     <div className={`flex w-full flex-col gap-2 sm:w-[309px]`}>
@@ -77,6 +142,7 @@ function PasswordField({
         <input
           id={id}
           type={show ? "text" : "password"}
+          maxLength={maxLength}
           className={`${inputClassName} pr-12`}
           {...register(id)}
         />
@@ -101,6 +167,7 @@ function ParentEmailField({
   isPrimary,
   error,
   register,
+  maxLength,
 }: {
   id: "fatherEmail" | "motherEmail";
   label: string;
@@ -108,6 +175,7 @@ function ParentEmailField({
   isPrimary: boolean;
   error?: string;
   register: UseFormRegister<BecomeMemberFormData>;
+  maxLength?: number;
 }) {
   const primaryInputId = `primary-email-${primaryValue}`;
 
@@ -121,6 +189,7 @@ function ParentEmailField({
           <input
             id={id}
             type="email"
+            maxLength={maxLength}
             placeholder="designer@dignitestudios.com"
             className={inputClassName}
             {...register(id)}
@@ -201,6 +270,7 @@ export default function BecomeMemberForm() {
               placeholder="John Doe"
               error={errors.name?.message}
               register={register}
+              maxLength={100}
             />
             <FormField
               id="grade"
@@ -208,16 +278,17 @@ export default function BecomeMemberForm() {
               placeholder="5"
               error={errors.grade?.message}
               register={register}
+              numericOnly
+              maxLength={2}
             />
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <FormField
+            <DateField
               id="birthDate"
               label="Birth Date"
-              type="date"
               error={errors.birthDate?.message}
-              register={register}
+              control={control}
             />
             <FormField
               id="city"
@@ -225,6 +296,7 @@ export default function BecomeMemberForm() {
               placeholder="Milwaukee"
               error={errors.city?.message}
               register={register}
+              maxLength={100}
             />
           </div>
 
@@ -235,6 +307,7 @@ export default function BecomeMemberForm() {
               placeholder="NA 235 milwake"
               error={errors.streetAddress?.message}
               register={register}
+              maxLength={200}
             />
             <div className="flex w-full flex-col gap-2 sm:w-[309px]">
               <label
@@ -246,26 +319,16 @@ export default function BecomeMemberForm() {
               <div className="relative">
                 <input
                   id="zipCode"
+                  inputMode="numeric"
+                  maxLength={10}
                   placeholder="54231"
-                  className={`${inputClassName} pr-10`}
-                  {...register("zipCode")}
+                  className={inputClassName}
+                  {...register("zipCode", {
+                    onChange: (e) => {
+                      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    },
+                  })}
                 />
-                <svg
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 rotate-[-90deg]"
-                  width="9"
-                  height="16"
-                  viewBox="0 0 9 16"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M1 1L8 8L1 15"
-                    stroke="#000000"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
               </div>
               {errors.zipCode && <p className="text-xs text-red-600">{errors.zipCode.message}</p>}
             </div>
@@ -284,6 +347,7 @@ export default function BecomeMemberForm() {
               placeholder="John Doe"
               error={errors.fatherName?.message}
               register={register}
+              maxLength={100}
             />
             <FormField
               id="motherName"
@@ -291,6 +355,7 @@ export default function BecomeMemberForm() {
               placeholder="Jane Doe"
               error={errors.motherName?.message}
               register={register}
+              maxLength={100}
             />
           </div>
 
@@ -302,6 +367,7 @@ export default function BecomeMemberForm() {
               placeholder="1234567890"
               error={errors.fatherPhone?.message}
               register={register}
+              maxLength={20}
             />
             <FormField
               id="motherPhone"
@@ -310,6 +376,7 @@ export default function BecomeMemberForm() {
               placeholder="0987654321"
               error={errors.motherPhone?.message}
               register={register}
+              maxLength={20}
             />
           </div>
 
@@ -321,6 +388,7 @@ export default function BecomeMemberForm() {
               isPrimary={primaryEmail === "father"}
               error={errors.fatherEmail?.message}
               register={register}
+              maxLength={150}
             />
             <ParentEmailField
               id="motherEmail"
@@ -329,6 +397,7 @@ export default function BecomeMemberForm() {
               isPrimary={primaryEmail === "mother"}
               error={errors.motherEmail?.message}
               register={register}
+              maxLength={150}
             />
           </div>
         </div>
@@ -343,6 +412,7 @@ export default function BecomeMemberForm() {
             onToggle={togglePassword}
             error={errors.password?.message}
             register={register}
+            maxLength={100}
           />
           <PasswordField
             id="confirmPassword"
@@ -351,6 +421,7 @@ export default function BecomeMemberForm() {
             onToggle={toggleConfirmPassword}
             error={errors.confirmPassword?.message}
             register={register}
+            maxLength={100}
           />
         </div>
 

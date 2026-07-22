@@ -13,7 +13,10 @@ import { useDashboard } from "@/features/dashboard/hooks/use-dashboard";
 import type { DashboardTournament } from "@/features/dashboard/hooks/use-dashboard";
 import TournamentRegistrationFlow from "@/features/tournaments/components/tournament-registration-flow";
 import { useTournamentsQuery } from "@/features/tournaments/api/tournaments.queries";
+import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
 import { Skeleton } from "@/components/ui/skeleton";
+import RenewMembershipConfirmModal from "@/features/dashboard/components/renew-membership-confirm-modal";
+import MembershipRequiredDialog from "@/features/tournaments/components/membership-required-dialog";
 
 function SearchIcon() {
   return (
@@ -123,6 +126,8 @@ export default function DashboardOverview() {
   const { summary, isLoading: isSummaryLoading } = useDashboard();
   const { data: tournamentsData, isPending } = useTournamentsQuery({ page: 1, limit: 4 });
   const [registrationTournament, setRegistrationTournament] = useState<DashboardTournament | null>(null);
+  const [isRenewMembershipOpen, setIsRenewMembershipOpen] = useState(false);
+  const [isMembershipRequiredOpen, setIsMembershipRequiredOpen] = useState(false);
 
   const mappedTournaments: DashboardTournament[] = (tournamentsData?.data.tournaments || []).map(t => ({
     id: t._id,
@@ -131,6 +136,16 @@ export default function DashboardOverview() {
     date: new Date(t.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
     price: t.entryFee === 0 ? "Free" : `$${t.entryFee}`,
   }));
+
+  const { data: authData } = useAuthUserQuery();
+
+  function handleRegisterClick(tournament: DashboardTournament) {
+    if (authData?.data?.membership?.status !== "active") {
+      setIsMembershipRequiredOpen(true);
+      return;
+    }
+    setRegistrationTournament(tournament);
+  }
 
   return (
     <>
@@ -164,9 +179,20 @@ export default function DashboardOverview() {
               {isSummaryLoading ? (
                 <Skeleton className="h-[36px] w-[82px] rounded-full bg-white/40" />
               ) : (
-                <span className="inline-flex w-fit rounded-full bg-white px-3 py-2 text-sm font-medium capitalize text-[#083F92]">
-                  {summary.membershipStatus}
-                </span>
+                <div className="flex flex-col gap-2">
+                  <span className="inline-flex w-fit rounded-full bg-white px-3 py-2 text-sm font-medium capitalize text-[#083F92]">
+                    {summary.membershipStatus}
+                  </span>
+                  {summary.membershipStatus === "Inactive" && (
+                    <button
+                      type="button"
+                      onClick={() => setIsRenewMembershipOpen(true)}
+                      className="mt-1 w-fit rounded-full border border-white px-4 py-1.5 text-sm font-medium text-white transition hover:bg-white/10"
+                    >
+                      Renew Membership
+                    </button>
+                  )}
+                </div>
               )}
             </div>
             <div className="flex flex-col gap-1.5">
@@ -260,17 +286,19 @@ export default function DashboardOverview() {
               <TournamentCard
                 key={tournament.id}
                 tournament={tournament}
-                onRegister={setRegistrationTournament}
+                onRegister={handleRegisterClick}
               />
             ))
           )}
         </div>
 
-        <div className="mt-6 flex justify-end">
-          <Link href={DASHBOARD_TOURNAMENTS_ROUTE} className="text-lg font-medium text-[#083F92]">
-            View All
-          </Link>
-        </div>
+        {mappedTournaments.length > 0 && (
+          <div className="mt-6 flex justify-end">
+            <Link href={DASHBOARD_TOURNAMENTS_ROUTE} className="text-lg font-medium text-[#083F92]">
+              View All
+            </Link>
+          </div>
+        )}
       </div>
     </div>
 
@@ -280,6 +308,15 @@ export default function DashboardOverview() {
           onClose={() => setRegistrationTournament(null)}
         />
       ) : null}
+      
+      {isRenewMembershipOpen ? (
+        <RenewMembershipConfirmModal onClose={() => setIsRenewMembershipOpen(false)} />
+      ) : null}
+
+      <MembershipRequiredDialog 
+        open={isMembershipRequiredOpen} 
+        onOpenChange={setIsMembershipRequiredOpen} 
+      />
     </>
   );
 }

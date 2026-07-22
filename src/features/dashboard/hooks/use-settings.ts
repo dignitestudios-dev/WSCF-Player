@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
 
-const settingsItems: SettingsItem[] = [
-  { id: "renew-membership", label: "Renew Membership" },
+const baseSettingsItems = [
+  { id: "renew-membership", label: "Renew Membership", action: "renew-membership" },
   { id: "change-password", label: "Change Password", action: "change-password" },
   { id: "notification", label: "Notification", action: "notification" },
   { id: "terms", label: "Terms & Conditions", action: "terms" },
   { id: "privacy", label: "Privacy Policy", action: "privacy" },
-  { id: "delete-account", label: "Delete Account", action: "delete-account" },
   { id: "logout", label: "Logout", action: "logout", danger: true },
 ];
 
@@ -19,7 +19,13 @@ export function useSettings() {
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState(false);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
-  const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
+  const [isRenewMembershipOpen, setIsRenewMembershipOpen] = useState(false);
+  const { data: authData } = useAuthUserQuery();
+
+  const isMembershipActive = authData?.data?.membership?.status === "active";
+  const settingsItems = baseSettingsItems.filter(item => 
+    item.id === "renew-membership" ? !isMembershipActive : true
+  ) as SettingsItem[];
 
   function openPolicy(type: PolicyModalType) {
     setActivePolicy(type);
@@ -58,12 +64,12 @@ export function useSettings() {
     logout();
   }
 
-  function openDeleteAccount() {
-    setIsDeleteAccountOpen(true);
+  function openRenewMembership() {
+    setIsRenewMembershipOpen(true);
   }
 
-  function closeDeleteAccount() {
-    setIsDeleteAccountOpen(false);
+  function closeRenewMembership() {
+    setIsRenewMembershipOpen(false);
   }
 
   return {
@@ -81,8 +87,8 @@ export function useSettings() {
     openLogout,
     closeLogout,
     confirmLogout,
-    isDeleteAccountOpen,
-    openDeleteAccount,
-    closeDeleteAccount,
+    isRenewMembershipOpen,
+    openRenewMembership,
+    closeRenewMembership,
   };
 }

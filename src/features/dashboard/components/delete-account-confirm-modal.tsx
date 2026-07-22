@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface DeleteAccountConfirmModalProps {
   onClose: () => void;
@@ -11,38 +11,15 @@ export default function DeleteAccountConfirmModal({
   onClose,
   onConfirm,
 }: DeleteAccountConfirmModalProps) {
-  useEffect(() => {
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
-    };
-  }, [onClose]);
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-      onClick={onClose}
-      role="presentation"
-    >
-      <div
-        className="flex w-full max-w-[462px] flex-col items-center justify-center gap-[26px] rounded-[12px] px-5 py-[50px]"
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent 
+        showCloseButton={false}
+        className="flex w-full max-w-[462px] flex-col items-center justify-center gap-[26px] rounded-[12px] px-5 py-[50px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
         }}
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="delete-account-confirm-title"
       >
         <div className="flex w-full max-w-[422px] flex-col items-center gap-2 text-center">
           <h2
@@ -72,7 +49,7 @@ export default function DeleteAccountConfirmModal({
             Delete
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
