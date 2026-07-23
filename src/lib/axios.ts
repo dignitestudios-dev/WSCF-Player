@@ -2,7 +2,7 @@ import axios from "axios";
 import { AUTH_TOKEN_KEY } from "@/utils/constants";
 
 const axiosInstance = axios.create({
-  baseURL: "https://416zwbs6-3050.inc1.devtunnels.ms",
+  baseURL: "https://api.wisconsinscholasticchess.org/",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
