@@ -5,11 +5,13 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 interface TournamentPaymentSuccessModalProps {
   tournament: TournamentRegistrationTarget;
   onClose: () => void;
+  isRegistrationOnly?: boolean;
 }
 
 export default function TournamentPaymentSuccessModal({
   tournament,
   onClose,
+  isRegistrationOnly,
 }: TournamentPaymentSuccessModalProps) {
   return (
     <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -40,10 +42,12 @@ export default function TournamentPaymentSuccessModal({
                 id="tournament-payment-success-title"
                 className="text-[32px] font-semibold capitalize leading-[43px] tracking-[-0.008em] text-[#181818]"
               >
-                Payment Successfully
+                {isRegistrationOnly ? "Registered Successfully" : "Payment Successfully"}
               </h2>
               <p className="text-lg leading-7 tracking-[-0.014em] text-[#565656]">
-                You have paid {tournament.price} USD To {tournament.title}
+                {isRegistrationOnly 
+                  ? `You have successfully registered to ${tournament.title}` 
+                  : `You have paid ${tournament.price} USD To ${tournament.title}`}
               </p>
             </div>
           </div>
@@ -58,7 +62,7 @@ export default function TournamentPaymentSuccessModal({
         </div>
 
         <p className="text-center text-base font-medium leading-[22px] tracking-[-0.014em] text-[#565656]">
-          Thank you for the payment
+          {isRegistrationOnly ? "Thank you for registering" : "Thank you for the payment"}
         </p>
       </DialogContent>
     </Dialog>
