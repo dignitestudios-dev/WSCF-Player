@@ -9,63 +9,9 @@ import {
   SETTINGS_ROUTE,
 } from "@/config/routes";
 import { cn } from "@/utils/cn";
+import { User, CircleUser, Settings, LogOut } from "lucide-react";
 
-function UserIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      <circle cx="9" cy="5" r="3.5" fill="white" />
-      <path d="M3 16C3 12.5 5.5 10.5 9 10.5C12.5 10.5 15 12.5 15 16" fill="white" />
-    </svg>
-  );
-}
 
-function ProfileMenuIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      <circle cx="9" cy="5.5" r="3" stroke="#083F92" strokeWidth="1.5" />
-      <path
-        d="M3.5 15.5C3.5 12.5 5.8 10.5 9 10.5C12.2 10.5 14.5 12.5 14.5 15.5"
-        stroke="#083F92"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function SettingsMenuIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      <circle cx="9" cy="9" r="2.25" stroke="#083F92" strokeWidth="1.5" />
-      <path
-        d="M9 2.5V4.25M9 13.75V15.5M15.5 9H13.75M4.25 9H2.5M13.364 4.636L12.121 5.879M5.879 12.121L4.636 13.364M13.364 13.364L12.121 12.121M5.879 5.879L4.636 4.636"
-        stroke="#083F92"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function LogoutMenuIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      <path
-        d="M6.5 9H14M14 9L11.5 6.5M14 9L11.5 11.5"
-        stroke="#083F92"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9 4.5H5.5C4.67157 4.5 4 5.17157 4 6V12C4 12.8284 4.67157 13.5 5.5 13.5H9"
-        stroke="#083F92"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 interface ProfileMenuItemProps {
   href?: string;
@@ -166,7 +112,7 @@ export default function ProfileMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <UserIcon />
+        <User className="h-[18px] w-[18px] text-white" />
       </button>
 
       {open ? (
@@ -178,7 +124,7 @@ export default function ProfileMenu() {
           <div className="border-b border-[#F4F4F4] px-4 py-4">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#083F92]">
-                <UserIcon />
+                <User className="h-[18px] w-[18px] text-white" />
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-[#121111]">{displayName}</p>
@@ -191,18 +137,18 @@ export default function ProfileMenu() {
             <ProfileMenuItem
               href={profileHref}
               label="My Profile"
-              icon={<ProfileMenuIcon />}
+              icon={<CircleUser className="h-[18px] w-[18px] text-[#083F92]" />}
               onNavigate={closeMenu}
             />
             <ProfileMenuItem
               href={SETTINGS_ROUTE}
               label="Settings"
-              icon={<SettingsMenuIcon />}
+              icon={<Settings className="h-[18px] w-[18px] text-[#083F92]" />}
               onNavigate={closeMenu}
             />
             <ProfileMenuItem
               label="Log Out"
-              icon={<LogoutMenuIcon />}
+              icon={<LogOut className="h-[18px] w-[18px] text-[#083F92]" />}
               onClick={handleLogout}
             />
           </div>

@@ -53,5 +53,9 @@ export default function TournamentRegistrationFlow({
     );
   }
 
+  if (step === "registration-success") {
+    return <TournamentPaymentSuccessModal tournament={tournament} onClose={handleComplete} isRegistrationOnly={true} />;
+  }
+
   return <TournamentPaymentSuccessModal tournament={tournament} onClose={handleComplete} />;
 }

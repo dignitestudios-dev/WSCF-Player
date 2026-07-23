@@ -19,4 +19,4 @@ interface TournamentRegistrationTarget {
   price: string;
 }
 
-type TournamentRegistrationStep = "registration" | "payment" | "success";
+type TournamentRegistrationStep = "registration" | "payment" | "success" | "registration-success";
