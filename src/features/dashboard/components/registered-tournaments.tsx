@@ -57,15 +57,14 @@ function CalendarIcon() {
 
 function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTournament }) {
   return (
-    <div className="relative flex min-h-[108px] items-center rounded-[12px] border border-[#083F92] bg-white px-8 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
-      <div className="flex h-[53px] w-[53px] shrink-0 items-center justify-center rounded-full bg-[#083F92]">
+    <div className="relative group flex min-h-[108px] items-center rounded-[12px] border border-[#083F92] bg-white px-8 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer">
+      <Link href={getTournamentDetailsRoute(tournament.id, "registered")} className="absolute inset-0 z-0" aria-label={`View details for ${tournament.title}`} />
+      <div className="relative z-10 flex h-[53px] w-[53px] shrink-0 items-center justify-center rounded-full bg-[#083F92] pointer-events-none">
         <ChessIcon className="text-white" />
       </div>
 
-      <div className="ml-4 min-w-0 flex-1 pr-36 sm:pr-44">
-        <Link href={getTournamentDetailsRoute(tournament.id, "registered")}>
-          <h3 className="text-lg font-bold leading-6 text-[#083F92] hover:underline">{tournament.title}</h3>
-        </Link>
+      <div className="relative z-10 ml-4 min-w-0 flex-1 pr-36 sm:pr-44 pointer-events-none">
+        <h3 className="text-lg font-bold leading-6 text-[#083F92] group-hover:underline">{tournament.title}</h3>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1.5">
             <LocationIcon />
@@ -80,7 +79,7 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
 
       <Link
         href={getTournamentDetailsRoute(tournament.id, "registered")}
-        className="absolute right-8 top-1/2 flex h-12 w-[136px] -translate-y-1/2 items-center justify-center rounded-full bg-[#083F92] text-sm font-medium leading-[19px] text-white"
+        className="absolute right-8 top-1/2 z-10 flex h-12 w-[136px] -translate-y-1/2 items-center justify-center rounded-full bg-[#083F92] text-sm font-medium leading-[19px] text-white"
       >
         View Details
       </Link>

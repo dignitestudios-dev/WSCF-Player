@@ -87,17 +87,16 @@ function TournamentCard({
   onRegister: (tournament: DashboardTournament) => void;
 }) {
   return (
-    <div className="relative h-[108px] rounded-[12px] border border-[#083F92] bg-white p-6 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
-      <div className="flex items-start gap-6 pr-40">
+    <div className="relative group h-[108px] rounded-[12px] border border-[#083F92] bg-white p-6 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer">
+      <Link href={getTournamentDetailsRoute(tournament.id, "dashboard")} className="absolute inset-0 z-0" aria-label={`View details for ${tournament.title}`} />
+      <div className="relative z-10 flex items-start gap-6 pr-40 pointer-events-none">
         <div className="flex h-[53px] w-[53px] shrink-0 items-center justify-center rounded-full bg-[#083F92]">
           <ChessIcon />
         </div>
         <div className="min-w-0">
-          <Link href={getTournamentDetailsRoute(tournament.id, "dashboard")}>
-            <h3 className="truncate text-lg font-bold leading-6 text-[#083F92] hover:underline">
-              {tournament.title}
-            </h3>
-          </Link>
+          <h3 className="truncate text-lg font-bold leading-6 text-[#083F92] group-hover:underline">
+            {tournament.title}
+          </h3>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <MetaItem icon={<LocationIcon />} text={tournament.location} />
             <MetaItem icon={<CalendarIcon />} text={tournament.date} />
@@ -109,7 +108,7 @@ function TournamentCard({
       <button
         type="button"
         onClick={() => onRegister(tournament)}
-        className="absolute right-6 top-1/2 h-12 w-[136px] -translate-y-1/2 rounded-full bg-[#083F92] text-xs font-medium text-white"
+        className="absolute right-6 top-1/2 z-10 h-12 w-[136px] -translate-y-1/2 rounded-full bg-[#083F92] text-xs font-medium text-white"
       >
         Register Now
       </button>

@@ -11,7 +11,7 @@ export function useUserProfileQuery(userId: string) {
 
 export function useUserTournamentHistoryQuery(
   userId: string,
-  params: { page: number; limit: number }
+  params: { page: number; limit: number; status?: string }
 ) {
   return useQuery({
     queryKey: ["userTournamentHistory", userId, params],

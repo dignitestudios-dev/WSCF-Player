@@ -58,7 +58,7 @@ function SortableHeader({ label }: { label: string }) {
 }
 
 export default function MyHistory() {
-  const { tournaments, page, totalPages, totalItems, pageSize, setPage, backHref } = useMyHistory();
+  const { tournaments, page, totalPages, totalItems, pageSize, setPage, backHref, isPending } = useMyHistory();
 
   const pageNumbers = Array.from({ length: Math.min(totalPages, 3) }, (_, index) => index + 1);
 
@@ -91,24 +91,42 @@ export default function MyHistory() {
             <span>Action</span>
           </div>
 
-          {tournaments.map((tournament, index) => (
-            <div
-              key={tournament.id}
-              className={`${GRID_COLS} items-center px-6 py-[11px] text-base font-semibold leading-[22px] text-[#151515] ${
-                index < tournaments.length - 1 ? "border-b border-[#DADADA]" : ""
-              }`}
-            >
-              <span>{tournament.name}</span>
-              <span>{tournament.date}</span>
-              <span>{tournament.month}</span>
-              <span>{tournament.year}</span>
-              <span>{tournament.rating}</span>
-              <span>{tournament.ratingChange}</span>
-              <button type="button" className="text-left font-semibold underline">
-                Result
-              </button>
+          {isPending ? (
+            [...Array(5)].map((_, i) => (
+              <div key={i} className={`${GRID_COLS} items-center px-6 py-[11px] border-b border-[#DADADA]`}>
+                <div className="h-5 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2"></div>
+              </div>
+            ))
+          ) : tournaments.length > 0 ? (
+            tournaments.map((tournament: any, index: number) => (
+              <div
+                key={tournament.id}
+                className={`${GRID_COLS} items-center px-6 py-[11px] text-base font-semibold leading-[22px] text-[#151515] ${
+                  index < tournaments.length - 1 ? "border-b border-[#DADADA]" : ""
+                }`}
+              >
+                <span>{tournament.name}</span>
+                <span>{tournament.date}</span>
+                <span>{tournament.month}</span>
+                <span>{tournament.year}</span>
+                <span>{tournament.rating}</span>
+                <span>{tournament.ratingChange}</span>
+                <button type="button" className="text-left font-semibold underline">
+                  Result
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="px-6 py-8 text-center text-[#727272]">
+              No tournament history found.
             </div>
-          ))}
+          )}
         </div>
       </div>
 

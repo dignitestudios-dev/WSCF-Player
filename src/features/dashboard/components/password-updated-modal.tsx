@@ -24,7 +24,7 @@ export default function PasswordUpdatedModal({ onClose }: PasswordUpdatedModalPr
     <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent 
         showCloseButton={false}
-        className="relative flex w-full max-w-[515px] flex-col items-center gap-8 rounded-[12px] bg-white px-6 py-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        className="flex w-full max-w-[515px] flex-col items-center gap-8 rounded-[12px] bg-white px-6 py-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
       >
         <button
           type="button"

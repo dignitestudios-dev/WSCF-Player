@@ -54,11 +54,10 @@ export default function PlayerProfile() {
           <Skeleton className="mb-[42px] h-[30px] w-24 rounded" />
           <Skeleton className="mb-[34px] h-[61px] w-96 rounded" />
 
-          <div className="relative mb-8 min-h-[420px] sm:h-[278px] sm:min-h-0">
-            <div className="absolute left-0 right-0 top-[83px] h-[195px] rounded-[24px] bg-white max-sm:bottom-0 max-sm:top-auto" />
-            <Skeleton className="absolute left-1/2 top-0 z-10 h-[198px] w-[198px] -translate-x-1/2 rounded-full sm:left-[52px] sm:translate-x-0 border-[10px] border-[#083F92]" />
-
-            <div className="absolute left-0 right-0 top-[220px] px-2 sm:left-[282px] sm:top-[128px] sm:w-auto sm:px-0">
+          <div className="relative mb-8 pt-[83px]">
+            <div className="relative rounded-[24px] bg-white px-4 pb-6 pt-[140px] sm:px-8 sm:pb-8 sm:pl-[282px] sm:pt-[45px]">
+              <Skeleton className="absolute -top-[83px] left-1/2 z-10 h-[198px] w-[198px] -translate-x-1/2 rounded-full border-[10px] border-[#083F92] sm:left-[52px] sm:translate-x-0" />
+              
               <div className="flex flex-col gap-3">
                 <Skeleton className="h-[43px] w-64 rounded" />
                 <div className="flex flex-wrap items-center gap-4">
@@ -139,20 +138,18 @@ export default function PlayerProfile() {
           Player Rating Lookup
         </h1>
 
-        <div className="relative mb-8 min-h-[420px] sm:h-[278px] sm:min-h-0">
-          <div className="absolute left-0 right-0 top-[83px] h-[195px] rounded-[24px] bg-white max-sm:bottom-0 max-sm:top-auto" />
+        <div className="relative mb-8 pt-[83px]">
+          <div className="relative rounded-[24px] bg-white px-4 pb-6 pt-[140px] sm:px-8 sm:pb-8 sm:pl-[282px] sm:pt-[45px]">
+            <div className="absolute -top-[83px] left-1/2 z-10 h-[198px] w-[198px] -translate-x-1/2 overflow-hidden rounded-full border-[10px] border-[#083F92] bg-[#eaeaea] sm:left-[52px] sm:translate-x-0">
+              <Image
+                src={player.avatarUrl}
+                alt={player.name}
+                fill
+                className="object-cover"
+                sizes="198px"
+              />
+            </div>
 
-          <div className="absolute left-1/2 top-0 z-10 h-[198px] w-[198px] -translate-x-1/2 overflow-hidden rounded-full border-[10px] border-[#083F92] bg-[#eaeaea] sm:left-[52px] sm:translate-x-0">
-            <Image
-              src={player.avatarUrl}
-              alt={player.name}
-              fill
-              className="object-cover"
-              sizes="198px"
-            />
-          </div>
-
-          <div className="absolute left-0 right-0 top-[220px] px-2 sm:left-[282px] sm:top-[128px] sm:w-auto sm:px-0">
             <div className="flex flex-col gap-3">
               <h2 className="text-[32px] font-semibold leading-[43px] text-[#292D32]">
                 {player.name}
