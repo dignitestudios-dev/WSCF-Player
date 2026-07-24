@@ -96,7 +96,7 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
       <Dialog open={!isSuccessOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
         <DialogContent 
           showCloseButton={false}
-          className="relative w-full max-w-[588px] rounded-[12px] px-[60px] pb-[60px] pt-[60px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+          className="w-full max-w-[588px] rounded-[12px] px-[60px] pb-[60px] pt-[60px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
           style={{
             background:
               "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",

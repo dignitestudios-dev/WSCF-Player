@@ -93,16 +93,15 @@ function TournamentCard({
   onRegister: (tournament: DashboardTournament) => void;
 }) {
   return (
-    <div className="relative rounded-[12px] border border-[#083F92] bg-white p-6 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
-      <div className="flex flex-col gap-4 pr-44 sm:pr-52">
+    <div className="relative group rounded-[12px] border border-[#083F92] bg-white p-6 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer">
+      <Link href={getTournamentDetailsRoute(tournament.id, "dashboard")} className="absolute inset-0 z-0" aria-label={`View details for ${tournament.title}`} />
+      <div className="relative z-10 flex flex-col gap-4 pr-44 sm:pr-52 pointer-events-none">
         <div className="flex items-start gap-4">
           <div className="flex h-[53px] w-[53px] shrink-0 items-center justify-center rounded-full bg-[#083F92]">
             <ChessIcon className="text-white" />
           </div>
           <div className="min-w-0 flex-1">
-            <Link href={getTournamentDetailsRoute(tournament.id, "dashboard")}>
-              <h3 className="text-lg font-bold leading-6 text-[#083F92] hover:underline">{tournament.title}</h3>
-            </Link>
+            <h3 className="text-lg font-bold leading-6 text-[#083F92] group-hover:underline">{tournament.title}</h3>
             <div className="mt-4 flex flex-wrap items-center gap-4">
               <MetaItem icon={<LocationIcon />} label={tournament.location} />
               <MetaItem icon={<CalendarIcon />} label={tournament.date} />
@@ -114,7 +113,7 @@ function TournamentCard({
       <button
         type="button"
         onClick={() => onRegister(tournament)}
-        className="absolute right-6 top-1/2 h-14 -translate-y-1/2 rounded-full bg-[#083F92] px-8 text-base font-semibold text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)]"
+        className="absolute right-6 top-1/2 z-10 h-14 -translate-y-1/2 rounded-full bg-[#083F92] px-8 text-base font-semibold text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)]"
       >
         Register Now
       </button>

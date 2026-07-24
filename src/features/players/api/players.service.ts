@@ -7,7 +7,7 @@ export async function getUserProfile(userId: string) {
 
 export async function getUserTournamentHistory(
   userId: string,
-  params: { page: number; limit: number }
+  params: { page: number; limit: number; status?: string }
 ) {
   const { data } = await axiosInstance.get(`/tournament/user-history/${userId}`, {
     params,

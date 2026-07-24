@@ -59,6 +59,7 @@ function FormField({
   error,
   disabled,
   register,
+  onChange,
 }: {
   id: keyof EditProfileFields;
   label: string;
@@ -66,13 +67,25 @@ function FormField({
   error?: string;
   disabled?: boolean;
   register: UseFormRegister<EditProfileFields>;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const registered = register(id);
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-2">
       <label htmlFor={id} className={`text-sm font-medium capitalize leading-[19px] text-[#181818] ${disabled ? "opacity-50" : ""}`}>
         {label}
       </label>
-      <input id={id} type={type} disabled={disabled} className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`} {...register(id)} />
+      <input 
+        id={id} 
+        type={type} 
+        disabled={disabled} 
+        className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`} 
+        {...registered}
+        onChange={(e) => {
+          if (onChange) onChange(e);
+          registered.onChange(e);
+        }}
+      />
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
     </div>
   );
@@ -113,7 +126,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
     <Dialog open={true} onOpenChange={(open) => { if (!open && !isUpdating) onClose(); }}>
       <DialogContent 
         showCloseButton={false}
-        className="relative flex max-h-[90vh] w-full max-w-[759px] flex-col overflow-y-auto rounded-[12px] px-6 py-[60px] sm:px-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        className="flex max-h-[90vh] w-full max-w-[759px] flex-col overflow-y-auto rounded-[12px] px-6 py-[60px] sm:px-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #F7F6FF",
@@ -227,6 +240,17 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.parentPhone?.message}
                     disabled={isUpdating}
                     register={register}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const phoneNumber = value.replace(/[^\d]/g, "");
+                      if (phoneNumber.length < 4) {
+                        e.target.value = phoneNumber;
+                      } else if (phoneNumber.length < 7) {
+                        e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+                      } else {
+                        e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+                      }
+                    }}
                   />
                 </FormRow>
                 <div className="flex flex-col gap-[23px] sm:flex-row sm:gap-10">

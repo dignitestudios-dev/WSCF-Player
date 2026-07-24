@@ -18,7 +18,7 @@ export function usePlayerProfile() {
   const { data: userProfileData, isLoading: isLoadingProfile } = useUserProfileQuery(playerId);
   const { data: historyData, isLoading: isLoadingHistory } = useUserTournamentHistoryQuery(
     playerId,
-    { page: 1, limit: 5 }
+    { page: 1, limit: 5, status: "completed" }
   );
 
   const userData = userProfileData?.data?.user;
@@ -42,12 +42,12 @@ export function usePlayerProfile() {
     avatarUrl: userData?.profilePicture || fallbackAvatar,
     tournaments: history.map((t: any) => ({
       id: t._id || Math.random().toString(),
-      name: t.tournament?.name || t.name || "Unknown Tournament",
-      date: t.date || t.createdAt
-        ? new Date(t.date || t.createdAt).toLocaleDateString()
+      name: t.tournament?.title || "Unknown Tournament",
+      date: t.tournament?.date
+        ? new Date(t.tournament.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
         : "-",
-      rating: t.rating || 0,
-      ratingChange: t.ratingChange || "+0",
+      rating: t.rating || "-",
+      ratingChange: t.ratingChange || "-",
     })),
   };
 

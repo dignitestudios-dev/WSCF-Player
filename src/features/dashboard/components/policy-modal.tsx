@@ -60,7 +60,7 @@ export default function PolicyModal({ type, onClose }: PolicyModalProps) {
     <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent 
         showCloseButton={false}
-        className="relative flex w-full max-w-[761px] flex-col overflow-hidden rounded-[12px] p-0 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        className="flex w-full max-w-[761px] flex-col overflow-hidden rounded-[12px] p-0 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",

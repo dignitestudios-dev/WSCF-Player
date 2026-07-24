@@ -14,7 +14,7 @@ export default function CreateTeamModal({ open, onClose }: CreateTeamModalProps)
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent 
         showCloseButton={false}
-        className="relative flex h-[24em] w-full max-w-[588px] flex-col items-center gap-[25px] rounded-xl bg-white px-4 py-[26px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        className="flex h-[24em] w-full max-w-[588px] flex-col items-center gap-[25px] rounded-xl bg-white px-4 py-[26px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
       >
         <button
           type="button"
