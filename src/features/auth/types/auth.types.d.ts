@@ -20,6 +20,7 @@ interface RegisterMemberParent {
 
 interface RegisterMemberPayload {
   name: string;
+  profileImage: string;
   grade: string;
   dob: string;
   city: string;

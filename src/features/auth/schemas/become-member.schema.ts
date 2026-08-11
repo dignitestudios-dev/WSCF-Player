@@ -4,6 +4,7 @@ import { differenceInYears } from "date-fns";
 
 export const becomeMemberSchema = z
   .object({
+    profileImage: z.any().optional(),
     name: z.string().min(1, "Full name is required").max(100, "Full name is too long"),
     birthDate: z.string().min(1, "Birth date is required").refine((date) => {
       const parsedDate = new Date(date);

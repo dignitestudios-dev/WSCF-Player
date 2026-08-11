@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getVerifyOtpRoute } from "@/config/routes";
+import { getPresignedUrl } from "@/features/auth/api/auth.service";
 import { useBecomeMemberMutation } from "@/features/auth/api/auth.mutations";
 import {
   becomeMemberSchema,
@@ -17,9 +18,12 @@ import {
 
 export function useBecomeMember() {
   const router = useRouter();
-  const { mutate: registerMember, isPending } = useBecomeMemberMutation();
+  const { mutate: registerMember, isPending: isMutationPending } = useBecomeMemberMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const isPending = isMutationPending || isUploading;
 
   const form = useForm<BecomeMemberFormData>({
     resolver: zodResolver(becomeMemberSchema),
@@ -51,9 +55,35 @@ export function useBecomeMember() {
     setShowConfirmPassword((value) => !value);
   }
 
-  function onSubmit(data: BecomeMemberFormData) {
-    registerMember(data, {
+  async function onSubmit(data: BecomeMemberFormData) {
+    let profileImageUrl = "";
+
+    try {
+      if (data.profileImage && data.profileImage instanceof File) {
+        setIsUploading(true);
+        const presignedResponse = await getPresignedUrl({
+          fileName: data.profileImage.name || "avatar.png",
+          contentType: data.profileImage.type || "image/png",
+          folder: "profiles",
+        });
+
+        const profileImageFinalUrl = presignedResponse.fileUrl;
+        profileImageUrl = profileImageFinalUrl;
+      }
+    } catch (error) {
+      setIsUploading(false);
+      showApiErrorToast(error as Error, "Failed to upload profile image.");
+      return;
+    }
+
+    const payload = {
+      ...data,
+      profileImage: profileImageUrl,
+    };
+
+    registerMember(payload, {
       onSuccess: (response) => {
+        setIsUploading(false);
         showApiSuccessToast(response, "Registration successful");
 
         const verificationEmail =
@@ -62,6 +92,7 @@ export function useBecomeMember() {
         router.push(getVerifyOtpRoute(verificationEmail, "register"));
       },
       onError: (error) => {
+        setIsUploading(false);
         showApiErrorToast(error, "Registration failed. Please try again.");
       },
     });

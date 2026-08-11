@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 function Calendar({
   className,
@@ -69,15 +70,15 @@ function Calendar({
           defaultClassNames.month_caption
         ),
         dropdowns: cn(
-          "flex h-(--cell-size) w-full items-center justify-center gap-1.5 text-sm font-medium",
+          "flex items-center justify-center gap-2",
           defaultClassNames.dropdowns
         ),
         dropdown_root: cn(
-          "relative rounded-(--cell-radius)",
+          "relative",
           defaultClassNames.dropdown_root
         ),
         dropdown: cn(
-          "absolute inset-0 bg-popover opacity-0",
+          "flex h-8 w-full items-center justify-between rounded-md border border-input bg-background px-2 py-1 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer appearance-none",
           defaultClassNames.dropdown
         ),
         caption_label: cn(
@@ -159,6 +160,34 @@ function Calendar({
 
           return (
             <ChevronDownIcon className={cn("size-4", className)} {...props} />
+          )
+        },
+        Dropdown: ({ value, onChange, options, ...props }: any) => {
+          const selected = options?.find((child: any) => child.value === value)
+          const handleChange = (value: string) => {
+            const changeEvent = {
+              target: { value }
+            } as React.ChangeEvent<HTMLSelectElement>
+            onChange?.(changeEvent)
+          }
+          return (
+            <Select
+              value={value?.toString()}
+              onValueChange={(value) => {
+                handleChange(value)
+              }}
+            >
+              <SelectTrigger className="h-8 w-fit gap-1 border-none bg-transparent p-0 px-2 font-medium shadow-none focus:ring-0">
+                <SelectValue>{selected?.label}</SelectValue>
+              </SelectTrigger>
+              <SelectContent position="popper" className="max-h-[200px]">
+                {options?.map((option: any) => (
+                  <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString() ?? ""} disabled={option.disabled}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )
         },
         DayButton: ({ ...props }) => (

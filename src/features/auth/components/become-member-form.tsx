@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { UseFormRegister, Control } from "react-hook-form";
 import { useWatch, Controller } from "react-hook-form";
 import { format } from "date-fns";
@@ -81,6 +82,8 @@ function DateField({
   error?: string;
   control: Control<BecomeMemberFormData>;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="flex w-full flex-col gap-2 sm:w-[309px]">
       <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
@@ -90,8 +93,9 @@ function DateField({
         name={id}
         control={control}
         render={({ field }) => (
-          <Popover>
+          <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger
+              onClick={() => setIsOpen(true)}
               className={cn(
                 "flex h-11 w-full items-center justify-between rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15",
                 !field.value && "text-[#181818]/60"
@@ -103,8 +107,14 @@ function DateField({
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
+                captionLayout="dropdown"
+                startMonth={new Date(1900, 0)}
+                endMonth={new Date(new Date().getFullYear(), 11)}
                 selected={field.value ? new Date(field.value) : undefined}
-                onSelect={(date) => field.onChange(date ? format(date, "yyyy-MM-dd") : "")}
+                onSelect={(date) => {
+                  field.onChange(date ? format(date, "yyyy-MM-dd") : "");
+                  setIsOpen(false);
+                }}
                 disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
               />
             </PopoverContent>
@@ -262,6 +272,62 @@ export default function BecomeMemberForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex w-full max-w-[640px] flex-col gap-4">
+        <div className="flex flex-col items-center justify-center mb-4">
+          <Controller
+            name="profileImage"
+            control={control}
+            render={({ field }) => (
+              <div className="flex flex-col items-center gap-2">
+                <label
+                  htmlFor="profile-image"
+                  className="relative flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#083F92] bg-[#F7F6FF] hover:bg-[#ECEAFF] transition-colors"
+                >
+                  {field.value instanceof File ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={URL.createObjectURL(field.value)}
+                      alt="Profile preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center text-[#083F92]">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mb-1"
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" x2="12" y1="3" y2="15" />
+                      </svg>
+                      <span className="text-xs font-medium">Upload</span>
+                    </div>
+                  )}
+                  <input
+                    id="profile-image"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        field.onChange(file);
+                      }
+                    }}
+                  />
+                </label>
+                <span className="text-sm font-medium text-[#181818]">Profile Picture</span>
+              </div>
+            )}
+          />
+        </div>
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
             <FormField

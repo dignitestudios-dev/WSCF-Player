@@ -5,6 +5,7 @@ export function mapBecomeMemberToRegisterPayload(
 ): RegisterMemberPayload {
   return {
     name: data.name.trim(),
+    profileImage: data.profileImage || "",
     grade: data.grade,
     dob: data.birthDate,
     city: data.city,

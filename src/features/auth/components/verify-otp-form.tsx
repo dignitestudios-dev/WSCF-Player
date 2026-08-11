@@ -62,7 +62,7 @@ export default function VerifyOtpForm() {
             <button
               type="button"
               onClick={handleResend}
-              disabled={!canResend}
+              disabled={!canResend || isPending || isResending}
               className="font-medium text-[#083F92] hover:underline disabled:cursor-not-allowed disabled:text-[#565656] disabled:no-underline"
             >
               {isResending
