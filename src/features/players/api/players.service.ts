@@ -19,3 +19,14 @@ export async function getUsers(params: { page: number; limit: number; search?: s
   const { data } = await axiosInstance.get("/user", { params });
   return data;
 }
+
+export async function getMatchSuggestions() {
+  const { data } = await axiosInstance.get("/player/match-suggestions");
+  return data;
+}
+
+export async function attachProfile(payload: { masterPlayerId: string }) {
+  const { data } = await axiosInstance.post("/player/attach-profile", payload);
+  return data;
+}
+

@@ -246,3 +246,23 @@ export async function updateProfile(payload: UpdateUserProfilePayload) {
   return data;
 }
 
+export interface PresignedUrlPayload {
+  fileName: string;
+  contentType: string;
+  folder: string;
+}
+
+export interface PresignedUrlResponse {
+  data: {
+    uploadUrl: string;
+    key: string;
+    fileUrl: string;
+    expiresIn?: number;
+  }
+}
+
+export async function getPresignedUrl(payload: PresignedUrlPayload) {
+  const { data } = await axiosInstance.post("/files/presigned-url", payload);
+  // Support both nested data or flat structure based on common patterns
+  return data.data || data;
+}

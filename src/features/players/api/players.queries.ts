@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUserProfile, getUserTournamentHistory, getUsers } from "@/features/players/api/players.service";
+import { getUserProfile, getUserTournamentHistory, getUsers, getMatchSuggestions } from "@/features/players/api/players.service";
+
+export function useMatchSuggestionsQuery() {
+  return useQuery({
+    queryKey: ["matchSuggestions"],
+    queryFn: () => getMatchSuggestions(),
+  });
+}
 
 export function useUserProfileQuery(userId: string) {
   return useQuery({
