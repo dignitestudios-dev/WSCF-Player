@@ -75,7 +75,7 @@ export default function MembershipValidation() {
           <SummaryRow label="Annual Membership" boldLabel />
           <SummaryRow label="Valid From" value="July 31, 2025" />
           <SummaryRow label="Valid Until" value="August 31, 2026" />
-          <SummaryRow label="Amount" value="$5" />
+          <SummaryRow label="Amount" value="$5.00" />
         </div>
 
         <button

@@ -154,7 +154,7 @@ export default function Tournaments() {
     title: t.title,
     location: t.location,
     date: new Date(t.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
-    price: t.entryFee === 0 ? "Free" : `$${t.entryFee}`,
+    price: t.entryFee === 0 ? "Free" : `$${t.entryFee.toFixed(2)}`,
   }));
 
   return (

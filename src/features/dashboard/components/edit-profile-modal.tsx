@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { UseFormRegister } from "react-hook-form";
 import { useEditProfile } from "@/features/dashboard/hooks/use-edit-profile";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -60,6 +60,7 @@ function FormField({
   disabled,
   register,
   onChange,
+  maxLength,
 }: {
   id: keyof EditProfileFields;
   label: string;
@@ -68,6 +69,7 @@ function FormField({
   disabled?: boolean;
   register: UseFormRegister<EditProfileFields>;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  maxLength?: number;
 }) {
   const registered = register(id);
   return (
@@ -75,11 +77,12 @@ function FormField({
       <label htmlFor={id} className={`text-sm font-medium capitalize leading-[19px] text-[#181818] ${disabled ? "opacity-50" : ""}`}>
         {label}
       </label>
-      <input 
-        id={id} 
-        type={type} 
-        disabled={disabled} 
-        className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`} 
+      <input
+        id={id}
+        type={type}
+        disabled={disabled}
+        maxLength={maxLength}
+        className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`}
         {...registered}
         onChange={(e) => {
           if (onChange) onChange(e);
@@ -114,8 +117,9 @@ function FormRow({ children }: { children: React.ReactNode }) {
 
 export default function EditProfileModal({ profile, isUpdating, onClose, onSave }: EditProfileModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(profile.avatarUrl || null);
   const { form, onSubmit } = useEditProfile({ profile, onSave, onClose });
-
+  console.log(profile)
   const {
     register,
     handleSubmit,
@@ -124,7 +128,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
 
   return (
     <Dialog open={true} onOpenChange={(open) => { if (!open && !isUpdating) onClose(); }}>
-      <DialogContent 
+      <DialogContent
         showCloseButton={false}
         className="flex max-h-[90vh] w-full max-w-[759px] flex-col overflow-y-auto rounded-[12px] px-6 py-[60px] sm:px-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
@@ -153,9 +157,9 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
 
             <div className="relative">
               <div className="relative h-[110px] w-[110px] overflow-hidden rounded-full bg-[#F9FAFA]">
-                {profile.avatarUrl ? (
+                {previewUrl ? (
                   <Image
-                    src={profile.avatarUrl}
+                    src={previewUrl}
                     alt={profile.name}
                     fill
                     className="object-cover"
@@ -174,12 +178,19 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                 accept="image/*"
                 className="hidden"
                 aria-hidden="true"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    form.setValue("profileImage", file);
+                    setPreviewUrl(URL.createObjectURL(file));
+                  }
+                }}
               />
               <button
                 type="button"
                 disabled={isUpdating}
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[2px_8px_12px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[2px_8px_12px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                 aria-label="Change profile photo"
               >
                 <EditAvatarIcon />
@@ -197,6 +208,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.fullName?.message}
                     disabled={isUpdating}
                     register={register}
+                    maxLength={100}
                   />
                   <FormField
                     id="division"
@@ -233,6 +245,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.parentFullName?.message}
                     disabled={isUpdating}
                     register={register}
+                    maxLength={100}
                   />
                   <FormField
                     id="parentPhone"

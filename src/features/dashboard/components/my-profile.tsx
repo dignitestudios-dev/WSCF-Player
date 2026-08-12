@@ -7,19 +7,6 @@ import { MY_HISTORY_ROUTE, REGISTERED_TOURNAMENTS_ROUTE } from "@/config/routes"
 import { useMyProfile } from "@/features/dashboard/hooks/use-my-profile";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function ProfileStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col justify-center">
-      <span className="text-sm font-medium leading-[19px] text-[#083F92]">{label}</span>
-      <span className="text-2xl font-semibold leading-8 text-[#083F92]">{value}</span>
-    </div>
-  );
-}
-
-function StatDivider() {
-  return <div className="h-6 w-0.5 shrink-0 bg-[#3D3775]" />;
-}
-
 function ParentIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
@@ -133,60 +120,73 @@ export default function MyProfile() {
   return (
     <>
     <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
-      <div className="mb-6 flex flex-col gap-3">
-        <h1 className="text-[45px] font-bold leading-[61px] text-[#083F92]">My Profile</h1>
-        <p className="text-[22px] leading-[30px] text-[#151515]">Manage your personal information</p>
-      </div>
-
-      <div className="relative mb-6 min-h-[320px] lg:min-h-[238px]">
-        <div className="absolute inset-x-0 top-[83px] hidden h-[155px] rounded-[12px] bg-white lg:block" />
-
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl md:text-[45px] font-bold md:leading-[61px] text-[#083F92]">My Profile</h1>
+          <p className="text-lg md:text-[22px] md:leading-[30px] text-[#151515]">Manage your personal information</p>
+        </div>
         <button
           type="button"
           onClick={openEditProfile}
-          className="absolute right-0 top-0 z-20 flex h-10 w-[122px] items-center justify-center rounded-[6px] bg-[#083F92] text-base font-medium leading-[25px] tracking-[-0.0041em] text-white lg:top-[19px]"
+          className="flex h-10 w-[122px] shrink-0 items-center justify-center rounded-[6px] bg-[#083F92] text-base font-medium leading-[25px] tracking-[-0.0041em] text-white hover:bg-[#062f6e] transition-colors self-start sm:self-center cursor-pointer"
         >
           Edit profile
         </button>
+      </div>
 
-        <div className="relative z-10 mx-auto mt-12 h-[198px] w-[198px] overflow-hidden rounded-full border-[10px] border-[#083F92] bg-[#eaeaea] lg:absolute lg:left-[52px] lg:top-0 lg:mx-0 lg:mt-0">
-          {isPending ? (
-             <Skeleton className="h-full w-full rounded-full" />
-          ) : (
-            <Image
-              src={profile.avatarUrl}
-              alt={profile.name}
-              fill
-              className="object-cover"
-              sizes="198px"
-            />
-          )}
-        </div>
+      <div className="relative mb-6 mt-20 lg:mt-24">
+        {/* Profile Card */}
+        <div className="relative rounded-[12px] bg-white p-6 pt-24 pb-8 lg:py-[25px] lg:pl-[282px] lg:pr-8 shadow-sm lg:min-h-[155px] flex flex-col justify-center">
+          
+          {/* Avatar Container */}
+          <div className="absolute -top-[70px] left-1/2 -translate-x-1/2 h-[140px] w-[140px] overflow-hidden rounded-full border-8 border-[#083F92] bg-[#eaeaea] lg:absolute lg:left-[52px] lg:-top-[83px] lg:translate-x-0 lg:h-[198px] lg:w-[198px] lg:border-[10px] z-10 shadow-md">
+            {isPending ? (
+               <Skeleton className="h-full w-full rounded-full" />
+            ) : (
+              <Image
+                src={profile.avatarUrl}
+                alt={profile.name}
+                fill
+                className="object-cover"
+                sizes="(max-w-1024px) 140px, 198px"
+              />
+            )}
+          </div>
 
-        <div className="relative mt-6 rounded-[12px] bg-white p-6 lg:absolute lg:left-[282px] lg:top-[108px] lg:mt-0 lg:bg-transparent lg:p-0">
-          {isPending ? (
-            <Skeleton className="h-[43px] w-64 mb-3" />
-          ) : (
-            <h2 className="text-[32px] font-semibold leading-[43px] text-[#292D32]">{profile.name}</h2>
-          )}
+          {/* Profile Details */}
+          <div className="w-full flex flex-col items-center lg:items-start">
+            {isPending ? (
+              <Skeleton className="h-[43px] w-64 mb-3" />
+            ) : (
+              <h2 className="text-2xl lg:text-[32px] font-semibold lg:leading-[43px] text-[#292D32] text-center lg:text-left break-words max-w-full">
+                {profile.name}
+              </h2>
+            )}
 
-          <div className="mt-3 flex flex-wrap items-center gap-4">
-            {isPending
-              ? [...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="flex flex-col gap-2">
+            {/* Stats Flex Row */}
+            <div className="mt-3 flex flex-wrap items-center justify-center lg:justify-start gap-y-4">
+              {isPending
+                ? [...Array(5)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex flex-col items-center lg:items-start gap-2 border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0"
+                    >
                       <Skeleton className="h-[19px] w-16" />
                       <Skeleton className="h-[32px] w-24" />
                     </div>
-                    {i < 4 && <StatDivider />}
-                  </div>
-                ))
-              : stats.map((stat, index) => (
-                  <div key={stat.label} className="flex items-center gap-4">
-                    <ProfileStat label={stat.label} value={stat.value} />
-                    {index < stats.length - 1 && <StatDivider />}
-                  </div>
-                ))}
+                  ))
+                : stats.map((stat) => (
+                    <div
+                      key={stat.label}
+                      className="flex flex-col items-center lg:items-start border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0"
+                    >
+                      <span className="text-sm font-medium leading-[19px] text-[#083F92]">{stat.label}</span>
+                      <span className="text-lg lg:text-2xl font-semibold leading-8 text-[#083F92] break-words text-center lg:text-left max-w-full">
+                        {stat.value}
+                      </span>
+                    </div>
+                  ))}
+            </div>
           </div>
         </div>
       </div>

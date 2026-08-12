@@ -41,9 +41,9 @@ function ChessIcon({ className }: { className?: string }) {
 
 function MetaItem({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-1.5 ">
       {icon}
-      <span className="text-sm font-medium text-[#151515]">{label}</span>
+      <span className="text-sm font-medium line-clamp-1 text-[#151515]">{label}</span>
     </div>
   );
 }
@@ -93,18 +93,19 @@ function TournamentCard({
   onRegister: (tournament: DashboardTournament) => void;
 }) {
   return (
-    <div className="relative group rounded-[12px] border border-[#083F92] bg-white p-6 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer">
-      <Link href={getTournamentDetailsRoute(tournament.id, "dashboard")} className="absolute inset-0 z-0" aria-label={`View details for ${tournament.title}`} />
+    <div className="relative group overflow-hidden  rounded-[12px] h-[110px] border border-[#083F92] bg-white p-6 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer">
+      <Link href={getTournamentDetailsRoute(tournament.id, "dashboard")} className="text-wrap break-word line-clamp-1 absolute inset-0 z-0" aria-label={`View details for ${tournament.title}`} />
       <div className="relative z-10 flex flex-col gap-4 pr-44 sm:pr-52 pointer-events-none">
         <div className="flex items-start gap-4">
           <div className="flex h-[53px] w-[53px] shrink-0 items-center justify-center rounded-full bg-[#083F92]">
             <ChessIcon className="text-white" />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="text-lg font-bold leading-6 text-[#083F92] group-hover:underline">{tournament.title}</h3>
+            <h3 className="text-lg break-word line-clamp-1 font-bold leading-6 text-[#083F92] group-hover:underline">{tournament.title}</h3>
             <div className="mt-4 flex flex-wrap items-center gap-4">
+              <div className="w-[50%] line-clamp-1" >
               <MetaItem icon={<LocationIcon />} label={tournament.location} />
-              <MetaItem icon={<CalendarIcon />} label={tournament.date} />
+              </div><MetaItem icon={<CalendarIcon />} label={tournament.date} />
               <MetaItem icon={<MoneyIcon />} label={tournament.price} />
             </div>
           </div>
@@ -133,7 +134,7 @@ export default function DashboardOverview() {
     title: t.title,
     location: t.location,
     date: new Date(t.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
-    price: t.entryFee === 0 ? "Free" : `$${t.entryFee}`,
+    price: t.entryFee === 0 ? "Free" : `$${t.entryFee.toFixed(2)}`,
   }));
 
   const { data: authData } = useAuthUserQuery();

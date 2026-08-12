@@ -12,6 +12,7 @@ export const PUBLIC_ROUTES = [
   "/auth/tournament-participants",
   "/membership/success",
   "/membership/cancel",
+  "/membership/select-profile",
 ];
 export const PROTECTED_ROUTES = ["/dashboard"];
 export const AUTH_REDIRECT = "/auth/login";
@@ -34,7 +35,11 @@ export function getDashboardPlayerProfileRoute(id: string) {
 export const VERIFY_OTP_ROUTE = "/auth/verify-otp";
 export const EMAIL_VERIFIED_ROUTE = "/auth/email-verified";
 export const MEMBERSHIP_VALIDATION_ROUTE = "/auth/membership-validation";
-export { MEMBERSHIP_SUCCESS_ROUTE, MEMBERSHIP_CANCEL_ROUTE } from "@/features/membership/constants/routes";
+export {
+  MEMBERSHIP_SUCCESS_ROUTE,
+  MEMBERSHIP_CANCEL_ROUTE,
+  MEMBERSHIP_SELECT_PROFILE_ROUTE,
+} from "@/features/membership/constants/routes";
 export const SET_NEW_PASSWORD_ROUTE = "/auth/set-new-password";
 export const DEFAULT_REDIRECT = "/dashboard";
 export const SETTINGS_ROUTE = "/dashboard/settings";

@@ -239,6 +239,7 @@ export interface UpdateUserProfilePayload {
   grade?: string;
   parentName?: string;
   parentNumber?: string;
+  profileImage?: string;
 }
 
 export async function updateProfile(payload: UpdateUserProfilePayload) {

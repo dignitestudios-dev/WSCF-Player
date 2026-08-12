@@ -6,4 +6,5 @@ interface EditProfileFields {
   parentFullName: string;
   parentPhone: string;
   parentEmail: string;
+  profileImage?: any;
 }

@@ -25,28 +25,28 @@ const defaultTournaments: DashboardTournament[] = [
     title: "USCF-Rated Scholastic May Summer Tournament",
     location: "Old Guard Games",
     date: "June 20, 2026",
-    price: "$10",
+    price: "$10.00",
   },
   {
     id: "2",
     title: "USCF-Rated Scholastic May Summer Tournament",
     location: "Old Guard Games",
     date: "June 20, 2026",
-    price: "$10",
+    price: "$10.00",
   },
   {
     id: "3",
     title: "Wisconsin Spring Open Championship",
     location: "Old Guard Games",
     date: "July 12, 2026",
-    price: "$10",
+    price: "$10.00",
   },
   {
     id: "4",
     title: "Junior Rapid Chess Challenge",
     location: "Milwaukee Chess Center",
     date: "August 5, 2026",
-    price: "$10",
+    price: "$10.00",
   },
 ];
 
