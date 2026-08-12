@@ -25,20 +25,15 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
       
       if (field.nature === "mandatory") {
         const minLen = Number(field.minLength) || 1;
-        fieldSchema = z
-          .any()
-          .transform((v) => (v === undefined || v === null ? "" : String(v).trim()))
-          .pipe(
-            z.string().min(
-              minLen,
-              minLen > 1 ? `${field.fieldName} must be at least ${minLen} characters` : `${field.fieldName} is required`
-            )
-          );
+        // Use plain z.string() — transform+pipe is unreliable with @hookform/resolvers v5
+        fieldSchema = z.string().min(
+          minLen,
+          minLen > 1
+            ? `${field.fieldName} must be at least ${minLen} characters`
+            : `${field.fieldName} is required`
+        );
       } else {
-        fieldSchema = z
-          .any()
-          .transform((v) => (v === undefined || v === null ? "" : String(v).trim()))
-          .pipe(z.string().optional().or(z.literal("")));
+        fieldSchema = z.string().optional();
       }
       
       schemaShape[field._id] = fieldSchema;
@@ -46,23 +41,27 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
     return z.object(schemaShape);
   }, [fields]);
 
-  // Keep a ref to the latest schema so the stable resolver always reads the current version.
-  // useForm only picks up the resolver once at mount, so passing zodResolver(dynamicSchema) directly
-  // would permanently lock in the empty schema that existed before the API fields loaded.
+  // Update ref synchronously during render (not only inside a useEffect).
+  // This guarantees the resolver wrapper always reads the latest schema on
+  // every call — even on the very first validation attempt after fields load.
   const schemaRef = useRef(dynamicSchema);
-  useEffect(() => {
-    schemaRef.current = dynamicSchema;
-  }, [dynamicSchema]);
+  schemaRef.current = dynamicSchema;
 
   const form = useForm<Record<string, any>>({
-    // Stable resolver wrapper that delegates to the latest schema via ref
+    // Stable resolver wrapper — reads schemaRef.current at call time so it
+    // always uses the current schema regardless of when useForm was initialised.
     resolver: (values, context, options) =>
       zodResolver(schemaRef.current)(values, context, options),
     defaultValues: {},
-    mode: "onChange",
+    // "onSubmit" mode: errors only appear after the user clicks Submit.
+    // "onChange" combined with a dynamically-built schema causes errors to
+    // get stuck because the resolver runs on every keystroke before the
+    // schema has finished settling.
+    mode: "onSubmit",
   });
 
-  // Re-evaluate form when fields are loaded to set default values
+  // When fields load, reset the form so every field starts with an empty string.
+  // Without this, inputs initialise as undefined which confuses z.string().
   useEffect(() => {
     if (fields.length > 0) {
       const defaultValues: Record<string, any> = {};
@@ -87,7 +86,7 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
 
   function onRegistrationSubmit(formData: Record<string, any>) {
     const registrationData = fields.map((field) => ({
-      name: field.fieldName, // using fieldName as requested in the payload spec
+      name: field.fieldName,
       value: formData[field._id] !== undefined ? String(formData[field._id]) : "",
     }));
 
@@ -110,14 +109,13 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
           if (response.data?.requiresPayment && response.data?.checkoutUrl) {
             window.location.href = response.data.checkoutUrl;
           } else if (response.data?.requiresPayment) {
-            proceedToPayment(); // fallback if no checkoutUrl provided
+            proceedToPayment();
           } else {
             completeRegistrationSuccess();
           }
         },
         onError: (error) => {
           console.error("Registration failed:", error);
-          // could show toast here
         },
       }
     );
