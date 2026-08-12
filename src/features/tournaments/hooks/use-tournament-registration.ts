@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
@@ -29,8 +29,6 @@ export function useTournamentRegistration(
   fieldsRef.current = fields;
 
   // Custom resolver — validates directly against field definitions.
-  // Replaces zodResolver which was silently failing with dynamic schemas
-  // built from async API data in production.
   const resolver = useCallback(
     (values: Record<string, any>) => {
       const currentFields = fieldsRef.current;
@@ -57,34 +55,47 @@ export function useTournamentRegistration(
       }
 
       return {
-        values: Object.keys(errors).length > 0 ? ({} as Record<string, any>) : parsed,
+        values:
+          Object.keys(errors).length > 0
+            ? ({} as Record<string, any>)
+            : parsed,
         errors,
       };
     },
-    [] // stable — reads from fieldsRef.current at call time
+    [] // stable — reads fieldsRef.current at call time
   );
 
+  // Build reactive default values from the loaded fields.
+  // Returns {} when fields haven't loaded yet, and { fieldId: "" } once loaded.
+  const formValues = useMemo(() => {
+    if (fields.length === 0) return undefined;
+    const vals: Record<string, string> = {};
+    for (const f of fields) {
+      vals[f._id] = "";
+    }
+    return vals;
+  }, [fields]);
+
+  // Use the `values` option (react-hook-form v7.43+) instead of
+  // form.reset() in a useEffect. `values` is reactive — when it changes
+  // from undefined to { fieldId: "" }, the form automatically syncs.
+  // `keepDirtyValues` ensures that if the user has already typed something
+  // before values update, their input is preserved.
+  //
+  // This fixes the first-open bug: form.reset() in useEffect fires AFTER
+  // the render paint, which breaks mode:"onChange" because react-hook-form's
+  // internal state gets wiped after register() has already set up handlers.
+  // The `values` option integrates directly with the form lifecycle and
+  // doesn't suffer from this timing issue.
   const form = useForm<Record<string, any>>({
     resolver: resolver as any,
     defaultValues: {},
+    values: formValues,
+    resetOptions: {
+      keepDirtyValues: true,
+    },
     mode: "onChange",
   });
-
-  // Initialise form defaults exactly once when fields first arrive.
-  // Must not re-run on subsequent reference changes (react-query refetches)
-  // because that would wipe user-entered values while the DOM inputs still
-  // display them (uncontrolled via register()), causing phantom errors.
-  const hasInitializedRef = useRef(false);
-  useEffect(() => {
-    if (fields.length > 0 && !hasInitializedRef.current) {
-      hasInitializedRef.current = true;
-      const defaults: Record<string, string> = {};
-      for (const f of fields) {
-        defaults[f._id] = "";
-      }
-      form.reset(defaults);
-    }
-  }, [fields, form]);
 
   function proceedToPayment() {
     setStep("payment");
