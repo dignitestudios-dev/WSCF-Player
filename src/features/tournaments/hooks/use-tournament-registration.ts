@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -46,8 +46,18 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
     return z.object(schemaShape);
   }, [fields]);
 
+  // Keep a ref to the latest schema so the stable resolver always reads the current version.
+  // useForm only picks up the resolver once at mount, so passing zodResolver(dynamicSchema) directly
+  // would permanently lock in the empty schema that existed before the API fields loaded.
+  const schemaRef = useRef(dynamicSchema);
+  useEffect(() => {
+    schemaRef.current = dynamicSchema;
+  }, [dynamicSchema]);
+
   const form = useForm<Record<string, any>>({
-    resolver: zodResolver(dynamicSchema),
+    // Stable resolver wrapper that delegates to the latest schema via ref
+    resolver: (values, context, options) =>
+      zodResolver(schemaRef.current)(values, context, options),
     defaultValues: {},
     mode: "onChange",
   });
