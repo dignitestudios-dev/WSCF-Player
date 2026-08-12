@@ -35,7 +35,7 @@ export function useTournamentRegistration(
     (values: Record<string, any>) => {
       const currentFields = fieldsRef.current;
       const errors: Record<string, { type: string; message: string }> = {};
-      const parsed: Record<string, string> = {};
+      const parsed: Record<string, any> = {};
 
       for (const field of currentFields) {
         const raw = values[field._id];
@@ -57,7 +57,7 @@ export function useTournamentRegistration(
       }
 
       return {
-        values: Object.keys(errors).length > 0 ? {} : parsed,
+        values: Object.keys(errors).length > 0 ? ({} as Record<string, any>) : parsed,
         errors,
       };
     },
@@ -65,7 +65,7 @@ export function useTournamentRegistration(
   );
 
   const form = useForm<Record<string, any>>({
-    resolver,
+    resolver: resolver as any,
     defaultValues: {},
     mode: "onChange",
   });
