@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -25,15 +25,16 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
       
       if (field.nature === "mandatory") {
         const minLen = Number(field.minLength) || 1;
-        // Use plain z.string() — transform+pipe is unreliable with @hookform/resolvers v5
-        fieldSchema = z.string().min(
+        // z.coerce.string() converts any value (including numbers from type="number" inputs)
+        // to a string before validating. Plain z.string() would reject numeric values.
+        fieldSchema = z.coerce.string().min(
           minLen,
           minLen > 1
             ? `${field.fieldName} must be at least ${minLen} characters`
             : `${field.fieldName} is required`
         );
       } else {
-        fieldSchema = z.string().optional();
+        fieldSchema = z.coerce.string().optional();
       }
       
       schemaShape[field._id] = fieldSchema;
@@ -41,29 +42,34 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
     return z.object(schemaShape);
   }, [fields]);
 
-  // Update ref synchronously during render (not only inside a useEffect).
-  // This guarantees the resolver wrapper always reads the latest schema on
-  // every call — even on the very first validation attempt after fields load.
+  // Keep schema ref synchronously in sync so the resolver wrapper always
+  // uses the latest schema on every validation call.
   const schemaRef = useRef(dynamicSchema);
   schemaRef.current = dynamicSchema;
 
-  const form = useForm<Record<string, any>>({
-    // Stable resolver wrapper — reads schemaRef.current at call time so it
-    // always uses the current schema regardless of when useForm was initialised.
-    resolver: (values, context, options) =>
+  const stableResolver = useCallback(
+    (values: any, context: any, options: any) =>
       zodResolver(schemaRef.current)(values, context, options),
+    []
+  );
+
+  const form = useForm<Record<string, any>>({
+    resolver: stableResolver,
     defaultValues: {},
-    // "onSubmit" mode: errors only appear after the user clicks Submit.
-    // "onChange" combined with a dynamically-built schema causes errors to
-    // get stuck because the resolver runs on every keystroke before the
-    // schema has finished settling.
     mode: "onSubmit",
   });
 
-  // When fields load, reset the form so every field starts with an empty string.
-  // Without this, inputs initialise as undefined which confuses z.string().
+  // Only reset form defaults ONCE when fields first arrive.
+  // Without this guard, react-query background refetches (e.g. window focus)
+  // cause `fields` to get a new array reference → useEffect re-fires →
+  // form.reset() wipes all user-entered values back to "". The DOM inputs
+  // still display the old values (uncontrolled via register()), so the user
+  // sees filled inputs but the form's internal state is empty → validation
+  // fails on every field.
+  const hasInitializedRef = useRef(false);
   useEffect(() => {
-    if (fields.length > 0) {
+    if (fields.length > 0 && !hasInitializedRef.current) {
+      hasInitializedRef.current = true;
       const defaultValues: Record<string, any> = {};
       fields.forEach((f) => {
         defaultValues[f._id] = "";

@@ -32,6 +32,11 @@ export function useTournamentFormFieldsQuery(tournamentId: string) {
     queryKey: ["tournamentFormFields", tournamentId],
     queryFn: () => getTournamentFormFields(tournamentId),
     enabled: !!tournamentId,
+    // Form field definitions don't change mid-session. Prevent background
+    // refetches (e.g. window focus) that would give `fields` a new array
+    // reference and potentially interfere with the registration form state.
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
   });
 }
 
