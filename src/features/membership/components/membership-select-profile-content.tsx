@@ -153,6 +153,9 @@ export default function MembershipSelectProfileContent() {
           <p className="text-sm font-medium text-gray-500">
             No matching profiles found with your details.
           </p>
+          <p className="text-sm font-medium text-gray-500">
+             Please contact the admin.
+          </p>
         </div>
       )}
 

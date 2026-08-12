@@ -154,6 +154,14 @@ export const pageMetadata = {
     description:
       "Explore WSCF products and offerings for scholastic chess players, parents, and schools.",
   },
+  paymentSuccess: {
+    title: "Payment Success",
+    description: "Your payment was processed successfully.",
+  },
+  paymentCancel: {
+    title: "Payment Cancelled",
+    description: "Your payment was cancelled.",
+  },
 } satisfies Record<string, PageMetadataEntry>;
 
 export function createPageMetadata(page: keyof typeof pageMetadata): Metadata {

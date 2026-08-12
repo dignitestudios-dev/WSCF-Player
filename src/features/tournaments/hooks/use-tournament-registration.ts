@@ -21,17 +21,24 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
   const dynamicSchema = useMemo(() => {
     const schemaShape: Record<string, any> = {};
     for (const field of fields) {
-      let baseSchema = z.string({ required_error: `${field.fieldName} is required` });
       let fieldSchema: z.ZodTypeAny;
       
       if (field.nature === "mandatory") {
-        const minLen = field.minLength || 1;
-        fieldSchema = baseSchema.min(
-          minLen,
-          minLen > 1 ? `${field.fieldName} must be at least ${minLen} characters` : `${field.fieldName} is required`
-        );
+        const minLen = Number(field.minLength) || 1;
+        fieldSchema = z
+          .any()
+          .transform((v) => (v === undefined || v === null ? "" : String(v).trim()))
+          .pipe(
+            z.string().min(
+              minLen,
+              minLen > 1 ? `${field.fieldName} must be at least ${minLen} characters` : `${field.fieldName} is required`
+            )
+          );
       } else {
-        fieldSchema = baseSchema.optional().or(z.literal(""));
+        fieldSchema = z
+          .any()
+          .transform((v) => (v === undefined || v === null ? "" : String(v).trim()))
+          .pipe(z.string().optional().or(z.literal("")));
       }
       
       schemaShape[field._id] = fieldSchema;
@@ -71,17 +78,29 @@ export function useTournamentRegistration(tournament: TournamentRegistrationTarg
   function onRegistrationSubmit(formData: Record<string, any>) {
     const registrationData = fields.map((field) => ({
       name: field.fieldName, // using fieldName as requested in the payload spec
-      value: formData[field._id] || "",
+      value: formData[field._id] !== undefined ? String(formData[field._id]) : "",
     }));
 
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+
+    const isPaid = tournament.price !== "Free" && tournament.price !== "$0.00";
+
     registerMutation.mutate(
-      { registrationData },
+      { 
+        registrationData,
+        ...(isPaid ? {
+          successUrl: `${baseUrl}/payment/success`,
+          cancelUrl: `${baseUrl}/payment/cancel`,
+        } : {}),
+      },
       {
         onSuccess: (response) => {
           queryClient.invalidateQueries({ queryKey: ["authUser"] });
           queryClient.invalidateQueries({ queryKey: ["myTournaments"] });
-          if (response.data?.requiresPayment) {
-            proceedToPayment();
+          if (response.data?.requiresPayment && response.data?.checkoutUrl) {
+            window.location.href = response.data.checkoutUrl;
+          } else if (response.data?.requiresPayment) {
+            proceedToPayment(); // fallback if no checkoutUrl provided
           } else {
             completeRegistrationSuccess();
           }

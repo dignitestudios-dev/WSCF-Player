@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getVerifyOtpRoute } from "@/config/routes";
-import { getPresignedUrl } from "@/features/auth/api/auth.service";
+import { uploadProfileImage } from "@/features/auth/api/auth.service";
 import { useBecomeMemberMutation } from "@/features/auth/api/auth.mutations";
 import {
   becomeMemberSchema,
@@ -61,14 +61,8 @@ export function useBecomeMember() {
     try {
       if (data.profileImage && data.profileImage instanceof File) {
         setIsUploading(true);
-        const presignedResponse = await getPresignedUrl({
-          fileName: data.profileImage.name || "avatar.png",
-          contentType: data.profileImage.type || "image/png",
-          folder: "profiles",
-        });
-
-        const profileImageFinalUrl = presignedResponse.fileUrl;
-        profileImageUrl = profileImageFinalUrl;
+        const uploadResponse = await uploadProfileImage(data.profileImage);
+        profileImageUrl = uploadResponse.url;
       }
     } catch (error) {
       setIsUploading(false);

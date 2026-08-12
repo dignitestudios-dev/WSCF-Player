@@ -25,6 +25,7 @@ export function useRegisteredTournaments() {
       day: "numeric",
       year: "numeric"
     }),
+    paymentStatus: reg.paymentStatus,
   }));
 
   return {

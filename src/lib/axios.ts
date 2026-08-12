@@ -1,5 +1,6 @@
 import axios from "axios";
-import { AUTH_TOKEN_KEY } from "@/utils/constants";
+import { AUTH_TOKEN_KEY, AUTH_USER_KEY } from "@/utils/constants";
+import { AUTH_REDIRECT } from "@/config/routes";
 
 const axiosInstance = axios.create({
   baseURL: "https://api.wisconsinscholasticchess.org/",
@@ -20,6 +21,15 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        localStorage.removeItem(AUTH_USER_KEY);
+        document.cookie = `${AUTH_TOKEN_KEY}=; path=/; max-age=0`;
+        window.location.href = AUTH_REDIRECT;
+      }
+    }
+
     const data = error.response?.data;
     const message =
       (typeof data?.message === "string" && data.message) ||

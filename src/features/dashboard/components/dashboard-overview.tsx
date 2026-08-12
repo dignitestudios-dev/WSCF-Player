@@ -242,8 +242,8 @@ export default function DashboardOverview() {
             <p className="mt-2 text-[40px] font-semibold leading-[54px] text-[#083F92]">{summary.upcomingCount}</p>
           )}
           <div className="mt-6 flex flex-col justify-between gap-4">
-            <p className="text-[22px] font-medium leading-[30px] text-[#083F92]">
-              Your next tournaments are scheduled through Next Week.
+            <p className="text-[22px] h-[80px] font-medium leading-[30px] text-[#083F92]">
+              {/* Your next tournaments are scheduled through Next Week. */}
             </p>
             <Link href={REGISTERED_TOURNAMENTS_ROUTE} className="self-end text-sm font-medium text-[#083F92]">
               View Details

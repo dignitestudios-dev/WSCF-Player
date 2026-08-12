@@ -96,6 +96,8 @@ interface TournamentRegistrationPayload {
     name: string;
     value: string;
   }[];
+  successUrl?: string;
+  cancelUrl?: string;
 }
 
 interface TournamentRegistrationApiResponse {
@@ -116,5 +118,7 @@ interface TournamentRegistrationApiResponse {
       enrolledAt: string;
     };
     requiresPayment: boolean;
+    checkoutUrl?: string;
+    sessionId?: string;
   };
 }

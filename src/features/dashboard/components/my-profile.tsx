@@ -105,8 +105,6 @@ export default function MyProfile() {
 
   const stats = [
     { label: "USER ID", value: profile.userId },
-    { label: "Gender", value: profile.gender },
-    { label: "School", value: profile.school },
     { label: "City", value: profile.city },
     { label: "Date Of Birth", value: profile.dateOfBirth },
   ];

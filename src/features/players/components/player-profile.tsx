@@ -100,8 +100,6 @@ export default function PlayerProfile() {
 
   const stats = [
     { label: "USER ID", value: player.userId },
-    { label: "Gender", value: player.gender },
-    { label: "School", value: player.school },
     { label: "City", value: player.city },
     { label: "Date Of Birth", value: player.dateOfBirth },
   ];

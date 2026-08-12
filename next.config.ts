@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "wscf-storage-bucket.s3.us-east-1.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "wscf-storage-bucket.s3.us-east-2.amazonaws.com",
+      },
     ],
   },
 };

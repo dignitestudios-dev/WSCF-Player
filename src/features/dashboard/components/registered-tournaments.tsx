@@ -64,7 +64,14 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
       </div>
 
       <div className="relative z-10 ml-4 min-w-0 flex-1 pr-36 sm:pr-44 pointer-events-none">
-        <h3 className="text-lg font-bold leading-6 text-[#083F92] group-hover:underline">{tournament.title}</h3>
+        <div className="flex items-center gap-3">
+          <h3 className="text-lg font-bold leading-6 text-[#083F92] group-hover:underline">{tournament.title}</h3>
+          {tournament.paymentStatus === "pending" && (
+            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">
+              Not Paid
+            </span>
+          )}
+        </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1.5">
             <LocationIcon />

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAuthUserQuery, useUpdateProfileMutation } from "@/features/auth/api/auth.queries";
-import { getPresignedUrl } from "@/features/auth/api/auth.service";
+import { uploadProfileImage } from "@/features/auth/api/auth.service";
 import { showApiSuccessToast, showApiErrorToast } from "@/lib/api-toast";
 
 export function useMyProfile() {
@@ -67,13 +67,8 @@ export function useMyProfile() {
 
       if (values.profileImage && values.profileImage instanceof File) {
         setIsUploading(true);
-        const presignedResponse = await getPresignedUrl({
-          fileName: values.profileImage.name || "avatar.png",
-          contentType: values.profileImage.type || "image/png",
-          folder: "profiles",
-        });
-
-        profileImageUrl = presignedResponse.fileUrl;
+        const uploadResponse = await uploadProfileImage(values.profileImage);
+        profileImageUrl = uploadResponse.url;
       }
 
       const response = await updateProfile({

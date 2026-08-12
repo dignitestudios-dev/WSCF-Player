@@ -4,7 +4,16 @@ const nameRegex = /^[a-zA-Z\s]+$/;
 const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
 
 export const editProfileSchema = z.object({
-  profileImage: z.any().optional(),
+  profileImage: z.any().optional().refine(
+    (file) => {
+      if (!file) return true;
+      if (typeof window !== "undefined" && file instanceof File) {
+        return ["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(file.type);
+      }
+      return true;
+    },
+    "Only PNG, JPG, and WEBP formats are supported."
+  ),
   fullName: z
     .string()
     .trim()

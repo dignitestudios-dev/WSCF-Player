@@ -3,4 +3,5 @@ interface RegisteredTournament {
   title: string;
   location: string;
   date: string;
+  paymentStatus?: string;
 }

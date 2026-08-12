@@ -1,4 +1,5 @@
 import axiosInstance from "@/lib/axios";
+import axios from "axios";
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
 import { mapBecomeMemberToRegisterPayload } from "@/features/auth/utils/register-member.mapper";
 
@@ -265,5 +266,39 @@ export interface PresignedUrlResponse {
 export async function getPresignedUrl(payload: PresignedUrlPayload) {
   const { data } = await axiosInstance.post("/files/presigned-url", payload);
   // Support both nested data or flat structure based on common patterns
+  return data.data || data;
+}
+
+export async function getSecurePresignedUrl(payload: PresignedUrlPayload): Promise<PresignedUrlResponse["data"]> {
+  const { data } = await axiosInstance.post("/files/secure-presigned-url", payload);
+  return data.data || data;
+}
+
+export async function uploadToPresignedUrl(uploadUrl: string, file: File): Promise<void> {
+  await axios.put(uploadUrl, file, {
+    headers: {
+      "Content-Type": file.type,
+    },
+  });
+}
+
+export interface UploadProfileImageResponse {
+  _id: string;
+  key: string;
+  url: string;
+  mimetype: string;
+  size: number;
+}
+
+export async function uploadProfileImage(file: File): Promise<UploadProfileImageResponse> {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const { data } = await axiosInstance.post("/files/profile-image", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  
   return data.data || data;
 }

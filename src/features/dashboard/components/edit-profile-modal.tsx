@@ -175,7 +175,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept=".png,.jpeg,.jpg,.webp,image/png,image/jpeg,image/webp"
                 className="hidden"
                 aria-hidden="true"
                 onChange={(e) => {
@@ -183,6 +183,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                   if (file) {
                     form.setValue("profileImage", file);
                     setPreviewUrl(URL.createObjectURL(file));
+                    form.trigger("profileImage");
                   }
                 }}
               />
@@ -196,6 +197,9 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                 <EditAvatarIcon />
               </button>
             </div>
+            {errors.profileImage && (
+              <p className="text-xs text-red-600 text-center -mt-3">{errors.profileImage.message as string}</p>
+            )}
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-[43px]">

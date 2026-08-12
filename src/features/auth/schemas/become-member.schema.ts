@@ -4,7 +4,16 @@ import { differenceInYears } from "date-fns";
 
 export const becomeMemberSchema = z
   .object({
-    profileImage: z.any().optional(),
+    profileImage: z.any().optional().refine(
+      (file) => {
+        if (!file) return true;
+        if (typeof window !== "undefined" && file instanceof File) {
+          return ["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(file.type);
+        }
+        return true;
+      },
+      "Only PNG, JPG, and WEBP formats are supported."
+    ),
     name: z
       .string()
       .min(1, "Full name is required")
@@ -14,7 +23,11 @@ export const becomeMemberSchema = z
       const parsedDate = new Date(date);
       if (isNaN(parsedDate.getTime())) return false;
       return differenceInYears(new Date(), parsedDate) >= 4;
-    }, "You must be at least 4 years old"),
+    }, "You must be at least 4 years old").refine((date) => {
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate.getTime())) return false;
+      return differenceInYears(new Date(), parsedDate) <= 20;
+    }, "You must be 20 years old or younger"),
     grade: z.string().min(1, "Grade is required").max(10, "Grade is too long").regex(/^\d+$/, "Grade must be a number"),
     city: z
       .string()

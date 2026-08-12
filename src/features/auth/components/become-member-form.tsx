@@ -121,7 +121,11 @@ function DateField({
               <Calendar
                 mode="single"
                 captionLayout="dropdown"
-                startMonth={new Date(1900, 0)}
+                startMonth={(() => {
+                  const date = new Date();
+                  date.setFullYear(date.getFullYear() - 21);
+                  return date;
+                })()}
                 endMonth={(() => {
                   const date = new Date();
                   date.setFullYear(date.getFullYear() - 4);
@@ -135,7 +139,9 @@ function DateField({
                 disabled={(date) => {
                   const fourYearsAgo = new Date();
                   fourYearsAgo.setFullYear(fourYearsAgo.getFullYear() - 4);
-                  return date > fourYearsAgo || date < new Date("1900-01-01");
+                  const twentyOneYearsAgo = new Date();
+                  twentyOneYearsAgo.setFullYear(twentyOneYearsAgo.getFullYear() - 21);
+                  return date > fourYearsAgo || date <= twentyOneYearsAgo;
                 }}
               />
             </PopoverContent>
@@ -334,7 +340,7 @@ export default function BecomeMemberForm() {
                   <input
                     id="profile-image"
                     type="file"
-                    accept="image/*"
+                    accept=".png,.jpeg,.jpg,.webp,image/png,image/jpeg,image/webp"
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -345,6 +351,9 @@ export default function BecomeMemberForm() {
                   />
                 </label>
                 <span className="text-sm font-medium text-[#181818]">Profile Picture</span>
+                {errors.profileImage && (
+                  <p className="text-xs text-red-600 text-center">{errors.profileImage.message as string}</p>
+                )}
               </div>
             )}
           />
