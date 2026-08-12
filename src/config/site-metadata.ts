@@ -79,6 +79,11 @@ export const pageMetadata = {
     description:
       "Your WSCF membership payment was completed successfully. Continue to member login.",
   },
+  membershipSelectProfile: {
+    title: "Select Your Profile",
+    description:
+      "Link your historical WSCF data to your new membership account.",
+  },
   membershipCancel: {
     title: "Membership Payment Cancelled",
     description:

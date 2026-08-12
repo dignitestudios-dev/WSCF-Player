@@ -59,11 +59,24 @@ function FormField({
         placeholder={placeholder}
         className={inputClassName}
         {...register(id, {
-          onChange: numericOnly
-            ? (e) => {
-                e.target.value = e.target.value.replace(/[^0-9]/g, "");
-              }
-            : undefined,
+          onChange:
+            type === "tel"
+              ? (e) => {
+                  const value = e.target.value;
+                  const phoneNumber = value.replace(/[^\d]/g, "");
+                  if (phoneNumber.length < 4) {
+                    e.target.value = phoneNumber;
+                  } else if (phoneNumber.length < 7) {
+                    e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+                  } else {
+                    e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+                  }
+                }
+              : numericOnly
+              ? (e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                }
+              : undefined,
         })}
       />
       {error && <p className="text-xs text-red-600">{error}</p>}
@@ -109,13 +122,21 @@ function DateField({
                 mode="single"
                 captionLayout="dropdown"
                 startMonth={new Date(1900, 0)}
-                endMonth={new Date(new Date().getFullYear(), 11)}
+                endMonth={(() => {
+                  const date = new Date();
+                  date.setFullYear(date.getFullYear() - 4);
+                  return date;
+                })()}
                 selected={field.value ? new Date(field.value) : undefined}
                 onSelect={(date) => {
                   field.onChange(date ? format(date, "yyyy-MM-dd") : "");
                   setIsOpen(false);
                 }}
-                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                disabled={(date) => {
+                  const fourYearsAgo = new Date();
+                  fourYearsAgo.setFullYear(fourYearsAgo.getFullYear() - 4);
+                  return date > fourYearsAgo || date < new Date("1900-01-01");
+                }}
               />
             </PopoverContent>
           </Popover>
@@ -373,7 +394,7 @@ export default function BecomeMemberForm() {
               placeholder="NA 235 milwake"
               error={errors.streetAddress?.message}
               register={register}
-              maxLength={200}
+              maxLength={100}
             />
             <div className="flex w-full flex-col gap-2 sm:w-[309px]">
               <label
@@ -386,7 +407,7 @@ export default function BecomeMemberForm() {
                 <input
                   id="zipCode"
                   inputMode="numeric"
-                  maxLength={10}
+                  maxLength={5}
                   placeholder="54231"
                   className={inputClassName}
                   {...register("zipCode", {
@@ -430,19 +451,19 @@ export default function BecomeMemberForm() {
               id="fatherPhone"
               label="Father's/Guardian Phone"
               type="tel"
-              placeholder="1234567890"
+              placeholder="(123) 456-7890"
               error={errors.fatherPhone?.message}
               register={register}
-              maxLength={20}
+              maxLength={14}
             />
             <FormField
               id="motherPhone"
               label="Mother's/Guardian Phone"
               type="tel"
-              placeholder="0987654321"
+              placeholder="(098) 765-4321"
               error={errors.motherPhone?.message}
               register={register}
-              maxLength={20}
+              maxLength={14}
             />
           </div>
 

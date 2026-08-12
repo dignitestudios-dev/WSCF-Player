@@ -1,15 +1,16 @@
 import { z } from "zod";
 
-const nameRegex = /^[a-zA-Z\s\-\']+$/;
+const nameRegex = /^[a-zA-Z\s]+$/;
 const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
 
 export const editProfileSchema = z.object({
+  profileImage: z.any().optional(),
   fullName: z
     .string()
     .trim()
     .min(2, "Full name must be at least 2 characters")
-    .max(50, "Full name must be less than 50 characters")
-    .regex(nameRegex, "Name can only contain letters, spaces, hyphens, and apostrophes"),
+    .max(100, "Full name must be less than 100 characters")
+    .regex(nameRegex, "Name can only contain letters and spaces"),
   division: z
     .string()
     .trim()
@@ -30,8 +31,8 @@ export const editProfileSchema = z.object({
     .string()
     .trim()
     .min(2, "Parent full name must be at least 2 characters")
-    .max(50, "Parent full name must be less than 50 characters")
-    .regex(nameRegex, "Name can only contain letters, spaces, hyphens, and apostrophes"),
+    .max(100, "Parent full name must be less than 100 characters")
+    .regex(nameRegex, "Name can only contain letters and spaces"),
   parentPhone: z
     .string()
     .trim()

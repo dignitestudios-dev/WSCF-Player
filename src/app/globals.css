@@ -41,3 +41,10 @@ body {
 .toast-enter {
   animation: toast-slide-in 0.3s ease-out;
 }
+
+/* Hide Microsoft Edge / Bing browser default password reveal and clear button */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+

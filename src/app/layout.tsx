@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { rootMetadata } from "@/config/site-metadata";
 import Providers from "@/providers";
+import OfflineGuard from "@/components/offline-guard";
 import "./globals.css";
 
 export const metadata: Metadata = rootMetadata;
@@ -19,7 +20,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen font-sans antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <OfflineGuard>{children}</OfflineGuard>
+        </Providers>
       </body>
     </html>
   );

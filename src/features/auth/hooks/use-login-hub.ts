@@ -53,7 +53,7 @@ export function useLoginHub() {
       id: "tournament",
       label: "Registration For A Tournament",
       icon: "chess",
-      href: "/auth/member-login",
+      href: BECOME_MEMBER_ROUTE,
     },
     {
       id: "rating",
