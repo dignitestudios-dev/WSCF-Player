@@ -32,7 +32,7 @@ export function usePlayerProfile() {
     name: userData?.name || "-",
     userId: profileData?.membershipId || profileData?.userId || "-",
     gender: profileData?.gender || "-",
-    school: profileData?.school || "-",
+    school: (typeof profileData?.school === 'object' ? profileData?.school?.name : profileData?.school) || "-",
     city: profileData?.city || "-",
     dateOfBirth: profileData?.dob
       ? new Date(profileData.dob).toLocaleDateString()

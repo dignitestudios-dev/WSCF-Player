@@ -17,6 +17,13 @@ export interface DashboardTournament {
   location: string;
   date: string;
   price: string;
+  divisions: {
+    _id: string;
+    type: string;
+    divisionName?: string;
+    rating?: number;
+    condition?: string;
+  }[];
 }
 
 const defaultTournaments: DashboardTournament[] = [
@@ -26,6 +33,7 @@ const defaultTournaments: DashboardTournament[] = [
     location: "Old Guard Games",
     date: "June 20, 2026",
     price: "$10.00",
+    divisions: [],
   },
   {
     id: "2",
@@ -33,6 +41,7 @@ const defaultTournaments: DashboardTournament[] = [
     location: "Old Guard Games",
     date: "June 20, 2026",
     price: "$10.00",
+    divisions: [],
   },
   {
     id: "3",
@@ -40,6 +49,7 @@ const defaultTournaments: DashboardTournament[] = [
     location: "Old Guard Games",
     date: "July 12, 2026",
     price: "$10.00",
+    divisions: [],
   },
   {
     id: "4",
@@ -47,6 +57,7 @@ const defaultTournaments: DashboardTournament[] = [
     location: "Milwaukee Chess Center",
     date: "August 5, 2026",
     price: "$10.00",
+    divisions: [],
   },
 ];
 

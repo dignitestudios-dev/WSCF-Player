@@ -9,6 +9,8 @@ interface RegisterFormData {
   password: string;
   firstName: string;
   lastName: string;
+  gender: string;
+  sigma?: string;
 }
 
 interface RegisterMemberParent {
@@ -19,8 +21,11 @@ interface RegisterMemberParent {
 }
 
 interface RegisterMemberPayload {
-  name: string;
-  profileImage: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  sigma?: string;
+  profileImage?: string;
   grade: string;
   dob: string;
   city: string;
@@ -28,8 +33,8 @@ interface RegisterMemberPayload {
   zipCode: number;
   password: string;
   parents: {
-    father: RegisterMemberParent;
-    mother: RegisterMemberParent;
+    father?: RegisterMemberParent;
+    mother?: RegisterMemberParent;
   };
 }
 
@@ -45,7 +50,8 @@ interface User {
   firstName: string;
   lastName: string;
   gender: string;
-  image: string;
+  sigma?: string;
+  image?: string;
 }
 
 interface LoginResponse extends User {

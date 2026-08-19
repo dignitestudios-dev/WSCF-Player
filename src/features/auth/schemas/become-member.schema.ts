@@ -4,21 +4,21 @@ import { differenceInYears } from "date-fns";
 
 export const becomeMemberSchema = z
   .object({
-    profileImage: z.any().optional().refine(
-      (file) => {
-        if (!file) return true;
-        if (typeof window !== "undefined" && file instanceof File) {
-          return ["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(file.type);
-        }
-        return true;
-      },
-      "Only PNG, JPG, and WEBP formats are supported."
-    ),
-    name: z
+    firstName: z
       .string()
-      .min(1, "Full name is required")
-      .max(100, "Full name is too long")
-      .regex(/^[a-zA-Z\s]+$/, "Full name can only contain letters and spaces"),
+      .min(1, "First name is required")
+      .max(50, "First name is too long")
+      .regex(/^[a-zA-Z\s]+$/, "First name can only contain letters and spaces"),
+    lastName: z
+      .string()
+      .min(1, "Last name is required")
+      .max(50, "Last name is too long")
+      .regex(/^[a-zA-Z\s]+$/, "Last name can only contain letters and spaces"),
+    gender: z.enum(["male", "female", "other"], {
+      errorMap: () => ({ message: "Please select a valid gender" }),
+    }),
+    profileImage: z.any().optional(),
+    sigma: z.string().optional(),
     birthDate: z.string().min(1, "Birth date is required").refine((date) => {
       const parsedDate = new Date(date);
       if (isNaN(parsedDate.getTime())) return false;
@@ -28,7 +28,7 @@ export const becomeMemberSchema = z
       if (isNaN(parsedDate.getTime())) return false;
       return differenceInYears(new Date(), parsedDate) <= 20;
     }, "You must be 20 years old or younger"),
-    grade: z.string().min(1, "Grade is required").max(10, "Grade is too long").regex(/^\d+$/, "Grade must be a number"),
+    grade: z.string().min(1, "Grade is required").regex(/^(K|[1-9]|1[0-2])$/, "Invalid grade"),
     city: z
       .string()
       .min(1, "City is required")
@@ -43,34 +43,40 @@ export const becomeMemberSchema = z
       .min(1, "Zip code is required")
       .regex(/^\d{5}$/, "Zip code must be exactly 5 digits")
       .max(5, "Zip code must be exactly 5 digits"),
-    fatherName: z
-      .string()
-      .min(1, "Father's/Guardian name is required")
-      .max(100, "Name is too long")
-      .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
-    motherName: z
-      .string()
-      .min(1, "Mother's/Guardian name is required")
-      .max(100, "Name is too long")
-      .regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
-    fatherPhone: z
-      .string()
-      .min(1, "Father's/Guardian phone is required")
-      .regex(/^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/, "Please enter a valid 10-digit phone number")
-      .max(14, "Phone number is too long"),
-    motherPhone: z
-      .string()
-      .min(1, "Mother's/Guardian phone is required")
-      .regex(/^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/, "Please enter a valid 10-digit phone number")
-      .max(14, "Phone number is too long"),
-    fatherEmail: z.string().email("Invalid email address").max(150, "Email is too long"),
-    motherEmail: z.string().email("Invalid email address").max(150, "Email is too long"),
+    fatherName: z.string().max(100, "Name is too long").regex(/^[a-zA-Z\s]*$/, "Name can only contain letters and spaces").optional().or(z.literal("")),
+    motherName: z.string().max(100, "Name is too long").regex(/^[a-zA-Z\s]*$/, "Name can only contain letters and spaces").optional().or(z.literal("")),
+    fatherPhone: z.string().regex(/^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
+    motherPhone: z.string().regex(/^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
+    fatherEmail: z.string().email("Invalid email address").max(150, "Email is too long").optional().or(z.literal("")),
+    motherEmail: z.string().email("Invalid email address").max(150, "Email is too long").optional().or(z.literal("")),
     primaryEmail: z.enum(["father", "mother"]),
     password: passwordFieldSchema,
     confirmPassword: z.string().min(1, "Please confirm your password"),
     agreeToTerms: z.boolean().refine((value) => value === true, {
       message: "You must agree to the terms",
     }),
+  })
+  .refine((data) => {
+    const hasFather = Boolean(data.fatherName && data.fatherPhone);
+    const hasMother = Boolean(data.motherName && data.motherPhone);
+    return hasFather || hasMother;
+  }, {
+    message: "At least one parent's complete information (name and phone) is required.",
+    path: ["fatherName"],
+  })
+  .refine((data) => {
+    const fatherHasPartial = Boolean(data.fatherName || data.fatherPhone) && !(data.fatherName && data.fatherPhone);
+    return !fatherHasPartial;
+  }, {
+    message: "Father's name and phone must both be provided if one is.",
+    path: ["fatherName"],
+  })
+  .refine((data) => {
+    const motherHasPartial = Boolean(data.motherName || data.motherPhone) && !(data.motherName && data.motherPhone);
+    return !motherHasPartial;
+  }, {
+    message: "Mother's name and phone must both be provided if one is.",
+    path: ["motherName"],
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

@@ -14,11 +14,21 @@ import {
 } from "@/components/ui/card";
 import { useRegister } from "@/features/auth/hooks/use-register";
 
+import { Controller } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 export default function RegisterForm() {
   const { form, onSubmit, isPending, error } = useRegister();
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = form;
 
@@ -28,7 +38,7 @@ export default function RegisterForm() {
         <CardTitle>Create account</CardTitle>
         <CardDescription>Fill in your details to get started</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit as any)}>
         <CardContent className="space-y-4">
           {error && (
             <p className="text-sm text-red-600" role="alert">
@@ -51,12 +61,36 @@ export default function RegisterForm() {
               )}
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
-            <Input id="username" {...register("username")} />
-            {errors.username && (
-              <p className="text-sm text-red-600">{errors.username.message}</p>
-            )}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input id="username" {...register("username")} />
+              {errors.username && (
+                <p className="text-sm text-red-600">{errors.username.message}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="gender">Gender</Label>
+              <Controller
+                control={control}
+                name="gender"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <SelectTrigger id="gender">
+                      <SelectValue placeholder="Select Gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.gender && (
+                <p className="text-sm text-red-600">{errors.gender.message as string}</p>
+              )}
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>

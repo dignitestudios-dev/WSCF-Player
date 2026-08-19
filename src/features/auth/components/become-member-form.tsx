@@ -8,6 +8,13 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { EyeIcon } from "@/features/auth/components/set-new-password-icons";
 import { useBecomeMember } from "@/features/auth/hooks/use-become-member";
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
@@ -27,7 +34,8 @@ function FormField({
 }: {
   id: keyof Pick<
     BecomeMemberFormData,
-    | "name"
+    | "firstName"
+    | "lastName"
     | "birthDate"
     | "grade"
     | "city"
@@ -299,84 +307,76 @@ export default function BecomeMemberForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex w-full max-w-[640px] flex-col gap-4">
-        <div className="flex flex-col items-center justify-center mb-4">
-          <Controller
-            name="profileImage"
-            control={control}
-            render={({ field }) => (
-              <div className="flex flex-col items-center gap-2">
-                <label
-                  htmlFor="profile-image"
-                  className="relative flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#083F92] bg-[#F7F6FF] hover:bg-[#ECEAFF] transition-colors"
-                >
-                  {field.value instanceof File ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={URL.createObjectURL(field.value)}
-                      alt="Profile preview"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center text-[#083F92]">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="mb-1"
-                      >
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="17 8 12 3 7 8" />
-                        <line x1="12" x2="12" y1="3" y2="15" />
-                      </svg>
-                      <span className="text-xs font-medium">Upload</span>
-                    </div>
-                  )}
-                  <input
-                    id="profile-image"
-                    type="file"
-                    accept=".png,.jpeg,.jpg,.webp,image/png,image/jpeg,image/webp"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        field.onChange(file);
-                      }
-                    }}
-                  />
-                </label>
-                <span className="text-sm font-medium text-[#181818]">Profile Picture</span>
-                {errors.profileImage && (
-                  <p className="text-xs text-red-600 text-center">{errors.profileImage.message as string}</p>
-                )}
-              </div>
-            )}
-          />
-        </div>
+
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
             <FormField
-              id="name"
-              label="Full Name"
-              placeholder="John Doe"
-              error={errors.name?.message}
+              id="firstName"
+              label="First Name"
+              placeholder="John"
+              error={errors.firstName?.message}
               register={register}
-              maxLength={100}
+              maxLength={50}
             />
             <FormField
-              id="grade"
-              label="Grade"
-              placeholder="5"
-              error={errors.grade?.message}
+              id="lastName"
+              label="Last Name"
+              placeholder="Doe"
+              error={errors.lastName?.message}
               register={register}
-              numericOnly
-              maxLength={2}
+              maxLength={50}
             />
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
+            <div className="flex w-full flex-col gap-2 sm:w-[309px]">
+              <label htmlFor="gender" className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
+                Gender
+              </label>
+              <Controller
+                control={control}
+                name="gender"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <SelectTrigger id="gender" className={inputClassName}>
+                      <SelectValue placeholder="Select Gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.gender && (
+                <p className="text-xs text-red-600">{errors.gender.message as string}</p>
+              )}
+            </div>
+            <div className="flex w-full flex-col gap-2 sm:w-[309px]">
+              <label htmlFor="grade" className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
+                Grade
+              </label>
+              <Controller
+                control={control}
+                name="grade"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <SelectTrigger id="grade" className={inputClassName}>
+                      <SelectValue placeholder="Select Grade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="K">K</SelectItem>
+                      {Array.from({ length: 12 }, (_, i) => String(i + 1)).map((g) => (
+                        <SelectItem key={g} value={g}>{g}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.grade && (
+                <p className="text-xs text-red-600">{errors.grade.message as string}</p>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
@@ -522,6 +522,22 @@ export default function BecomeMemberForm() {
         </div>
 
         <div className="flex flex-col gap-6 pt-2">
+          <div>
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="checkbox"
+                className="mt-0.5 h-5 w-5 shrink-0 rounded-full border border-black/30 accent-[#083F92]"
+                {...register("agreeToTerms")}
+              />
+              <span className="text-sm leading-[19px] text-[#3D3775]">
+                I agree to the Terms and Conditions of the Wisconsin Scholastic Chess Federation
+              </span>
+            </label>
+            {errors.agreeToTerms && (
+              <p className="text-xs text-red-600 mt-1">{errors.agreeToTerms.message}</p>
+            )}
+          </div>
+
           <button
             type="submit"
             disabled={isPending}
@@ -529,20 +545,6 @@ export default function BecomeMemberForm() {
           >
             {isPending ? "Signing Up..." : "Sign Up"}
           </button>
-
-          <label className="flex cursor-pointer items-start gap-3">
-            <input
-              type="checkbox"
-              className="mt-0.5 h-5 w-5 shrink-0 rounded-full border border-black/30 accent-[#083F92]"
-              {...register("agreeToTerms")}
-            />
-            <span className="text-sm leading-[19px] text-[#3D3775]">
-              I agree to the Terms and Conditions of the Wisconsin Scholastic Chess Federation
-            </span>
-          </label>
-          {errors.agreeToTerms && (
-            <p className="text-xs text-red-600">{errors.agreeToTerms.message}</p>
-          )}
         </div>
       </form>
     </div>

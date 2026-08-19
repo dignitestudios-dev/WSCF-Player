@@ -17,6 +17,13 @@ interface TournamentRegistrationTarget {
   location: string;
   date: string;
   price: string;
+  divisions: {
+    _id: string;
+    type: string;
+    divisionName?: string;
+    rating?: number;
+    condition?: string;
+  }[];
 }
 
 type TournamentRegistrationStep = "registration" | "payment" | "success" | "registration-success";

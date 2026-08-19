@@ -1,10 +1,17 @@
 "use client";
 
-import Image from "next/image";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { UseFormRegister } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { useEditProfile } from "@/features/dashboard/hooks/use-edit-profile";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface EditProfileModalProps {
   profile: MyProfile;
@@ -29,28 +36,7 @@ function CloseIcon() {
   );
 }
 
-function ImagePlaceholderIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
-      <rect x="3.5" y="3.5" width="23" height="23" rx="2" stroke="#181818" strokeWidth="1.5" />
-      <circle cx="10.5" cy="10.5" r="2" stroke="#181818" strokeWidth="1.5" />
-      <path d="M4.5 19.5L10 14L14 18L19 13L25.5 19.5" stroke="#181818" strokeWidth="1.5" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
-function EditAvatarIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <path
-        d="M8.5 1.5L10.5 3.5L4 10H2V8L8.5 1.5Z"
-        stroke="#28303F"
-        strokeWidth="1.2"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function FormField({
   id,
@@ -116,13 +102,12 @@ function FormRow({ children }: { children: React.ReactNode }) {
 }
 
 export default function EditProfileModal({ profile, isUpdating, onClose, onSave }: EditProfileModalProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(profile.avatarUrl || null);
   const { form, onSubmit } = useEditProfile({ profile, onSave, onClose });
   console.log(profile)
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = form;
 
@@ -155,72 +140,53 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
               Edit Profile
             </h2>
 
-            <div className="relative">
-              <div className="relative h-[110px] w-[110px] overflow-hidden rounded-full bg-[#F9FAFA]">
-                {previewUrl ? (
-                  <Image
-                    src={previewUrl}
-                    alt={profile.name}
-                    fill
-                    className="object-cover"
-                    sizes="110px"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">
-                    <ImagePlaceholderIcon />
-                  </div>
-                )}
-              </div>
 
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".png,.jpeg,.jpg,.webp,image/png,image/jpeg,image/webp"
-                className="hidden"
-                aria-hidden="true"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    form.setValue("profileImage", file);
-                    setPreviewUrl(URL.createObjectURL(file));
-                    form.trigger("profileImage");
-                  }
-                }}
-              />
-              <button
-                type="button"
-                disabled={isUpdating}
-                onClick={() => fileInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[2px_8px_12px_rgba(0,0,0,0.06)] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-                aria-label="Change profile photo"
-              >
-                <EditAvatarIcon />
-              </button>
-            </div>
-            {errors.profileImage && (
-              <p className="text-xs text-red-600 text-center -mt-3">{errors.profileImage.message as string}</p>
-            )}
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-[43px]">
+          <form onSubmit={handleSubmit(onSubmit as any)} className="flex w-full flex-col gap-[43px]">
             <div className="flex flex-col gap-6">
               <FormSection title="Personal Information">
                 <FormRow>
                   <FormField
-                    id="fullName"
-                    label="Full Name"
-                    error={errors.fullName?.message}
+                    id="firstName"
+                    label="First Name"
+                    error={errors.firstName?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={100}
+                    maxLength={50}
                   />
                   <FormField
-                    id="division"
-                    label="Division"
-                    error={errors.division?.message}
+                    id="lastName"
+                    label="Last Name"
+                    error={errors.lastName?.message}
                     disabled={isUpdating}
                     register={register}
+                    maxLength={50}
                   />
+                </FormRow>
+                <FormRow>
+                  <div className="flex min-w-0 flex-1 flex-col gap-2">
+                    <label htmlFor="gender" className={`text-sm font-medium capitalize leading-[19px] text-[#181818] ${isUpdating ? "opacity-50" : ""}`}>
+                      Gender
+                    </label>
+                    <Controller
+                      control={control}
+                      name="gender"
+                      render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value || ""} disabled={isUpdating}>
+                          <SelectTrigger id="gender" className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`}>
+                            <SelectValue placeholder="Select Gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {errors.gender && <p className="text-xs text-red-600">{errors.gender.message as string}</p>}
+                  </div>
                 </FormRow>
                 <FormRow>
                   <FormField
@@ -231,30 +197,74 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     disabled={isUpdating}
                     register={register}
                   />
-                  <FormField
-                    id="grade"
-                    label="Grade"
-                    error={errors.grade?.message}
-                    disabled={isUpdating}
-                    register={register}
-                  />
+                  <div className="flex w-full flex-col gap-2 sm:w-[309px]">
+                    <label htmlFor="grade" className={`text-sm font-medium capitalize leading-[19px] text-[#181818] ${isUpdating ? "opacity-50" : ""}`}>
+                      Grade
+                    </label>
+                    <Controller
+                      control={control}
+                      name="grade"
+                      render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value || ""} disabled={isUpdating}>
+                          <SelectTrigger id="grade" className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`}>
+                            <SelectValue placeholder="Select Grade" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="K">K</SelectItem>
+                            {Array.from({ length: 12 }, (_, i) => String(i + 1)).map((g) => (
+                              <SelectItem key={g} value={g}>{g}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {errors.grade && <p className="text-xs text-red-600">{errors.grade.message as string}</p>}
+                  </div>
                 </FormRow>
               </FormSection>
 
               <FormSection title="Parent Information">
                 <FormRow>
                   <FormField
-                    id="parentFullName"
-                    label="Full Name"
-                    error={errors.parentFullName?.message}
+                    id="fatherName"
+                    label="Father's Full Name"
+                    error={errors.fatherName?.message}
                     disabled={isUpdating}
                     register={register}
                     maxLength={100}
                   />
                   <FormField
-                    id="parentPhone"
-                    label="Phone"
-                    error={errors.parentPhone?.message}
+                    id="motherName"
+                    label="Mother's Full Name"
+                    error={errors?.motherName?.message}
+                    disabled={isUpdating}
+                    register={register}
+                    maxLength={100}
+                  />
+                </FormRow>
+                <FormRow>
+                  <FormField
+                    id="fatherPhone"
+                    label="Father's Phone"
+                    error={errors.fatherPhone?.message}
+                    disabled={isUpdating}
+                    register={register}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const phoneNumber = value.replace(/[^\d]/g, "");
+                      if (phoneNumber.length < 4) {
+                        e.target.value = phoneNumber;
+                      } else if (phoneNumber.length < 7) {
+                        e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+                      } else {
+                        e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+                      }
+                    }}
+                  />
+                  <FormField
+                    id="motherPhone"
+                    label="Mother's Phone"
+                    error={errors.motherPhone?.message}
                     disabled={isUpdating}
                     register={register}
                     onChange={(e) => {
@@ -270,16 +280,24 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     }}
                   />
                 </FormRow>
-                <div className="flex flex-col gap-[23px] sm:flex-row sm:gap-10">
+                <FormRow>
                   <FormField
-                    id="parentEmail"
-                    label="Email"
+                    id="fatherEmail"
+                    label="Father's Email"
                     type="email"
-                    error={errors.parentEmail?.message}
+                    error={errors.fatherEmail?.message}
                     disabled={isUpdating}
                     register={register}
                   />
-                </div>
+                  <FormField
+                    id="motherEmail"
+                    label="Mother's Email"
+                    type="email"
+                    error={errors.motherEmail?.message}
+                    disabled={isUpdating}
+                    register={register}
+                  />
+                </FormRow>
               </FormSection>
             </div>
 

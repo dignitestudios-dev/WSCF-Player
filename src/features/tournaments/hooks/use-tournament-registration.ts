@@ -54,6 +54,17 @@ export function useTournamentRegistration(
         }
       }
 
+      if (tournament.divisions && tournament.divisions.length > 0) {
+        if (!values["divisionId"]) {
+          errors["divisionId"] = {
+            type: "validation",
+            message: "Division is required",
+          };
+        } else {
+          parsed["divisionId"] = values["divisionId"];
+        }
+      }
+
       return {
         values:
           Object.keys(errors).length > 0
@@ -62,7 +73,7 @@ export function useTournamentRegistration(
         errors,
       };
     },
-    [] // stable — reads fieldsRef.current at call time
+    [tournament.divisions] // stable — reads fieldsRef.current at call time
   );
 
   // Build reactive default values from the loaded fields.
@@ -73,8 +84,11 @@ export function useTournamentRegistration(
     for (const f of fields) {
       vals[f._id] = "";
     }
+    if (tournament.divisions && tournament.divisions.length > 0) {
+      vals["divisionId"] = "";
+    }
     return vals;
-  }, [fields]);
+  }, [fields, tournament.divisions]);
 
   // Use the `values` option (react-hook-form v7.43+) instead of
   // form.reset() in a useEffect. `values` is reactive — when it changes
@@ -115,17 +129,20 @@ export function useTournamentRegistration(
       value:
         formData[field._id] !== undefined ? String(formData[field._id]) : "",
     }));
+    
+    const divisionId = formData["divisionId"];
 
     const baseUrl =
       typeof window !== "undefined" ? window.location.origin : "";
 
-    const isPaid =
+    const requiresPayment =
       tournament.price !== "Free" && tournament.price !== "$0.00";
 
     registerMutation.mutate(
       {
         registrationData,
-        ...(isPaid
+        divisionId,
+        ...(requiresPayment
           ? {
               successUrl: `${baseUrl}/payment/success`,
               cancelUrl: `${baseUrl}/payment/cancel`,

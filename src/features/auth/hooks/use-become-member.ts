@@ -28,7 +28,8 @@ export function useBecomeMember() {
   const form = useForm<BecomeMemberFormData>({
     resolver: zodResolver(becomeMemberSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       birthDate: "",
       grade: "",
       city: "",
@@ -83,7 +84,7 @@ export function useBecomeMember() {
         const verificationEmail =
           data.primaryEmail === "father" ? data.fatherEmail : data.motherEmail;
 
-        router.push(getVerifyOtpRoute(verificationEmail, "register"));
+        router.push(getVerifyOtpRoute(verificationEmail!, "register"));
       },
       onError: (error) => {
         setIsUploading(false);

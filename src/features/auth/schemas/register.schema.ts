@@ -7,4 +7,10 @@ export const registerSchema = z.object({
   password: passwordFieldSchema,
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
+  gender: z.enum(["male", "female", "other"], {
+    errorMap: () => ({ message: "Please select a valid gender" }),
+  }),
+  sigma: z.string().optional(),
 });
+
+export type RegisterFormDataSchemaType = z.infer<typeof registerSchema>;

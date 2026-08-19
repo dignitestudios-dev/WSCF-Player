@@ -4,7 +4,13 @@ interface TournamentApiData {
   date: string;
   location: string;
   entryFee: number;
-  isPaid: boolean;
+  divisions: {
+    _id: string;
+    type: "open" | "conditional";
+    divisionName?: string;
+    rating?: number;
+    condition?: "under" | "above";
+  }[];
   tournamentDirector: string;
   tournamentHost: string;
   status: string;
@@ -96,6 +102,7 @@ interface TournamentRegistrationPayload {
     name: string;
     value: string;
   }[];
+  divisionId: string;
   successUrl?: string;
   cancelUrl?: string;
 }

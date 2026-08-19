@@ -4,27 +4,22 @@ const nameRegex = /^[a-zA-Z\s]+$/;
 const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
 
 export const editProfileSchema = z.object({
-  profileImage: z.any().optional().refine(
-    (file) => {
-      if (!file) return true;
-      if (typeof window !== "undefined" && file instanceof File) {
-        return ["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(file.type);
-      }
-      return true;
-    },
-    "Only PNG, JPG, and WEBP formats are supported."
-  ),
-  fullName: z
+  firstName: z
     .string()
     .trim()
-    .min(2, "Full name must be at least 2 characters")
-    .max(100, "Full name must be less than 100 characters")
+    .min(1, "First name is required")
+    .max(50, "First name is too long")
     .regex(nameRegex, "Name can only contain letters and spaces"),
-  division: z
+  lastName: z
     .string()
     .trim()
-    .min(1, "Division is required")
-    .max(30, "Division is too long"),
+    .min(1, "Last name is required")
+    .max(50, "Last name is too long")
+    .regex(nameRegex, "Name can only contain letters and spaces"),
+  gender: z.enum(["male", "female", "other"], {
+    errorMap: () => ({ message: "Please select a valid gender" }),
+  }),
+  sigma: z.string().optional(),
   email: z
     .string()
     .trim()
@@ -35,23 +30,33 @@ export const editProfileSchema = z.object({
     .string()
     .trim()
     .min(1, "Grade is required")
-    .max(20, "Grade is too long"),
-  parentFullName: z
-    .string()
-    .trim()
-    .min(2, "Parent full name must be at least 2 characters")
-    .max(100, "Parent full name must be less than 100 characters")
-    .regex(nameRegex, "Name can only contain letters and spaces"),
-  parentPhone: z
-    .string()
-    .trim()
-    .min(7, "Phone number must be at least 7 digits")
-    .max(20, "Phone number is too long")
-    .regex(phoneRegex, "Please enter a valid phone number"),
-  parentEmail: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .min(1, "Parent email is required")
-    .email("Please enter a valid parent email address"),
+    .regex(/^(K|[1-9]|1[0-2])$/, "Invalid grade"),
+  fatherName: z.string().max(100, "Name is too long").regex(nameRegex, "Name can only contain letters and spaces").optional().or(z.literal("")),
+  motherName: z.string().max(100, "Name is too long").regex(nameRegex, "Name can only contain letters and spaces").optional().or(z.literal("")),
+  fatherPhone: z.string().regex(phoneRegex, "Please enter a valid phone number").max(20, "Phone number is too long").optional().or(z.literal("")),
+  motherPhone: z.string().regex(phoneRegex, "Please enter a valid phone number").max(20, "Phone number is too long").optional().or(z.literal("")),
+  fatherEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
+  motherEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
+})
+.refine((data) => {
+  const hasFather = Boolean(data.fatherName && data.fatherPhone);
+  const hasMother = Boolean(data.motherName && data.motherPhone);
+  return hasFather || hasMother;
+}, {
+  message: "At least one parent's complete information (name and phone) is required.",
+  path: ["fatherName"],
+})
+.refine((data) => {
+  const fatherHasPartial = Boolean(data.fatherName || data.fatherPhone) && !(data.fatherName && data.fatherPhone);
+  return !fatherHasPartial;
+}, {
+  message: "Father's name and phone must both be provided if one is.",
+  path: ["fatherName"],
+})
+.refine((data) => {
+  const motherHasPartial = Boolean(data.motherName || data.motherPhone) && !(data.motherName && data.motherPhone);
+  return !motherHasPartial;
+}, {
+  message: "Mother's name and phone must both be provided if one is.",
+  path: ["motherName"],
 });

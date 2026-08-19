@@ -78,7 +78,7 @@ function SelectField({
 }: {
   id: string;
   label: string;
-  options: string[];
+  options: string[] | { label: string; value: string }[];
   placeholder?: string;
   error?: string;
   control: Control<any>;
@@ -97,11 +97,15 @@ function SelectField({
               <SelectValue placeholder={placeholder || "Select drop down"} />
             </SelectTrigger>
             <SelectContent>
-              {options.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
+              {options.map((option) => {
+                const val = typeof option === "string" ? option : option.value;
+                const lbl = typeof option === "string" ? option : option.label;
+                return (
+                  <SelectItem key={val} value={val}>
+                    {lbl}
+                  </SelectItem>
+                );
+              })}
             </SelectContent>
           </Select>
         )}
@@ -112,6 +116,7 @@ function SelectField({
 }
 
 interface TournamentRegistrationModalProps {
+  tournament: TournamentRegistrationTarget;
   onClose: () => void;
   onSubmit: (data: any) => void;
   register: UseFormRegister<any>;
@@ -124,6 +129,7 @@ interface TournamentRegistrationModalProps {
 }
 
 export default function TournamentRegistrationModal({
+  tournament,
   onClose,
   onSubmit,
   register,
@@ -204,6 +210,28 @@ export default function TournamentRegistrationModal({
                   />
                 );
               })}
+              {tournament.divisions && tournament.divisions.length > 0 && (
+                <SelectField
+                  id="divisionId"
+                  label="Division"
+                  placeholder="Select division"
+                  options={tournament.divisions.map((d) => {
+                    let label = d.divisionName || d.type;
+                    if (d.type === "conditional" && d.divisionName && d.condition && d.rating !== undefined) {
+                      const conditionLetter = d.condition === "above" || d.condition === "over" ? "O" : "U";
+                      label = `${d.divisionName} ${conditionLetter} ${d.rating}`;
+                    } else if (d.type === "open") {
+                      label = "Open";
+                    }
+                    return {
+                      label,
+                      value: d._id,
+                    };
+                  })}
+                  error={errors.divisionId?.message}
+                  control={control}
+                />
+              )}
             </div>
 
             <button

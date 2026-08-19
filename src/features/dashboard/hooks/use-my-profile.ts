@@ -23,7 +23,7 @@ export function useMyProfile() {
     name: user?.name || "N/A",
     userId: playerProfile?.membershipId || user?._id || "N/A",
     gender: playerProfile?.gender || "N/A",
-    school: playerProfile?.school || "N/A",
+    school: (typeof playerProfile?.school === 'object' ? playerProfile?.school?.name : playerProfile?.school) || "N/A",
     city: playerProfile?.city || "N/A",
     dateOfBirth: playerProfile?.dob
       ? new Date(playerProfile.dob).toLocaleDateString("en-US", {
@@ -72,11 +72,11 @@ export function useMyProfile() {
       }
 
       const response = await updateProfile({
-        name: values.fullName,
-        division: values.division,
+        name: `${values.firstName} ${values.lastName}`.trim(),
+        division: profile.division ?? "U18",
         grade: values.grade,
-        parentName: values.parentFullName,
-        parentNumber: values.parentPhone,
+        parentName: values.fatherName || values.motherName || "",
+        parentNumber: values.fatherPhone || values.motherPhone || "",
         ...(profileImageUrl ? { profileImage: profileImageUrl } : {}),
       });
       showApiSuccessToast(response, "Profile updated successfully");

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppDispatch } from "@/store";
 import { setCredentials } from "@/store/slices/auth.slice";
 import { useRegisterMutation } from "@/features/auth/api/auth.mutations";
-import { registerSchema } from "@/features/auth/schemas/register.schema";
+import { registerSchema, type RegisterFormDataSchemaType } from "@/features/auth/schemas/register.schema";
 import { DEFAULT_REDIRECT } from "@/config/routes";
 import {
   AUTH_TOKEN_KEY,
@@ -19,7 +19,7 @@ export function useRegister() {
   const dispatch = useAppDispatch();
   const { mutate: register, isPending, error } = useRegisterMutation();
 
-  const form = useForm<RegisterFormData>({
+  const form = useForm<RegisterFormDataSchemaType>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
@@ -27,10 +27,11 @@ export function useRegister() {
       password: "",
       firstName: "",
       lastName: "",
+      gender: undefined,
     },
   });
 
-  function onSubmit(data: RegisterFormData) {
+  function onSubmit(data: RegisterFormDataSchemaType) {
     register(data, {
       onSuccess: (response) => {
         const { accessToken, refreshToken, ...user } = response;

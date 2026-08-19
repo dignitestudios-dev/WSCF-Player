@@ -4,7 +4,10 @@ export function mapBecomeMemberToRegisterPayload(
   data: BecomeMemberFormData
 ): RegisterMemberPayload {
   return {
-    name: data.name.trim(),
+    firstName: data.firstName.trim(),
+    lastName: data.lastName.trim(),
+    gender: data.gender,
+    sigma: data.sigma,
     profileImage: data.profileImage || "",
     grade: data.grade,
     dob: data.birthDate,
@@ -13,18 +16,26 @@ export function mapBecomeMemberToRegisterPayload(
     zipCode: Number(data.zipCode),
     password: data.password,
     parents: {
-      father: {
-        name: data.fatherName,
-        phone: data.fatherPhone,
-        email: data.fatherEmail,
-        isPrimary: data.primaryEmail === "father",
-      },
-      mother: {
-        name: data.motherName,
-        phone: data.motherPhone,
-        email: data.motherEmail,
-        isPrimary: data.primaryEmail === "mother",
-      },
+      ...(data.fatherName || data.fatherPhone || data.fatherEmail
+        ? {
+            father: {
+              name: data.fatherName || "",
+              phone: data.fatherPhone || "",
+              email: data.fatherEmail || "",
+              isPrimary: data.primaryEmail === "father",
+            },
+          }
+        : {}),
+      ...(data.motherName || data.motherPhone || data.motherEmail
+        ? {
+            mother: {
+              name: data.motherName || "",
+              phone: data.motherPhone || "",
+              email: data.motherEmail || "",
+              isPrimary: data.primaryEmail === "mother",
+            },
+          }
+        : {}),
     },
   };
 }

@@ -1,22 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { usePlayerProfile } from "@/features/players/hooks/use-player-profile";
 import { Skeleton } from "@/components/ui/skeleton";
-
-function ProfileStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col justify-center">
-      <span className="text-sm font-medium leading-[19px] text-[#083F92]">{label}</span>
-      <span className="text-2xl font-semibold leading-8 text-[#083F92]">{value}</span>
-    </div>
-  );
-}
-
-function StatDivider() {
-  return <div className="h-6 w-0.5 shrink-0 bg-[#3D3775]" />;
-}
 
 function SortArrow() {
   return (
@@ -54,20 +40,18 @@ export default function PlayerProfile() {
           <Skeleton className="mb-[42px] h-[30px] w-24 rounded" />
           <Skeleton className="mb-[34px] h-[61px] w-96 rounded" />
 
-          <div className="relative mb-8 pt-[83px]">
-            <div className="relative rounded-[24px] bg-white px-4 pb-6 pt-[140px] sm:px-8 sm:pb-8 sm:pl-[282px] sm:pt-[45px]">
-              <Skeleton className="absolute -top-[83px] left-1/2 z-10 h-[198px] w-[198px] -translate-x-1/2 rounded-full border-[10px] border-[#083F92] sm:left-[52px] sm:translate-x-0" />
-              
-              <div className="flex flex-col gap-3">
-                <Skeleton className="h-[43px] w-64 rounded" />
-                <div className="flex flex-wrap items-center gap-4">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <div className="flex flex-col gap-2">
-                        <Skeleton className="h-4 w-16" />
-                        <Skeleton className="h-8 w-24" />
-                      </div>
-                      {i < 4 && <StatDivider />}
+          <div className="relative mb-6 mt-20 lg:mt-24">
+            <div className="relative rounded-[12px] bg-white p-6 lg:p-8 shadow-sm lg:min-h-[155px] flex flex-col justify-center">
+              <div className="w-full flex flex-col items-center lg:items-start">
+                <Skeleton className="h-[43px] w-64 mb-3" />
+                <div className="mt-3 flex flex-wrap items-center justify-center lg:justify-start gap-y-4">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex flex-col items-center lg:items-start gap-2 border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0"
+                    >
+                      <Skeleton className="h-[19px] w-16" />
+                      <Skeleton className="h-[32px] w-24" />
                     </div>
                   ))}
                 </div>
@@ -102,6 +86,7 @@ export default function PlayerProfile() {
     { label: "USER ID", value: player.userId },
     { label: "City", value: player.city },
     { label: "Date Of Birth", value: player.dateOfBirth },
+    { label: "School", value: player.school && player.school !== "-" && player.school !== "N/A" ? player.school : "Not assigned" },
   ];
 
   return (
@@ -136,28 +121,27 @@ export default function PlayerProfile() {
           Player Rating Lookup
         </h1>
 
-        <div className="relative mb-8 pt-[83px]">
-          <div className="relative rounded-[24px] bg-white px-4 pb-6 pt-[140px] sm:px-8 sm:pb-8 sm:pl-[282px] sm:pt-[45px]">
-            <div className="absolute -top-[83px] left-1/2 z-10 h-[198px] w-[198px] -translate-x-1/2 overflow-hidden rounded-full border-[10px] border-[#083F92] bg-[#eaeaea] sm:left-[52px] sm:translate-x-0">
-              <Image
-                src={player.avatarUrl}
-                alt={player.name}
-                fill
-                className="object-cover"
-                sizes="198px"
-              />
-            </div>
+        <div className="relative mb-6 mt-20 lg:mt-24">
+          {/* Profile Card */}
+          <div className="relative rounded-[12px] bg-white p-6 lg:p-8 shadow-sm lg:min-h-[155px] flex flex-col justify-center">
 
-            <div className="flex flex-col gap-3">
-              <h2 className="text-[32px] font-semibold leading-[43px] text-[#292D32]">
+            {/* Profile Details */}
+            <div className="w-full flex flex-col items-center lg:items-start">
+              <h2 className="text-2xl lg:text-[32px] font-semibold lg:leading-[43px] text-[#292D32] text-center lg:text-left break-words max-w-full">
                 {player.name}
               </h2>
 
-              <div className="flex flex-wrap items-center gap-4">
-                {stats.map((stat, index) => (
-                  <div key={stat.label} className="flex items-center gap-4">
-                    <ProfileStat label={stat.label} value={stat.value} />
-                    {index < stats.length - 1 && <StatDivider />}
+              {/* Stats Flex Row */}
+              <div className="mt-3 flex flex-wrap items-center justify-center lg:justify-start gap-y-4">
+                {stats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="flex flex-col items-center lg:items-start border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0"
+                  >
+                    <span className="text-sm font-medium leading-[19px] text-[#083F92]">{stat.label}</span>
+                    <span className="text-lg lg:text-2xl font-semibold leading-8 text-[#083F92] break-words text-center lg:text-left max-w-full">
+                      {stat.value}
+                    </span>
                   </div>
                 ))}
               </div>

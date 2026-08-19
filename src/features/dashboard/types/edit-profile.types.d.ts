@@ -1,10 +1,15 @@
 interface EditProfileFields {
-  fullName: string;
-  division: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  sigma?: string;
   email: string;
   grade: string;
-  parentFullName: string;
-  parentPhone: string;
-  parentEmail: string;
+  fatherName?: string;
+  motherName?: string;
+  fatherPhone?: string;
+  motherPhone?: string;
+  fatherEmail?: string;
+  motherEmail?: string;
   profileImage?: any;
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import EditProfileModal from "@/features/dashboard/components/edit-profile-modal";
 import { MY_HISTORY_ROUTE, REGISTERED_TOURNAMENTS_ROUTE } from "@/config/routes";
@@ -107,6 +106,7 @@ export default function MyProfile() {
     { label: "USER ID", value: profile.userId },
     { label: "City", value: profile.city },
     { label: "Date Of Birth", value: profile.dateOfBirth },
+    { label: "School", value: profile.school && profile.school !== "N/A" ? profile.school : "Not assigned" },
   ];
 
   const parentRows = [
@@ -134,22 +134,7 @@ export default function MyProfile() {
 
       <div className="relative mb-6 mt-20 lg:mt-24">
         {/* Profile Card */}
-        <div className="relative rounded-[12px] bg-white p-6 pt-24 pb-8 lg:py-[25px] lg:pl-[282px] lg:pr-8 shadow-sm lg:min-h-[155px] flex flex-col justify-center">
-          
-          {/* Avatar Container */}
-          <div className="absolute -top-[70px] left-1/2 -translate-x-1/2 h-[140px] w-[140px] overflow-hidden rounded-full border-8 border-[#083F92] bg-[#eaeaea] lg:absolute lg:left-[52px] lg:-top-[83px] lg:translate-x-0 lg:h-[198px] lg:w-[198px] lg:border-[10px] z-10 shadow-md">
-            {isPending ? (
-               <Skeleton className="h-full w-full rounded-full" />
-            ) : (
-              <Image
-                src={profile.avatarUrl}
-                alt={profile.name}
-                fill
-                className="object-cover"
-                sizes="(max-w-1024px) 140px, 198px"
-              />
-            )}
-          </div>
+        <div className="relative rounded-[12px] bg-white p-6 lg:p-8 shadow-sm lg:min-h-[155px] flex flex-col justify-center">
 
           {/* Profile Details */}
           <div className="w-full flex flex-col items-center lg:items-start">

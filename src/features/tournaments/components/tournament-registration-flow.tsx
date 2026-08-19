@@ -34,6 +34,7 @@ export default function TournamentRegistrationFlow({
   if (step === "registration") {
     return (
       <TournamentRegistrationModal
+        tournament={tournament}
         onClose={onClose}
         onSubmit={onRegistrationSubmit}
         register={register}
