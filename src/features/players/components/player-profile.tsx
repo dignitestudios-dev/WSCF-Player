@@ -84,6 +84,7 @@ export default function PlayerProfile() {
 
   const stats = [
     { label: "USER ID", value: player.userId },
+    { label: "Grade", value: player.grade },
     { label: "City", value: player.city },
     { label: "Date Of Birth", value: player.dateOfBirth },
     { label: "School", value: player.school && player.school !== "-" && player.school !== "N/A" ? player.school : "Not assigned" },
@@ -139,7 +140,7 @@ export default function PlayerProfile() {
                     className="flex flex-col items-center lg:items-start border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0"
                   >
                     <span className="text-sm font-medium leading-[19px] text-[#083F92]">{stat.label}</span>
-                    <span className="text-lg lg:text-2xl font-semibold leading-8 text-[#083F92] break-words text-center lg:text-left max-w-full">
+                    <span className={`text-lg lg:text-2xl font-semibold leading-8 break-words text-center lg:text-left max-w-full ${stat.value === "Not assigned" ? "text-gray-400" : "text-[#083F92]"}`}>
                       {stat.value}
                     </span>
                   </div>

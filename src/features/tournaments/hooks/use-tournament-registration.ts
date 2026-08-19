@@ -20,6 +20,7 @@ export function useTournamentRegistration(
     tournament.id
   );
   const fields = data?.data?.fields || [];
+  const divisions = data?.data?.divisions || [];
 
   const registerMutation = useTournamentRegistrationMutation(tournament.id);
 
@@ -54,7 +55,7 @@ export function useTournamentRegistration(
         }
       }
 
-      if (tournament.divisions && tournament.divisions.length > 0) {
+      if (divisions && divisions.length > 0) {
         if (!values["divisionId"]) {
           errors["divisionId"] = {
             type: "validation",
@@ -73,7 +74,7 @@ export function useTournamentRegistration(
         errors,
       };
     },
-    [tournament.divisions] // stable — reads fieldsRef.current at call time
+    [divisions] // stable — reads fieldsRef.current at call time
   );
 
   // Build reactive default values from the loaded fields.
@@ -84,11 +85,11 @@ export function useTournamentRegistration(
     for (const f of fields) {
       vals[f._id] = "";
     }
-    if (tournament.divisions && tournament.divisions.length > 0) {
+    if (divisions && divisions.length > 0) {
       vals["divisionId"] = "";
     }
     return vals;
-  }, [fields, tournament.divisions]);
+  }, [fields, divisions]);
 
   // Use the `values` option (react-hook-form v7.43+) instead of
   // form.reset() in a useEffect. `values` is reactive — when it changes
@@ -176,6 +177,7 @@ export function useTournamentRegistration(
     step,
     form,
     fields,
+    divisions,
     isFieldsPending,
     isRegistering: registerMutation.isPending,
     onRegistrationSubmit,

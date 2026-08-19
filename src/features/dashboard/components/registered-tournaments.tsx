@@ -55,6 +55,16 @@ function CalendarIcon() {
   );
 }
 
+function DivisionIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M10 3L3 7L10 11L17 7L10 3Z" fill="#083F92" />
+      <path d="M3 11L10 15L17 11" stroke="#083F92" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 14.5L10 18.5L17 14.5" stroke="#083F92" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTournament }) {
   return (
     <div className="relative group flex min-h-[108px] items-center rounded-[12px] border border-[#083F92] bg-white px-8 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer">
@@ -73,7 +83,13 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
           )}
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1.5">
+          {tournament.divisionLabel && tournament.divisionLabel !== "-" && (
+            <div className="flex items-center gap-1.5 mr-2">
+              <DivisionIcon />
+              <span className="text-sm font-medium leading-[19px] text-[#151515]">{tournament.divisionLabel}</span>
+            </div>
+          )}
+          <div className="flex items-center gap-1.5 mr-2">
             <LocationIcon />
             <span className="text-sm font-medium leading-[19px] text-[#151515]">{tournament.location}</span>
           </div>
