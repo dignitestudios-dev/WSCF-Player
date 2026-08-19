@@ -124,6 +124,7 @@ interface TournamentRegistrationModalProps {
   errors: Partial<Record<string, { message?: string }>>;
   handleSubmit: (callback: (data: any) => void) => (event?: React.BaseSyntheticEvent) => void;
   fields: FormFieldApiData[];
+  divisions?: any[];
   isFieldsPending: boolean;
   isRegistering?: boolean;
 }
@@ -137,6 +138,7 @@ export default function TournamentRegistrationModal({
   errors,
   handleSubmit,
   fields,
+  divisions = [],
   isFieldsPending,
   isRegistering,
 }: TournamentRegistrationModalProps) {
@@ -174,6 +176,20 @@ export default function TournamentRegistrationModal({
             </div>
             <Skeleton className="h-12 w-full rounded-[24px]" />
           </div>
+        ) : divisions.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center gap-3">
+            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-2">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <h3 className="text-[20px] font-semibold text-[#181818] tracking-tight">Not Eligible</h3>
+            <p className="text-[14px] text-[#181818]/70 max-w-[280px]">
+              You are not eligible for any divisions in this tournament based on your profile.
+            </p>
+          </div>
         ) : fields.length === 0 ? (
           <div className="flex justify-center p-8 text-[#181818]/60">
             No registration fields found.
@@ -210,24 +226,15 @@ export default function TournamentRegistrationModal({
                   />
                 );
               })}
-              {tournament.divisions && tournament.divisions.length > 0 && (
+              {divisions.length > 0 && (
                 <SelectField
                   id="divisionId"
                   label="Division"
                   placeholder="Select division"
-                  options={tournament.divisions.map((d) => {
-                    let label = d.divisionName || d.type;
-                    if (d.type === "conditional" && d.divisionName && d.condition && d.rating !== undefined) {
-                      const conditionLetter = d.condition === "above" || d.condition === "over" ? "O" : "U";
-                      label = `${d.divisionName} ${conditionLetter} ${d.rating}`;
-                    } else if (d.type === "open") {
-                      label = "Open";
-                    }
-                    return {
-                      label,
-                      value: d._id,
-                    };
-                  })}
+                  options={divisions.map((d) => ({
+                    label: d.label || d.divisionName || d.type,
+                    value: d._id,
+                  }))}
                   error={errors.divisionId?.message}
                   control={control}
                 />

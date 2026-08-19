@@ -243,9 +243,15 @@ export default function DashboardOverview() {
             <p className="mt-2 text-[40px] font-semibold leading-[54px] text-[#083F92]">{summary.upcomingCount}</p>
           )}
           <div className="mt-6 flex flex-col justify-between gap-4">
-            <p className="text-[22px] h-[80px] font-medium leading-[30px] text-[#083F92]">
-              {/* Your next tournaments are scheduled through Next Week. */}
-            </p>
+            {isSummaryLoading ? (
+              <Skeleton className="h-[80px] w-full" />
+            ) : (
+              <p className="text-[20px] lg:text-[22px] h-[80px] font-medium leading-[30px] text-[#083F92]">
+                {summary.nextTournamentAt 
+                  ? `Your next tournament is scheduled on ${summary.nextTournamentAt}.` 
+                  : "You have no upcoming tournaments scheduled."}
+              </p>
+            )}
             <Link href={REGISTERED_TOURNAMENTS_ROUTE} className="self-end text-sm font-medium text-[#083F92]">
               View Details
             </Link>

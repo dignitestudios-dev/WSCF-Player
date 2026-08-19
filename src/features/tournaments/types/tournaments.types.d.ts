@@ -94,6 +94,7 @@ interface TournamentFormFieldsApiResponse {
   message: string;
   data: {
     fields: FormFieldApiData[];
+    divisions?: any[];
   };
 }
 

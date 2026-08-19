@@ -56,27 +56,28 @@ export const becomeMemberSchema = z
       message: "You must agree to the terms",
     }),
   })
-  .refine((data) => {
-    const hasFather = Boolean(data.fatherName && data.fatherPhone);
-    const hasMother = Boolean(data.motherName && data.motherPhone);
-    return hasFather || hasMother;
-  }, {
-    message: "At least one parent's complete information (name and phone) is required.",
-    path: ["fatherName"],
-  })
-  .refine((data) => {
-    const fatherHasPartial = Boolean(data.fatherName || data.fatherPhone) && !(data.fatherName && data.fatherPhone);
-    return !fatherHasPartial;
-  }, {
-    message: "Father's name and phone must both be provided if one is.",
-    path: ["fatherName"],
-  })
-  .refine((data) => {
-    const motherHasPartial = Boolean(data.motherName || data.motherPhone) && !(data.motherName && data.motherPhone);
-    return !motherHasPartial;
-  }, {
-    message: "Mother's name and phone must both be provided if one is.",
-    path: ["motherName"],
+  .superRefine((data, ctx) => {
+    if (data.primaryEmail === "father") {
+      if (!data.fatherName) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Father's name is required", path: ["fatherName"] });
+      }
+      if (!data.fatherPhone) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Father's phone is required", path: ["fatherPhone"] });
+      }
+      if (!data.fatherEmail) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Father's email is required", path: ["fatherEmail"] });
+      }
+    } else if (data.primaryEmail === "mother") {
+      if (!data.motherName) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Mother's name is required", path: ["motherName"] });
+      }
+      if (!data.motherPhone) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Mother's phone is required", path: ["motherPhone"] });
+      }
+      if (!data.motherEmail) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Mother's email is required", path: ["motherEmail"] });
+      }
+    }
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

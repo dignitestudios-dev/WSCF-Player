@@ -26,6 +26,7 @@ export function useRegisteredTournaments() {
       year: "numeric"
     }),
     paymentStatus: reg.paymentStatus,
+    divisionLabel: reg.division?.label || "-",
   }));
 
   return {

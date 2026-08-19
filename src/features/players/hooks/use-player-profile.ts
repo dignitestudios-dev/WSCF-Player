@@ -38,6 +38,7 @@ export function usePlayerProfile() {
       ? new Date(profileData.dob).toLocaleDateString()
       : "-",
     currentRating: profileData?.rating || 0,
+    grade: profileData?.grade || "-",
     status: userData?.status || "-",
     avatarUrl: userData?.profilePicture || fallbackAvatar,
     tournaments: history.map((t: any) => ({

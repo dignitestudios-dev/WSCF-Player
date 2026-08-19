@@ -9,6 +9,7 @@ export interface DashboardSummary {
   currentRating: number;
   lastUpdate: string;
   upcomingCount: number;
+  nextTournamentAt: string | null;
 }
 
 export interface DashboardTournament {
@@ -68,6 +69,13 @@ export function useDashboard() {
   const membership = authData?.data?.membership;
   const profile = authData?.data?.playerProfile;
   const upcomingCount = authData?.data?.upcomingTournamentCount || 0;
+  const nextTournamentAt = authData?.data?.nextTournamentAt 
+    ? new Date(authData.data.nextTournamentAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      })
+    : null;
 
   const validTillDate = membership?.currentPeriodEnd
     ? new Date(membership.currentPeriodEnd).toLocaleDateString("en-US", {
@@ -92,6 +100,7 @@ export function useDashboard() {
     currentRating: profile?.rating || 0,
     lastUpdate: lastUpdateDate,
     upcomingCount: upcomingCount,
+    nextTournamentAt,
   };
 
   return {

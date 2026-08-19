@@ -17,7 +17,7 @@ export default function TournamentRegistrationFlow({
   onClose,
 }: TournamentRegistrationFlowProps) {
   const router = useRouter();
-  const { step, form, fields, isFieldsPending, isRegistering, onRegistrationSubmit, completePayment } = useTournamentRegistration(tournament);
+  const { step, form, fields, divisions, isFieldsPending, isRegistering, onRegistrationSubmit, completePayment } = useTournamentRegistration(tournament);
 
   const {
     register,
@@ -42,6 +42,7 @@ export default function TournamentRegistrationFlow({
         errors={errors}
         handleSubmit={handleSubmit}
         fields={fields}
+        divisions={divisions}
         isFieldsPending={isFieldsPending}
         isRegistering={isRegistering}
       />

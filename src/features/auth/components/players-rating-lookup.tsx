@@ -73,7 +73,7 @@ export default function PlayersRatingLookup() {
               No players found.
             </div>
           ) : (
-            filteredPlayers.map((player: {id: string, name: string, userId: string}, index: number) => (
+            filteredPlayers.map((player: {id: string, name: string, userId: string, rating: number}, index: number) => (
               <Link
                 key={player.id}
                 href={getPlayerProfileRoute(player.id)}
@@ -83,7 +83,9 @@ export default function PlayersRatingLookup() {
               >
                 <div className="min-w-0">
                   <p className="truncate text-base font-medium text-[#151515]">{player.name}</p>
-                  <p className="mt-1 text-sm text-[#727272]">USER ID: {player.userId}</p>
+                  <p className="mt-1 text-sm text-[#727272]">
+                    USER ID: {player.userId} &nbsp;|&nbsp; Rating: {player.rating}
+                  </p>
                 </div>
                 <span className="shrink-0 text-sm font-medium text-[#083F92]">View Profile</span>
               </Link>
