@@ -14,7 +14,9 @@ export const PUBLIC_ROUTES = [
   "/membership/cancel",
   "/membership/select-profile",
 ];
-export const PROTECTED_ROUTES = ["/dashboard"];
+// /players is the picker, the add-a-child flow and the record lookup: all of
+// them need an account, none of them is the dashboard.
+export const PROTECTED_ROUTES = ["/dashboard", "/players"];
 export const AUTH_REDIRECT = "/auth/login";
 export const MEMBER_LOGIN_ROUTE = "/auth/member-login";
 export const BECOME_MEMBER_ROUTE = "/auth/register";
@@ -35,6 +37,11 @@ export function getDashboardPlayerProfileRoute(id: string) {
 export const VERIFY_OTP_ROUTE = "/auth/verify-otp";
 export const EMAIL_VERIFIED_ROUTE = "/auth/email-verified";
 export const MEMBERSHIP_VALIDATION_ROUTE = "/auth/membership-validation";
+export {
+  SELECT_PLAYER_ROUTE,
+  ADD_PLAYER_ROUTE,
+  CLAIM_RATINGS_ROUTE,
+} from "@/features/players/routes";
 export {
   MEMBERSHIP_SUCCESS_ROUTE,
   MEMBERSHIP_CANCEL_ROUTE,

@@ -3,13 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import LogoutConfirmModal from "@/features/dashboard/components/logout-confirm-modal";
+import SwitchPlayerDialog from "@/features/players/components/switch-player-dialog";
+import { useActivePlayer } from "@/features/players/use-active-player";
 import { useAuth } from "@/hooks/use-auth";
 import {
+  ADD_PLAYER_ROUTE,
   MY_PROFILE_ROUTE,
   SETTINGS_ROUTE,
 } from "@/config/routes";
 import { cn } from "@/utils/cn";
-import { User, CircleUser, Settings, LogOut } from "lucide-react";
+import { User, CircleUser, Settings, LogOut, Users, UserPlus } from "lucide-react";
 
 
 
@@ -49,15 +52,18 @@ function ProfileMenuItem({
 }
 
 export default function ProfileMenu() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { account, activePlayer, hasMultiplePlayers } = useActivePlayer();
   const [open, setOpen] = useState(false);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const [isSwitchOpen, setIsSwitchOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const displayName = user
-    ? `${user.firstName} ${user.lastName}`.trim()
-    : "WSCF Member";
-  const email = user?.email ?? "member@wscf.org";
+  // The app is showing a player, so the menu names that player. The account
+  // email underneath is the parent's — that is who signed in.
+  const displayName =
+    activePlayer?.name?.trim() || account?.name || "WSCF Member";
+  const email = account?.email ?? "member@wscf.org";
   const profileHref = MY_PROFILE_ROUTE;
 
   useEffect(() => {
@@ -140,6 +146,27 @@ export default function ProfileMenu() {
               icon={<CircleUser className="h-[18px] w-[18px] text-[#083F92]" />}
               onNavigate={closeMenu}
             />
+            {/* With more than one player there is somewhere to switch to, and
+                the switch dialog is also where another is added. With only one
+                there is nothing to switch between, so the menu offers the one
+                thing that is actually useful: adding another. */}
+            {hasMultiplePlayers ? (
+              <ProfileMenuItem
+                label="Switch Profile"
+                icon={<Users className="h-[18px] w-[18px] text-[#083F92]" />}
+                onClick={() => {
+                  closeMenu();
+                  setIsSwitchOpen(true);
+                }}
+              />
+            ) : (
+              <ProfileMenuItem
+                href={ADD_PLAYER_ROUTE}
+                label="Add Player"
+                icon={<UserPlus className="h-[18px] w-[18px] text-[#083F92]" />}
+                onNavigate={closeMenu}
+              />
+            )}
             <ProfileMenuItem
               href={SETTINGS_ROUTE}
               label="Settings"
@@ -155,6 +182,11 @@ export default function ProfileMenu() {
         </div>
       ) : null}
     </div>
+
+      <SwitchPlayerDialog
+        open={isSwitchOpen}
+        onClose={() => setIsSwitchOpen(false)}
+      />
 
       {isLogoutOpen ? (
         <LogoutConfirmModal onClose={() => setIsLogoutOpen(false)} onConfirm={confirmLogout} />

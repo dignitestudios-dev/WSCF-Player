@@ -1,12 +1,17 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useMembershipCheckout } from "@/features/membership/hooks/use-membership-checkout";
-import { MEMBER_LOGIN_ROUTE } from "@/config/routes";
+import { useMembershipQuoteQuery } from "@/features/membership/api/membership.mutations";
 
 function CalendarIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+    <svg
+      width="36"
+      height="36"
+      viewBox="0 0 36 36"
+      fill="none"
+      aria-hidden="true"
+    >
       <rect x="4" y="6" width="28" height="26" rx="4" fill="white" />
       <rect x="4" y="6" width="28" height="8" rx="4" fill="#DADADA" />
       <rect x="10" y="18" width="4" height="4" rx="1" fill="#083F92" />
@@ -41,14 +46,32 @@ function SummaryRow({
 
   return (
     <div className="flex w-full items-center justify-between gap-4">
-      <span className="text-xs font-medium leading-4 text-[#181818]">{label}</span>
-      <span className="text-right text-xs font-normal leading-4 text-[#181818]">{value}</span>
+      <span className="text-xs font-medium leading-4 text-[#181818]">
+        {label}
+      </span>
+      <span className="text-right text-xs font-normal leading-4 text-[#181818]">
+        {value}
+      </span>
     </div>
   );
 }
 
+/**
+ * The bill, before Stripe.
+ *
+ * A membership is per player, so an account with five children owes five of
+ * them. Every player is listed by name and the arithmetic is shown in full —
+ * the total should never be a surprise at the checkout page.
+ *
+ * The figures come from the API rather than being computed here, so what is
+ * displayed is exactly what is charged.
+ */
 export default function MembershipValidation() {
   const { handleProceedToPayment, isPending } = useMembershipCheckout();
+  const { data: quote, isLoading } = useMembershipQuoteQuery();
+
+  const players = quote?.players ?? [];
+  const unitPrice = quote?.unitPrice ?? 5;
 
   return (
     <div className="flex w-full max-w-[398px] flex-col gap-[15px]">
@@ -71,17 +94,53 @@ export default function MembershipValidation() {
           Membership Summary
         </h2>
 
-        <div className="mb-6 flex flex-col gap-[19px]">
-          <SummaryRow label="Annual Membership" boldLabel />
-          <SummaryRow label="Valid From" value="July 31, 2025" />
-          <SummaryRow label="Valid Until" value="August 31, 2026" />
-          <SummaryRow label="Amount" value="$5.00" />
-        </div>
+        {isLoading ? (
+          <div className="mb-6 flex flex-col gap-3">
+            {[0, 1, 2].map((key) => (
+              <div
+                key={key}
+                className="h-4 w-full animate-pulse rounded-full bg-[#F2F2F2]"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="mb-6 flex flex-col gap-[19px]">
+            <SummaryRow label="Annual Membership" boldLabel />
+            <SummaryRow label="Valid Until" value="August 31, 2026" />
+
+            <div className="h-px w-full bg-[#F0F0F0]" />
+
+            {/* One line per player, so it is obvious what the total covers. */}
+            {players.map((player) => (
+              <SummaryRow
+                key={player._id}
+                label={player.name}
+                value={`$${unitPrice.toFixed(2)}`}
+              />
+            ))}
+
+            <div className="h-px w-full bg-[#F0F0F0]" />
+
+            <SummaryRow
+              label={`${players.length} ${players.length === 1 ? "player" : "players"} × $${unitPrice.toFixed(2)}`}
+              value={`$${(quote?.totalAmount ?? 0).toFixed(2)}`}
+            />
+
+            <div className="flex w-full items-center justify-between gap-4">
+              <span className="text-sm font-semibold leading-5 text-[#181818]">
+                Total
+              </span>
+              <span className="text-lg font-semibold leading-6 text-[#083F92]">
+                ${(quote?.totalAmount ?? 0).toFixed(2)}
+              </span>
+            </div>
+          </div>
+        )}
 
         <button
           type="button"
           onClick={handleProceedToPayment}
-          disabled={isPending}
+          disabled={isPending || isLoading || players.length === 0}
           className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
         >
           {isPending ? "Redirecting..." : "Proceed To Payment"}
@@ -89,8 +148,8 @@ export default function MembershipValidation() {
       </div>
 
       <p className="text-sm font-semibold leading-[19px] text-black">
-        Note: All memberships expire on August 31 each year. Your current plan is valid for 1 month
-        and must be renewed after expiration.
+        Note: All memberships expire on August 31 each year and cover one player
+        each.
       </p>
     </div>
   );

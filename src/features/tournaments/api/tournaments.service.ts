@@ -4,12 +4,14 @@ export async function getTournaments({
   page,
   limit,
   search,
+  status,
 }: GetTournamentsParams): Promise<TournamentsApiResponse> {
   const { data } = await axiosInstance.get<TournamentsApiResponse>("/tournament", {
     params: {
       page,
       limit,
       search: search || undefined,
+      status: status || undefined,
     },
   });
 

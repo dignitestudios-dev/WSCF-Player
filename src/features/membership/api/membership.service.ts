@@ -48,3 +48,19 @@ export async function createMembershipCheckout(
     apiMessage: data.message,
   };
 }
+
+export interface MembershipQuote {
+  unitPrice: number;
+  playerCount: number;
+  totalAmount: number;
+  players: { _id: string; name: string }[];
+}
+
+/**
+ * What the account owes right now, itemised by player. Resolved server-side so
+ * the price shown is the price charged.
+ */
+export async function getMembershipQuote(): Promise<MembershipQuote> {
+  const { data } = await axiosInstance.get("/membership/quote");
+  return data.data;
+}

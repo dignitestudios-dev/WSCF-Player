@@ -11,8 +11,6 @@ interface TournamentApiData {
     rating?: number;
     condition?: "under" | "above";
   }[];
-  tournamentDirector: string;
-  tournamentHost: string;
   status: string;
   customDropdownOptions?: any[];
   createdBy?: string;
@@ -40,6 +38,7 @@ interface GetTournamentsParams {
   page: number;
   limit: number;
   search?: string;
+  status?: "upcoming" | "ongoing" | "completed" | "cancelled";
 }
 
 interface TournamentParticipantApiData {
@@ -52,7 +51,6 @@ interface TournamentParticipantApiData {
   team?: {
     _id: string;
     name: string;
-    teamCode: string;
   };
   playerProfile?: {
     _id: string;

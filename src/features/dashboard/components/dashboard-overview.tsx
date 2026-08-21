@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import {
   DASHBOARD_PLAYERS_RATING_ROUTE,
   DASHBOARD_TOURNAMENTS_ROUTE,
-  getTournamentDetailsRoute,
   REGISTERED_TOURNAMENTS_ROUTE,
 } from "@/config/routes";
 import { useDashboard } from "@/features/dashboard/hooks/use-dashboard";
 import type { DashboardTournament } from "@/features/dashboard/hooks/use-dashboard";
+import TournamentCard from "@/features/tournaments/components/tournament-card";
 import TournamentRegistrationFlow from "@/features/tournaments/components/tournament-registration-flow";
 import { useTournamentsQuery } from "@/features/tournaments/api/tournaments.queries";
 import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
@@ -27,104 +27,13 @@ function SearchIcon() {
   );
 }
 
-function ChessIcon({ className }: { className?: string }) {
-  return (
-    <svg width="29" height="29" viewBox="0 0 29 29" fill="none" aria-hidden="true" className={className}>
-      <path
-        d="M14.5 3C11.5 3 9.5 5.5 9.5 8.5C9.5 10.5 10.5 12 12 13L10.5 18H18.5L17 13C18.5 12 19.5 10.5 19.5 8.5C19.5 5.5 17.5 3 14.5 3Z"
-        fill="currentColor"
-      />
-      <path d="M8 18H21V21C21 23 19.5 24.5 17.5 24.5H11.5C9.5 24.5 8 23 8 21V18Z" fill="currentColor" />
-    </svg>
-  );
-}
-
-function MetaItem({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <div className="flex items-center gap-1.5 ">
-      {icon}
-      <span className="text-sm font-medium line-clamp-1 text-[#151515]">{label}</span>
-    </div>
-  );
-}
-
-function LocationIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path
-        d="M10 2C7.25 2 5 4.25 5 7C5 10.75 10 17 10 17C10 17 15 10.75 15 7C15 4.25 12.75 2 10 2Z"
-        fill="#083F92"
-      />
-      <circle cx="10" cy="7" r="2" fill="white" />
-    </svg>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <rect x="3" y="4" width="14" height="13" rx="2" fill="#083F92" />
-      <rect x="3" y="4" width="14" height="4" rx="2" fill="#083F92" />
-      <rect x="6" y="2" width="2" height="4" fill="#083F92" />
-      <rect x="12" y="2" width="2" height="4" fill="#083F92" />
-    </svg>
-  );
-}
-
-function MoneyIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <circle cx="10" cy="10" r="8" fill="#083F92" />
-      <path
-        d="M10 6V14M7.5 8.5C7.5 7.5 8.5 7 10 7C11.5 7 12.5 7.5 12.5 8.5C12.5 9.5 11.5 10 10 10C8.5 10 7.5 10.5 7.5 11.5C7.5 12.5 8.5 13 10 13C11.5 13 12.5 12.5 12.5 11.5"
-        stroke="white"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function TournamentCard({
-  tournament,
-  onRegister,
-}: {
-  tournament: DashboardTournament;
-  onRegister: (tournament: DashboardTournament) => void;
-}) {
-  return (
-    <div className="relative group overflow-hidden  rounded-[12px] h-[110px] border border-[#083F92] bg-white p-6 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer">
-      <Link href={getTournamentDetailsRoute(tournament.id, "dashboard")} className="text-wrap break-word line-clamp-1 absolute inset-0 z-0" aria-label={`View details for ${tournament.title}`} />
-      <div className="relative z-10 flex flex-col gap-4 pr-44 sm:pr-52 pointer-events-none">
-        <div className="flex items-start gap-4">
-          <div className="flex h-[53px] w-[53px] shrink-0 items-center justify-center rounded-full bg-[#083F92]">
-            <ChessIcon className="text-white" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-lg break-word line-clamp-1 font-bold leading-6 text-[#083F92] group-hover:underline">{tournament.title}</h3>
-            <div className="mt-4 flex flex-wrap items-center gap-4">
-              <div className="w-[50%] line-clamp-1" >
-              <MetaItem icon={<LocationIcon />} label={tournament.location} />
-              </div><MetaItem icon={<CalendarIcon />} label={tournament.date} />
-              <MetaItem icon={<MoneyIcon />} label={tournament.price} />
-            </div>
-          </div>
-        </div>
-      </div>
-      <button
-        type="button"
-        onClick={() => onRegister(tournament)}
-        className="absolute right-6 top-1/2 z-10 h-14 -translate-y-1/2 rounded-full bg-[#083F92] px-8 text-base font-semibold text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)]"
-      >
-        Register Now
-      </button>
-    </div>
-  );
-}
-
 export default function DashboardOverview() {
   const { summary, isLoading: isSummaryLoading } = useDashboard();
-  const { data: tournamentsData, isPending } = useTournamentsQuery({ page: 1, limit: 4 });
+  const { data: tournamentsData, isPending } = useTournamentsQuery({
+    page: 1,
+    limit: 4,
+    status: "upcoming",
+  });
   const [registrationTournament, setRegistrationTournament] = useState<DashboardTournament | null>(null);
   const [isRenewMembershipOpen, setIsRenewMembershipOpen] = useState(false);
   const [isMembershipRequiredOpen, setIsMembershipRequiredOpen] = useState(false);

@@ -5,33 +5,22 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getVerifyOtpRoute } from "@/config/routes";
-import { uploadProfileImage } from "@/features/auth/api/auth.service";
 import { useBecomeMemberMutation } from "@/features/auth/api/auth.mutations";
 import {
   becomeMemberSchema,
   type BecomeMemberFormData,
 } from "@/features/auth/schemas/become-member.schema";
-import {
-  showApiErrorToast,
-  showApiSuccessToast,
-} from "@/lib/api-toast";
+import { showApiErrorToast, showApiSuccessToast } from "@/lib/api-toast";
 
 export function useBecomeMember() {
   const router = useRouter();
-  const { mutate: registerMember, isPending: isMutationPending } = useBecomeMemberMutation();
+  const { mutate: registerMember, isPending } = useBecomeMemberMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-
-  const isPending = isMutationPending || isUploading;
 
   const form = useForm<BecomeMemberFormData>({
     resolver: zodResolver(becomeMemberSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      birthDate: "",
-      grade: "",
       city: "",
       streetAddress: "",
       zipCode: "",
@@ -45,6 +34,7 @@ export function useBecomeMember() {
       password: "",
       confirmPassword: "",
       agreeToTerms: false,
+      children: [],
     },
   });
 
@@ -56,38 +46,19 @@ export function useBecomeMember() {
     setShowConfirmPassword((value) => !value);
   }
 
-  async function onSubmit(data: BecomeMemberFormData) {
-    let profileImageUrl = "";
-
-    try {
-      if (data.profileImage && data.profileImage instanceof File) {
-        setIsUploading(true);
-        const uploadResponse = await uploadProfileImage(data.profileImage);
-        profileImageUrl = uploadResponse.url;
-      }
-    } catch (error) {
-      setIsUploading(false);
-      showApiErrorToast(error as Error, "Failed to upload profile image.");
-      return;
-    }
-
-    const payload = {
-      ...data,
-      profileImage: profileImageUrl,
-    };
-
-    registerMember(payload, {
+  function onSubmit(data: BecomeMemberFormData) {
+    registerMember(data, {
       onSuccess: (response) => {
-        setIsUploading(false);
         showApiSuccessToast(response, "Registration successful");
 
+        // The account is the primary guardian's, so that is the address the
+        // verification code goes to.
         const verificationEmail =
           data.primaryEmail === "father" ? data.fatherEmail : data.motherEmail;
 
         router.push(getVerifyOtpRoute(verificationEmail!, "register"));
       },
       onError: (error) => {
-        setIsUploading(false);
         showApiErrorToast(error, "Registration failed. Please try again.");
       },
     });

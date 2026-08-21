@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
+import { REGISTERED_TOURNAMENTS_ROUTE } from "@/config/routes";
 import {
   useTournamentFormFieldsQuery,
   useTournamentRegistrationMutation,
@@ -145,8 +146,8 @@ export function useTournamentRegistration(
         divisionId,
         ...(requiresPayment
           ? {
-              successUrl: `${baseUrl}/payment/success`,
-              cancelUrl: `${baseUrl}/payment/cancel`,
+              successUrl: `${baseUrl}${REGISTERED_TOURNAMENTS_ROUTE}?payment=success`,
+              cancelUrl: `${baseUrl}${REGISTERED_TOURNAMENTS_ROUTE}?payment=cancelled`,
             }
           : {}),
       },

@@ -10,6 +10,7 @@ interface MyProfile {
   gender: string;
   sigma?: string;
   school: string;
+  team: string;
   city: string;
   dateOfBirth: string;
   email?: string;

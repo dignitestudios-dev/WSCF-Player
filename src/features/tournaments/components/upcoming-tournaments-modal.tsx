@@ -88,6 +88,21 @@ export default function UpcomingTournamentsModal({
             placeholder="Search tournaments"
             className="h-12 w-full rounded-[24px] border border-[#DADADA] bg-white pl-6 pr-14 text-sm font-light text-[#181818] outline-none"
           />
+          {search ? (
+            <button
+              type="button"
+              aria-label="Clear search"
+              onMouseDown={(event) => {
+                event.preventDefault();
+                setSearch('');
+              }}
+              className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[#ADADAD] transition-colors hover:bg-[#F2F2F2] hover:text-[#151515]"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          ) : null}
           <div className="absolute right-3 top-1 flex h-10 w-10 items-center justify-center">
             <SearchButtonIcon />
           </div>

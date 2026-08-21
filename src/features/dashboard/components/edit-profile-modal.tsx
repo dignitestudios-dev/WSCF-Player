@@ -180,7 +180,6 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                           <SelectContent>
                             <SelectItem value="male">Male</SelectItem>
                             <SelectItem value="female">Female</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
                       )}

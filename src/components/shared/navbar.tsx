@@ -24,7 +24,7 @@ export default function Navbar() {
                 Dashboard
               </Link>
               <span className="text-sm text-zinc-500">
-                {user?.firstName} {user?.lastName}
+                {user?.name}
               </span>
               <Button variant="outline" size="sm" onClick={logout}>
                 Logout

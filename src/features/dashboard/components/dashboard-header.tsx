@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import ProfileMenu from "@/features/dashboard/components/profile-menu";
+import NotificationsMenu from "@/features/notifications/components/notifications-menu";
 
 export default function DashboardHeader() {
   return (
@@ -17,6 +18,7 @@ export default function DashboardHeader() {
         </Link>
 
         <div className="flex items-center gap-2.5">
+          <NotificationsMenu />
           <ProfileMenu />
         </div>
       </div>

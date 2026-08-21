@@ -1,23 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import type { UseFormRegister, Control } from "react-hook-form";
-import { useWatch, Controller } from "react-hook-form";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import type { UseFormRegister } from "react-hook-form";
+import { useWatch } from "react-hook-form";
+import { UserPlus } from "lucide-react";
 import { EyeIcon } from "@/features/auth/components/set-new-password-icons";
+import ChildProfileCard from "@/features/auth/components/child-profile-card";
+import ChildProfileDialog from "@/features/auth/components/child-profile-dialog";
 import { useBecomeMember } from "@/features/auth/hooks/use-become-member";
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
+import type { ChildFormData } from "@/features/auth/schemas/child.schema";
+
+/** What one membership costs, per player. */
+const MEMBERSHIP_UNIT_PRICE = 5;
+
+/** Red asterisk on the labels of fields the schema rejects when empty. */
+function RequiredMark() {
+  return <span className="text-red-500">{" *"}</span>;
+}
 
 const inputClassName =
   "h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none placeholder:text-[#181818]/60 focus:ring-2 focus:ring-[#083F92]/15";
@@ -28,16 +28,13 @@ function FormField({
   type = "text",
   placeholder,
   error,
+  required,
   register,
   numericOnly,
   maxLength,
 }: {
   id: keyof Pick<
     BecomeMemberFormData,
-    | "firstName"
-    | "lastName"
-    | "birthDate"
-    | "grade"
     | "city"
     | "streetAddress"
     | "zipCode"
@@ -50,6 +47,7 @@ function FormField({
   type?: string;
   placeholder?: string;
   error?: string;
+  required?: boolean;
   register: UseFormRegister<BecomeMemberFormData>;
   numericOnly?: boolean;
   maxLength?: number;
@@ -58,6 +56,7 @@ function FormField({
     <div className="flex w-full flex-col gap-2 sm:w-[309px]">
       <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
         {label}
+        {required && <RequiredMark />}
       </label>
       <input
         id={id}
@@ -92,81 +91,13 @@ function FormField({
   );
 }
 
-function DateField({
-  id,
-  label,
-  error,
-  control,
-}: {
-  id: "birthDate";
-  label: string;
-  error?: string;
-  control: Control<BecomeMemberFormData>;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="flex w-full flex-col gap-2 sm:w-[309px]">
-      <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
-        {label}
-      </label>
-      <Controller
-        name={id}
-        control={control}
-        render={({ field }) => (
-          <Popover open={isOpen} onOpenChange={setIsOpen}>
-            <PopoverTrigger
-              onClick={() => setIsOpen(true)}
-              className={cn(
-                "flex h-11 w-full items-center justify-between rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15",
-                !field.value && "text-[#181818]/60"
-              )}
-            >
-              {field.value ? format(new Date(field.value), "MM/dd/yyyy") : <span>Pick a date</span>}
-              <CalendarIcon className="h-4 w-4 opacity-50" />
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                captionLayout="dropdown"
-                startMonth={(() => {
-                  const date = new Date();
-                  date.setFullYear(date.getFullYear() - 21);
-                  return date;
-                })()}
-                endMonth={(() => {
-                  const date = new Date();
-                  date.setFullYear(date.getFullYear() - 4);
-                  return date;
-                })()}
-                selected={field.value ? new Date(field.value) : undefined}
-                onSelect={(date) => {
-                  field.onChange(date ? format(date, "yyyy-MM-dd") : "");
-                  setIsOpen(false);
-                }}
-                disabled={(date) => {
-                  const fourYearsAgo = new Date();
-                  fourYearsAgo.setFullYear(fourYearsAgo.getFullYear() - 4);
-                  const twentyOneYearsAgo = new Date();
-                  twentyOneYearsAgo.setFullYear(twentyOneYearsAgo.getFullYear() - 21);
-                  return date > fourYearsAgo || date <= twentyOneYearsAgo;
-                }}
-              />
-            </PopoverContent>
-          </Popover>
-        )}
-      />
-      {error && <p className="text-xs text-red-600">{error}</p>}
-    </div>
-  );
-}
-
 function PasswordField({
   id,
   label,
   show,
   onToggle,
   error,
+  required,
   register,
   maxLength,
 }: {
@@ -175,6 +106,7 @@ function PasswordField({
   show: boolean;
   onToggle: () => void;
   error?: string;
+  required?: boolean;
   register: UseFormRegister<BecomeMemberFormData>;
   maxLength?: number;
 }) {
@@ -182,6 +114,7 @@ function PasswordField({
     <div className={`flex w-full flex-col gap-2 sm:w-[309px]`}>
       <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
         {label}
+        {required && <RequiredMark />}
       </label>
       <div className="relative">
         <input
@@ -211,6 +144,7 @@ function ParentEmailField({
   primaryValue,
   isPrimary,
   error,
+  required,
   register,
   maxLength,
 }: {
@@ -219,6 +153,7 @@ function ParentEmailField({
   primaryValue: "father" | "mother";
   isPrimary: boolean;
   error?: string;
+  required?: boolean;
   register: UseFormRegister<BecomeMemberFormData>;
   maxLength?: number;
 }) {
@@ -230,6 +165,7 @@ function ParentEmailField({
         <div className="flex flex-col gap-2">
           <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
             {label}
+            {required && <RequiredMark />}
           </label>
           <input
             id={id}
@@ -290,10 +226,53 @@ export default function BecomeMemberForm() {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = form;
 
-  const primaryEmail = useWatch({ control, name: "primaryEmail", defaultValue: "father" });
+  const primaryEmail = useWatch({
+    control,
+    name: "primaryEmail",
+    defaultValue: "father",
+  });
+
+  // The players being added. Held in form state so the schema can require at
+  // least one, and edited through the dialog rather than inline.
+  const children = useWatch({ control, name: "children", defaultValue: [] });
+
+  const [isChildDialogOpen, setIsChildDialogOpen] = useState(false);
+  // Which card the dialog is editing; null means it is adding a new one.
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
+  const openAddChild = () => {
+    setEditingIndex(null);
+    setIsChildDialogOpen(true);
+  };
+
+  const openEditChild = (index: number) => {
+    setEditingIndex(index);
+    setIsChildDialogOpen(true);
+  };
+
+  const saveChild = (child: ChildFormData) => {
+    const next = [...children];
+    if (editingIndex === null) {
+      next.push(child);
+    } else {
+      next[editingIndex] = child;
+    }
+    setValue("children", next, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const removeChild = (index: number) => {
+    setValue(
+      "children",
+      children.filter((_, i) => i !== index),
+      { shouldValidate: true, shouldDirty: true },
+    );
+  };
+
+  const total = children.length * MEMBERSHIP_UNIT_PRICE;
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -302,143 +281,23 @@ export default function BecomeMemberForm() {
           Become A WSCF Member
         </h1>
         <p className="text-base font-medium leading-[22px] tracking-[0.01em] text-[#565656]">
-          Please complete details to Become A Member
+          Create your parent account, then add each child who will play
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex w-full max-w-[640px] flex-col gap-4">
-
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <FormField
-              id="firstName"
-              label="First Name"
-              placeholder="John"
-              error={errors.firstName?.message}
-              register={register}
-              maxLength={50}
-            />
-            <FormField
-              id="lastName"
-              label="Last Name"
-              placeholder="Doe"
-              error={errors.lastName?.message}
-              register={register}
-              maxLength={50}
-            />
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <div className="flex w-full flex-col gap-2 sm:w-[309px]">
-              <label htmlFor="gender" className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
-                Gender
-              </label>
-              <Controller
-                control={control}
-                name="gender"
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
-                    <SelectTrigger id="gender" className={inputClassName}>
-                      <SelectValue placeholder="Select Gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.gender && (
-                <p className="text-xs text-red-600">{errors.gender.message as string}</p>
-              )}
-            </div>
-            <div className="flex w-full flex-col gap-2 sm:w-[309px]">
-              <label htmlFor="grade" className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
-                Grade
-              </label>
-              <Controller
-                control={control}
-                name="grade"
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
-                    <SelectTrigger id="grade" className={inputClassName}>
-                      <SelectValue placeholder="Select Grade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="K">K</SelectItem>
-                      {Array.from({ length: 12 }, (_, i) => String(i + 1)).map((g) => (
-                        <SelectItem key={g} value={g}>{g}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.grade && (
-                <p className="text-xs text-red-600">{errors.grade.message as string}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <DateField
-              id="birthDate"
-              label="Birth Date"
-              error={errors.birthDate?.message}
-              control={control}
-            />
-            <FormField
-              id="city"
-              label="City"
-              placeholder="Milwaukee"
-              error={errors.city?.message}
-              register={register}
-              maxLength={100}
-            />
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <FormField
-              id="streetAddress"
-              label="Street Address"
-              placeholder="NA 235 milwake"
-              error={errors.streetAddress?.message}
-              register={register}
-              maxLength={100}
-            />
-            <div className="flex w-full flex-col gap-2 sm:w-[309px]">
-              <label
-                htmlFor="zipCode"
-                className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
-              >
-                Zip Code
-              </label>
-              <div className="relative">
-                <input
-                  id="zipCode"
-                  inputMode="numeric"
-                  maxLength={5}
-                  placeholder="54231"
-                  className={inputClassName}
-                  {...register("zipCode", {
-                    onChange: (e) => {
-                      e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                    },
-                  })}
-                />
-              </div>
-              {errors.zipCode && <p className="text-xs text-red-600">{errors.zipCode.message}</p>}
-            </div>
-          </div>
-        </div>
-
-        <div className="h-px w-full border-t border-[#DDDDDD]" />
-
-        <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">Parent Details</h2>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex w-full max-w-[640px] flex-col gap-4"
+      >
+        <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
+          Parent / Guardian Details
+        </h2>
 
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
             <FormField
               id="fatherName"
+              required={primaryEmail === "father"}
               label="Father's/Guardian Full Name"
               placeholder="John Doe"
               error={errors.fatherName?.message}
@@ -447,6 +306,7 @@ export default function BecomeMemberForm() {
             />
             <FormField
               id="motherName"
+              required={primaryEmail === "mother"}
               label="Mother's/Guardian Full Name"
               placeholder="Jane Doe"
               error={errors.motherName?.message}
@@ -458,6 +318,7 @@ export default function BecomeMemberForm() {
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
             <FormField
               id="fatherPhone"
+              required={primaryEmail === "father"}
               label="Father's/Guardian Phone"
               type="tel"
               placeholder="(123) 456-7890"
@@ -467,6 +328,7 @@ export default function BecomeMemberForm() {
             />
             <FormField
               id="motherPhone"
+              required={primaryEmail === "mother"}
               label="Mother's/Guardian Phone"
               type="tel"
               placeholder="(098) 765-4321"
@@ -479,6 +341,7 @@ export default function BecomeMemberForm() {
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
             <ParentEmailField
               id="fatherEmail"
+              required={primaryEmail === "father"}
               label="Email Address"
               primaryValue="father"
               isPrimary={primaryEmail === "father"}
@@ -488,6 +351,7 @@ export default function BecomeMemberForm() {
             />
             <ParentEmailField
               id="motherEmail"
+              required={primaryEmail === "mother"}
               label="Email Address"
               primaryValue="mother"
               isPrimary={primaryEmail === "mother"}
@@ -496,13 +360,24 @@ export default function BecomeMemberForm() {
               maxLength={150}
             />
           </div>
+
+          <p className="text-xs leading-4 text-[#565656]">
+            The primary guardian&apos;s name, phone and email are required — that
+            email is the one you will sign in with. The other guardian is
+            optional.
+          </p>
         </div>
 
-        <div className="h-px w-full border-t border-[#D8D4FF]" />
+        <div className="h-px w-full border-t border-[#DDDDDD]" />
+
+        <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
+          Password
+        </h2>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
           <PasswordField
             id="password"
+            required
             label="Password"
             show={showPassword}
             onToggle={togglePassword}
@@ -512,6 +387,7 @@ export default function BecomeMemberForm() {
           />
           <PasswordField
             id="confirmPassword"
+            required
             label="Confirm Password"
             show={showConfirmPassword}
             onToggle={toggleConfirmPassword}
@@ -520,6 +396,134 @@ export default function BecomeMemberForm() {
             maxLength={100}
           />
         </div>
+
+        <div className="h-px w-full border-t border-[#DDDDDD]" />
+
+        <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
+          Home Address
+        </h2>
+
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
+            <FormField
+              id="streetAddress"
+              required
+              label="Street Address"
+              placeholder="NA 235 milwake"
+              error={errors.streetAddress?.message}
+              register={register}
+              maxLength={100}
+            />
+            <FormField
+              id="city"
+              required
+              label="City"
+              placeholder="Milwaukee"
+              error={errors.city?.message}
+              register={register}
+              maxLength={100}
+            />
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
+            <div className="flex w-full flex-col gap-2 sm:w-[309px]">
+              <label
+                htmlFor="zipCode"
+                className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
+              >
+                Zip Code
+                <RequiredMark />
+              </label>
+              <input
+                id="zipCode"
+                inputMode="numeric"
+                maxLength={5}
+                placeholder="54231"
+                className={inputClassName}
+                {...register("zipCode", {
+                  onChange: (e) => {
+                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                  },
+                })}
+              />
+              {errors.zipCode && (
+                <p className="text-xs text-red-600">{errors.zipCode.message}</p>
+              )}
+            </div>
+          </div>
+
+          <p className="text-xs leading-4 text-[#565656]">
+            One address for the household — it applies to every player you add.
+          </p>
+        </div>
+
+        <div className="h-px w-full border-t border-[#DDDDDD]" />
+
+        {/* --- the players ------------------------------------------------ */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
+              Player Profiles
+            </h2>
+            <p className="text-sm leading-5 text-[#565656]">
+              Add each child who will play. At least one is required.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={openAddChild}
+            className="flex h-11 shrink-0 items-center gap-2 rounded-[24px] bg-[#083F92] px-5 text-sm font-semibold text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875]"
+          >
+            <UserPlus className="h-4 w-4" />
+            Add Player
+          </button>
+        </div>
+
+        {children.length === 0 ? (
+          <button
+            type="button"
+            onClick={openAddChild}
+            className="flex w-full flex-col items-center gap-2 rounded-[20px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-8 text-center transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+          >
+            <UserPlus className="h-6 w-6 text-[#083F92]" />
+            <span className="text-sm font-semibold text-[#083F92]">
+              Add your first player
+            </span>
+            <span className="text-xs text-[#565656]">
+              Each player costs ${MEMBERSHIP_UNIT_PRICE} per season
+            </span>
+          </button>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {children.map((child, index) => (
+              <ChildProfileCard
+                key={`${child.firstName}-${child.lastName}-${index}`}
+                child={child}
+                onEdit={() => openEditChild(index)}
+                onRemove={() => removeChild(index)}
+              />
+            ))}
+
+            {/* The bill, shown before they commit rather than at Stripe. */}
+            <div className="flex items-center justify-between rounded-[20px] border border-[#D8D4FF] bg-white px-4 py-3">
+              <span className="text-sm leading-5 text-[#565656]">
+                {children.length}{" "}
+                {children.length === 1 ? "player" : "players"} × $
+                {MEMBERSHIP_UNIT_PRICE.toFixed(2)}
+              </span>
+              <span className="text-base font-semibold text-[#083F92]">
+                ${total.toFixed(2)}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {errors.children && (
+          <p className="text-xs text-red-600">
+            {errors.children.message as string}
+          </p>
+        )}
 
         <div className="flex flex-col gap-6 pt-2">
           <div>
@@ -530,11 +534,14 @@ export default function BecomeMemberForm() {
                 {...register("agreeToTerms")}
               />
               <span className="text-sm leading-[19px] text-[#3D3775]">
-                I agree to the Terms and Conditions of the Wisconsin Scholastic Chess Federation
+                I agree to the Terms and Conditions of the Wisconsin Scholastic
+                Chess Federation
               </span>
             </label>
             {errors.agreeToTerms && (
-              <p className="text-xs text-red-600 mt-1">{errors.agreeToTerms.message}</p>
+              <p className="mt-1 text-xs text-red-600">
+                {errors.agreeToTerms.message}
+              </p>
             )}
           </div>
 
@@ -547,6 +554,15 @@ export default function BecomeMemberForm() {
           </button>
         </div>
       </form>
+
+      {/* Mounted only while open, so each open starts from a clean form. */}
+      {isChildDialogOpen && (
+        <ChildProfileDialog
+          onClose={() => setIsChildDialogOpen(false)}
+          onSubmit={saveChild}
+          initialValue={editingIndex === null ? null : children[editingIndex]}
+        />
+      )}
     </div>
   );
 }

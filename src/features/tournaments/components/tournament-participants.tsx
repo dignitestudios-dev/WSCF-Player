@@ -101,6 +101,21 @@ function TournamentParticipantsContent({
               disabled={!tournamentId}
               className="h-12 w-full rounded-[24px] border border-[#3D3775] bg-white pl-6 pr-14 text-sm font-light text-[#808080] outline-none disabled:opacity-60"
             />
+            {query ? (
+              <button
+                type="button"
+                aria-label="Clear search"
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  setQuery('');
+                }}
+                className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[#ADADAD] transition-colors hover:bg-[#F2F2F2] hover:text-[#151515]"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            ) : null}
             <button
               type="button"
               className="absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-[#083F92] text-white disabled:opacity-60"

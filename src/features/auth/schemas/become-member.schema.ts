@@ -1,34 +1,17 @@
 import { z } from "zod";
 import { passwordFieldSchema } from "@/features/auth/schemas/password.schema";
-import { differenceInYears } from "date-fns";
+import { childSchema } from "@/features/auth/schemas/child.schema";
 
+/**
+ * Signing up creates a parent's account and the children on it.
+ *
+ * The parent's own details, the household address and the password belong to
+ * the account; everything about a player lives on a child, and at least one is
+ * required — an account with no players has nothing to do.
+ */
 export const becomeMemberSchema = z
   .object({
-    firstName: z
-      .string()
-      .min(1, "First name is required")
-      .max(50, "First name is too long")
-      .regex(/^[a-zA-Z\s]+$/, "First name can only contain letters and spaces"),
-    lastName: z
-      .string()
-      .min(1, "Last name is required")
-      .max(50, "Last name is too long")
-      .regex(/^[a-zA-Z\s]+$/, "Last name can only contain letters and spaces"),
-    gender: z.enum(["male", "female", "other"], {
-      errorMap: () => ({ message: "Please select a valid gender" }),
-    }),
-    profileImage: z.any().optional(),
-    sigma: z.string().optional(),
-    birthDate: z.string().min(1, "Birth date is required").refine((date) => {
-      const parsedDate = new Date(date);
-      if (isNaN(parsedDate.getTime())) return false;
-      return differenceInYears(new Date(), parsedDate) >= 4;
-    }, "You must be at least 4 years old").refine((date) => {
-      const parsedDate = new Date(date);
-      if (isNaN(parsedDate.getTime())) return false;
-      return differenceInYears(new Date(), parsedDate) <= 20;
-    }, "You must be 20 years old or younger"),
-    grade: z.string().min(1, "Grade is required").regex(/^(K|[1-9]|1[0-2])$/, "Invalid grade"),
+    // --- the household address, shared by every child ---
     city: z
       .string()
       .min(1, "City is required")
@@ -43,39 +26,99 @@ export const becomeMemberSchema = z
       .min(1, "Zip code is required")
       .regex(/^\d{5}$/, "Zip code must be exactly 5 digits")
       .max(5, "Zip code must be exactly 5 digits"),
-    fatherName: z.string().max(100, "Name is too long").regex(/^[a-zA-Z\s]*$/, "Name can only contain letters and spaces").optional().or(z.literal("")),
-    motherName: z.string().max(100, "Name is too long").regex(/^[a-zA-Z\s]*$/, "Name can only contain letters and spaces").optional().or(z.literal("")),
-    fatherPhone: z.string().regex(/^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
-    motherPhone: z.string().regex(/^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
-    fatherEmail: z.string().email("Invalid email address").max(150, "Email is too long").optional().or(z.literal("")),
-    motherEmail: z.string().email("Invalid email address").max(150, "Email is too long").optional().or(z.literal("")),
+
+    // --- the parents/guardians ---
+    // Names are free text: guardians write full names with initials, hyphens,
+    // apostrophes and non-Latin characters, and none of that is invalid.
+    fatherName: z
+      .string()
+      .max(100, "Name is too long")
+      .optional()
+      .or(z.literal("")),
+    motherName: z
+      .string()
+      .max(100, "Name is too long")
+      .optional()
+      .or(z.literal("")),
+    fatherPhone: z
+      .string()
+      .regex(
+        /^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/,
+        "Please enter a valid 10-digit phone number",
+      )
+      .max(14, "Phone number is too long")
+      .optional()
+      .or(z.literal("")),
+    motherPhone: z
+      .string()
+      .regex(
+        /^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/,
+        "Please enter a valid 10-digit phone number",
+      )
+      .max(14, "Phone number is too long")
+      .optional()
+      .or(z.literal("")),
+    fatherEmail: z
+      .string()
+      .email("Invalid email address")
+      .max(150, "Email is too long")
+      .optional()
+      .or(z.literal("")),
+    motherEmail: z
+      .string()
+      .email("Invalid email address")
+      .max(150, "Email is too long")
+      .optional()
+      .or(z.literal("")),
     primaryEmail: z.enum(["father", "mother"]),
+
     password: passwordFieldSchema,
     confirmPassword: z.string().min(1, "Please confirm your password"),
     agreeToTerms: z.boolean().refine((value) => value === true, {
       message: "You must agree to the terms",
     }),
+
+    // --- the players ---
+    children: z.array(childSchema).min(1, "Add at least one player profile"),
   })
+  /**
+   * Only the primary guardian is required, and they must be complete: their
+   * name, phone and email are the account's.
+   *
+   * The other guardian is entirely optional — none, one, two or all three
+   * fields are all fine. They are a contact detail, not an account.
+   */
   .superRefine((data, ctx) => {
-    if (data.primaryEmail === "father") {
-      if (!data.fatherName) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Father's name is required", path: ["fatherName"] });
-      }
-      if (!data.fatherPhone) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Father's phone is required", path: ["fatherPhone"] });
-      }
-      if (!data.fatherEmail) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Father's email is required", path: ["fatherEmail"] });
-      }
-    } else if (data.primaryEmail === "mother") {
-      if (!data.motherName) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Mother's name is required", path: ["motherName"] });
-      }
-      if (!data.motherPhone) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Mother's phone is required", path: ["motherPhone"] });
-      }
-      if (!data.motherEmail) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Mother's email is required", path: ["motherEmail"] });
+    const primary =
+      data.primaryEmail === "father"
+        ? {
+            label: "Father's",
+            name: data.fatherName,
+            phone: data.fatherPhone,
+            email: data.fatherEmail,
+            paths: ["fatherName", "fatherPhone", "fatherEmail"] as const,
+          }
+        : {
+            label: "Mother's",
+            name: data.motherName,
+            phone: data.motherPhone,
+            email: data.motherEmail,
+            paths: ["motherName", "motherPhone", "motherEmail"] as const,
+          };
+
+    const required = [
+      { value: primary.name, field: "name", path: primary.paths[0] },
+      { value: primary.phone, field: "phone", path: primary.paths[1] },
+      { value: primary.email, field: "email", path: primary.paths[2] },
+    ];
+
+    for (const { value, field, path } of required) {
+      if (!value) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${primary.label} ${field} is required`,
+          path: [path],
+        });
       }
     }
   })

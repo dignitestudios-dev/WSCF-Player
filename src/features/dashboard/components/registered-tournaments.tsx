@@ -1,6 +1,9 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import PaymentResultDialog from "@/features/tournaments/components/payment-result-dialog";
 import { getTournamentDetailsRoute } from "@/config/routes";
 import { useRegisteredTournaments } from "@/features/dashboard/hooks/use-registered-tournaments";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -113,8 +116,33 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
 export default function RegisteredTournaments() {
   const { tournaments, isPending, setPage, pagination, backHref } = useRegisteredTournaments();
 
+  // Stripe returns here with ?payment=success|cancelled. The result is shown
+  // as a dialog over the list, and the query is stripped straight away so a
+  // refresh or a back-navigation does not show it again.
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [paymentOutcome, setPaymentOutcome] = useState<"success" | "cancelled" | null>(null);
+
+  useEffect(() => {
+    const outcome = searchParams.get("payment");
+    if (outcome !== "success" && outcome !== "cancelled") return;
+
+    setPaymentOutcome(outcome);
+    router.replace(pathname, { scroll: false });
+  }, [searchParams, router, pathname]);
+
+  const closePaymentDialog = useCallback(() => setPaymentOutcome(null), []);
+
   return (
     <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+      {paymentOutcome ? (
+        <PaymentResultDialog
+          outcome={paymentOutcome}
+          onClose={closePaymentDialog}
+        />
+      ) : null}
+
       <Link
         href={backHref}
         className="mb-[27px] inline-flex items-center gap-3 text-lg font-medium leading-6 text-[#083F92]"

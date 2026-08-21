@@ -1,20 +1,19 @@
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
 
+/**
+ * Turns the signup form into the account the API creates: one parent, one
+ * household address, and every child on it.
+ */
 export function mapBecomeMemberToRegisterPayload(
-  data: BecomeMemberFormData
+  data: BecomeMemberFormData,
 ): RegisterMemberPayload {
   return {
-    firstName: data.firstName.trim(),
-    lastName: data.lastName.trim(),
-    gender: data.gender,
-    sigma: data.sigma,
-    profileImage: data.profileImage || "",
-    grade: data.grade,
-    dob: data.birthDate,
-    city: data.city,
-    streetAddress: data.streetAddress,
-    zipCode: Number(data.zipCode),
     password: data.password,
+    address: {
+      city: data.city,
+      streetAddress: data.streetAddress,
+      zipCode: Number(data.zipCode),
+    },
     parents: {
       ...(data.fatherName || data.fatherPhone || data.fatherEmail
         ? {
@@ -37,5 +36,12 @@ export function mapBecomeMemberToRegisterPayload(
           }
         : {}),
     },
+    children: data.children.map((child) => ({
+      firstName: child.firstName.trim(),
+      lastName: child.lastName.trim(),
+      gender: child.gender,
+      grade: child.grade,
+      dob: child.birthDate,
+    })),
   };
 }

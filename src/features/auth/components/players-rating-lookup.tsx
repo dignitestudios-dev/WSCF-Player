@@ -53,6 +53,21 @@ export default function PlayersRatingLookup() {
                 placeholder="Search players rating"
                 className="min-w-0 flex-1 bg-transparent text-base font-medium text-[#151515] outline-none placeholder:text-[#151515]"
               />
+              {query ? (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  onMouseDown={(event) => {
+                    event.preventDefault();
+                    setQuery('');
+                  }}
+                  className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[#ADADAD] transition-colors hover:bg-[#F2F2F2] hover:text-[#151515]"
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </button>
+              ) : null}
             </div>
           </div>
           <button

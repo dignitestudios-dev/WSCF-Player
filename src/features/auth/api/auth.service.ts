@@ -25,42 +25,36 @@ interface SignInApiResponse {
   image?: string;
 }
 
-function mapOtpVerifiedUser(
+/**
+ * The account, as the app holds it.
+ *
+ * The signed-in person is the parent; the players are the children on
+ * `children`. Both entry points — signing in and verifying the OTP — return
+ * the same shape from the API, so both map through here.
+ */
+function mapAccount(
   payload: Record<string, unknown>,
   fallbackEmail: string
 ): User {
-  const email = String(payload.email ?? fallbackEmail);
-  const fullName = String(payload.name ?? "");
-  const [firstName, ...lastNameParts] = fullName.trim().split(" ");
-
   return {
-    id: Number(payload.id ?? 0),
-    username: email.split("@")[0] || fullName || "member",
-    email,
-    firstName: firstName || "",
-    lastName: lastNameParts.join(" ") || "",
-    gender: String(payload.gender ?? ""),
-    image: String(payload.image ?? payload.avatar ?? ""),
+    _id: String(payload._id ?? ""),
+    name: String(payload.name ?? ""),
+    email: String(payload.email ?? fallbackEmail),
+    phone: (payload.phone as string) ?? null,
+    address: payload.address as User["address"],
+    parents: payload.parents as User["parents"],
+    role: payload.role as string | undefined,
+    status: payload.status as string | undefined,
+    isEmailVerified: Boolean(payload.isEmailVerified),
+    children: (payload.children as PlayerChild[]) ?? [],
+    childrenCount: Number(payload.childrenCount ?? 0),
+    needsMembershipPayment: Boolean(payload.needsMembershipPayment),
+    needsMasterFileCheck: Boolean(payload.needsMasterFileCheck),
   };
 }
 
-function mapSignInUser(
-  payload: Record<string, unknown>,
-  fallbackEmail: string
-): User {
-  const email = String(payload.email ?? fallbackEmail);
-  const username = String(payload.username ?? email.split("@")[0] ?? "member");
-
-  return {
-    id: Number(payload.id ?? 0),
-    username,
-    email,
-    firstName: String(payload.firstName ?? payload.first_name ?? ""),
-    lastName: String(payload.lastName ?? payload.last_name ?? ""),
-    gender: String(payload.gender ?? ""),
-    image: String(payload.image ?? payload.avatar ?? ""),
-  };
-}
+const mapOtpVerifiedUser = mapAccount;
+const mapSignInUser = mapAccount;
 
 export async function signInMember(
   credentials: MemberLoginCredentials

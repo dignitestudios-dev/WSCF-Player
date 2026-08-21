@@ -84,6 +84,21 @@ export const pageMetadata = {
     description:
       "Link your historical WSCF data to your new membership account.",
   },
+  selectPlayer: {
+    title: "Select Player",
+    description:
+      "Choose which of your players to open. Everything in the app shows their details.",
+  },
+  addPlayer: {
+    title: "Add Player",
+    description:
+      "Add another child to your WSCF account and purchase their membership.",
+  },
+  claimRatings: {
+    title: "Link Player Records",
+    description:
+      "Link each of your players to their existing WSCF record so their rating carries across.",
+  },
   membershipCancel: {
     title: "Membership Payment Cancelled",
     description:

@@ -108,6 +108,7 @@ export default function MyProfile() {
     { label: "City", value: profile.city },
     { label: "Date Of Birth", value: profile.dateOfBirth },
     { label: "School", value: profile.school && profile.school !== "N/A" ? profile.school : "Not assigned" },
+    { label: "Team", value: profile.team && profile.team !== "N/A" ? profile.team : "Not assigned" },
   ];
 
   const parentRows = [

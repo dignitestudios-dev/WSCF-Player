@@ -12,7 +12,12 @@ function profileToFormValues(profile: MyProfile): EditProfileFields {
   return {
     firstName,
     lastName,
-    gender: (profile.gender === "male" || profile.gender === "female" || profile.gender === "other") ? profile.gender : "" as any,
+    // A profile saved before "other" was removed falls back to empty, so the
+    // player has to pick one of the two supported values before saving.
+    gender:
+      profile.gender === "male" || profile.gender === "female"
+        ? profile.gender
+        : ("" as any),
     email: profile.email ?? "",
     grade: profile.grade ?? "",
     fatherName: profile.parent.name,

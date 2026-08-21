@@ -16,7 +16,7 @@ export const editProfileSchema = z.object({
     .min(1, "Last name is required")
     .max(50, "Last name is too long")
     .regex(nameRegex, "Name can only contain letters and spaces"),
-  gender: z.enum(["male", "female", "other"], {
+  gender: z.enum(["male", "female"], {
     errorMap: () => ({ message: "Please select a valid gender" }),
   }),
   sigma: z.string().optional(),
@@ -31,8 +31,11 @@ export const editProfileSchema = z.object({
     .trim()
     .min(1, "Grade is required")
     .regex(/^(K|[1-9]|1[0-2])$/, "Invalid grade"),
-  fatherName: z.string().max(100, "Name is too long").regex(nameRegex, "Name can only contain letters and spaces").optional().or(z.literal("")),
-  motherName: z.string().max(100, "Name is too long").regex(nameRegex, "Name can only contain letters and spaces").optional().or(z.literal("")),
+  // A guardian's name is free text, exactly as it is on signup: people write
+  // full names with initials, digits, hyphens, apostrophes and non-Latin
+  // characters, and none of that is invalid.
+  fatherName: z.string().max(100, "Name is too long").optional().or(z.literal("")),
+  motherName: z.string().max(100, "Name is too long").optional().or(z.literal("")),
   fatherPhone: z.string().regex(phoneRegex, "Please enter a valid phone number").max(20, "Phone number is too long").optional().or(z.literal("")),
   motherPhone: z.string().regex(phoneRegex, "Please enter a valid phone number").max(20, "Phone number is too long").optional().or(z.literal("")),
   fatherEmail: z.string().email("Invalid email address").optional().or(z.literal("")),

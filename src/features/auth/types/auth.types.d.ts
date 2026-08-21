@@ -20,22 +20,27 @@ interface RegisterMemberParent {
   isPrimary: boolean;
 }
 
-interface RegisterMemberPayload {
+/** One child on the account. A player is a child, never the account itself. */
+interface RegisterMemberChild {
   firstName: string;
   lastName: string;
   gender: string;
-  sigma?: string;
-  profileImage?: string;
   grade: string;
   dob: string;
-  city: string;
-  streetAddress: string;
-  zipCode: number;
+}
+
+interface RegisterMemberPayload {
   password: string;
+  address: {
+    city: string;
+    streetAddress: string;
+    zipCode: number;
+  };
   parents: {
     father?: RegisterMemberParent;
     mother?: RegisterMemberParent;
   };
+  children: RegisterMemberChild[];
 }
 
 interface RegisterMemberResponse {
@@ -43,15 +48,59 @@ interface RegisterMemberResponse {
   apiMessage?: string;
 }
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
+/**
+ * A player: one child on a parent's account. Everything the app shows —
+ * dashboard, history, notifications, tournament entries — is scoped to one of
+ * these at a time.
+ */
+interface PlayerChild {
+  _id: string;
   firstName: string;
   lastName: string;
-  gender: string;
-  sigma?: string;
-  image?: string;
+  name: string;
+  membershipId?: string;
+  grade?: string;
+  gender?: string;
+  dob?: string;
+  rating?: number;
+  masterFileChecked?: boolean;
+  masterPlayerId?: string | null;
+  school?: { _id: string; name: string } | null;
+  team?: { _id: string; name: string } | null;
+  membership?: {
+    _id: string;
+    status: "active" | "expired" | "cancelled";
+    currentPeriodStart?: string;
+    currentPeriodEnd?: string;
+  } | null;
+  hasActiveMembership?: boolean;
+}
+
+/** The signed-in account. The user is the parent, not a player. */
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  address?: {
+    city?: string | null;
+    streetAddress?: string | null;
+    zipCode?: number | null;
+  };
+  parents?: {
+    father?: RegisterMemberParent;
+    mother?: RegisterMemberParent;
+  };
+  role?: string;
+  status?: string;
+  isEmailVerified?: boolean;
+
+  children?: PlayerChild[];
+  childrenCount?: number;
+  /** A child still has no active membership, so the account owes money. */
+  needsMembershipPayment?: boolean;
+  /** A child has not been through the master players file lookup yet. */
+  needsMasterFileCheck?: boolean;
 }
 
 interface LoginResponse extends User {

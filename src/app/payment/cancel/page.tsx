@@ -1,14 +1,8 @@
-import type { Metadata } from "next";
-import { createPageMetadata } from "@/config/site-metadata";
-import LoginShell from "@/features/auth/components/login-shell";
-import PaymentCancelContent from "@/features/tournaments/components/payment-cancel-content";
+import { redirect } from "next/navigation";
+import { REGISTERED_TOURNAMENTS_ROUTE } from "@/config/routes";
 
-export const metadata: Metadata = createPageMetadata("paymentCancel");
-
+// See the success route: kept only so an in-flight checkout session created
+// before the redirect target changed still lands somewhere sensible.
 export default function PaymentCancelPage() {
-  return (
-    <LoginShell contentMaxWidth="max-w-[515px]" hideLogo>
-      <PaymentCancelContent />
-    </LoginShell>
-  );
+  redirect(`${REGISTERED_TOURNAMENTS_ROUTE}?payment=cancelled`);
 }

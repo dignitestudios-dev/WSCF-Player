@@ -1,14 +1,9 @@
-import type { Metadata } from "next";
-import { createPageMetadata } from "@/config/site-metadata";
-import LoginShell from "@/features/auth/components/login-shell";
-import PaymentSuccessContent from "@/features/tournaments/components/payment-success-content";
+import { redirect } from "next/navigation";
+import { REGISTERED_TOURNAMENTS_ROUTE } from "@/config/routes";
 
-export const metadata: Metadata = createPageMetadata("paymentSuccess");
-
+// Tournament payments now return straight to the registered tournaments list,
+// which shows the outcome as a dialog. This route only exists so a checkout
+// session created before that change still lands somewhere sensible.
 export default function PaymentSuccessPage() {
-  return (
-    <LoginShell contentMaxWidth="max-w-[515px]" hideLogo>
-      <PaymentSuccessContent />
-    </LoginShell>
-  );
+  redirect(`${REGISTERED_TOURNAMENTS_ROUTE}?payment=success`);
 }
