@@ -65,6 +65,10 @@ interface PlayerChild {
   rating?: number;
   masterFileChecked?: boolean;
   masterPlayerId?: string | null;
+  /** Barring is per player: a sibling can be active alongside a barred one. */
+  status?: "active" | "inactive";
+  deactivationReason?: string | null;
+  isActive?: boolean;
   school?: { _id: string; name: string } | null;
   team?: { _id: string; name: string } | null;
   membership?: {

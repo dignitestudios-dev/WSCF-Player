@@ -39,9 +39,15 @@ export function useActivePlayer() {
 
   const children: PlayerChild[] = data?.data?.children ?? [];
 
+  // A deactivated player cannot be acted as, so a stored choice pointing at
+  // one resolves to nobody and the picker asks again.
+  const selectablePlayers = children.filter(
+    (child) => child.status !== "inactive" && child.isActive !== false,
+  );
+
   const activePlayer =
-    children.find((child) => child._id === storedId) ??
-    (children.length === 1 ? children[0] : null);
+    selectablePlayers.find((child) => child._id === storedId) ??
+    (selectablePlayers.length === 1 ? selectablePlayers[0] : null);
 
   /** Switch the whole app to another child. */
   const switchTo = useCallback(
@@ -59,6 +65,8 @@ export function useActivePlayer() {
   return {
     account: data?.data?.user ?? null,
     children,
+    /** The ones that can actually be opened. */
+    selectablePlayers,
     activePlayer,
     /** No picker and no switch option for an only child. */
     hasMultiplePlayers: children.length > 1,

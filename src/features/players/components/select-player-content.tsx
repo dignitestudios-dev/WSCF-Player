@@ -17,6 +17,7 @@ export default function SelectPlayerContent() {
   const router = useRouter();
   const {
     children,
+    selectablePlayers,
     activePlayer,
     hasMultiplePlayers,
     isLoading,
@@ -44,12 +45,13 @@ export default function SelectPlayerContent() {
   useEffect(() => {
     if (isLoading || hasHandedOver.current) return;
 
-    if (children.length === 1) {
+    // Only one player they can actually open: nothing to choose, so open it.
+    if (selectablePlayers.length === 1) {
       hasHandedOver.current = true;
-      switchTo(children[0]._id);
+      switchTo(selectablePlayers[0]._id);
       router.replace(DEFAULT_REDIRECT);
     }
-  }, [isLoading, children, router, switchTo]);
+  }, [isLoading, selectablePlayers, router, switchTo]);
 
   if (isLoading) {
     return (

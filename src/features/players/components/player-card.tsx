@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, Ban } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function initials(player: PlayerChild) {
@@ -25,16 +25,23 @@ export default function PlayerCard({
 }) {
   const membershipActive = player.membership?.status === "active";
 
+  // Deactivation is per player: this one cannot be opened, but their siblings
+  // are unaffected and the parent still signs in normally.
+  const isDeactivated = player.status === "inactive" || player.isActive === false;
+
   return (
     <button
       type="button"
-      onClick={onSelect}
+      onClick={isDeactivated ? undefined : onSelect}
+      disabled={isDeactivated}
       aria-pressed={selected}
       className={cn(
         "flex w-full items-center gap-4 rounded-[20px] border bg-white p-4 text-left transition-colors",
-        selected
-          ? "border-[#083F92] bg-[#F2F6FF] shadow-[0px_4px_12px_rgba(8,63,146,0.12)]"
-          : "border-[#DADADA] hover:border-[#083F92]/50 hover:bg-[#F7F6FF]",
+        isDeactivated
+          ? "cursor-not-allowed border-[#DADADA] opacity-60"
+          : selected
+            ? "border-[#083F92] bg-[#F2F6FF] shadow-[0px_4px_12px_rgba(8,63,146,0.12)]"
+            : "border-[#DADADA] hover:border-[#083F92]/50 hover:bg-[#F7F6FF]",
       )}
     >
       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#083F92] text-base font-semibold text-white">
@@ -50,23 +57,41 @@ export default function PlayerCard({
           {player.membershipId ? ` · ${player.membershipId}` : ""}
           {typeof player.rating === "number" ? ` · ${player.rating}` : ""}
         </p>
-        {!membershipActive && (
+        {isDeactivated ? (
+          <span className="mt-1 w-fit rounded-full bg-[#FDECEA] px-2.5 py-0.5 text-xs font-medium text-[#B42318]">
+            Deactivated
+          </span>
+        ) : !membershipActive ? (
           <span className="mt-1 w-fit rounded-full bg-[#FDECEA] px-2.5 py-0.5 text-xs font-medium text-[#B42318]">
             Membership expired
           </span>
-        )}
+        ) : null}
+
+        {/* Whatever the admin wrote when they deactivated this player — it is
+            the only explanation the parent gets, so it is shown in full. */}
+        {isDeactivated && player.deactivationReason ? (
+          <p className="mt-1 text-xs leading-4 text-[#B42318]">
+            {player.deactivationReason}
+          </p>
+        ) : null}
       </div>
 
-      <span
-        className={cn(
-          "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
-          selected
-            ? "border-[#083F92] bg-[#083F92]"
-            : "border-[#DADADA] bg-white",
-        )}
-      >
-        {selected && <Check className="h-3.5 w-3.5 text-white" />}
-      </span>
+      {isDeactivated ? (
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#FDECEA]">
+          <Ban className="h-3.5 w-3.5 text-[#B42318]" />
+        </span>
+      ) : (
+        <span
+          className={cn(
+            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
+            selected
+              ? "border-[#083F92] bg-[#083F92]"
+              : "border-[#DADADA] bg-white",
+          )}
+        >
+          {selected && <Check className="h-3.5 w-3.5 text-white" />}
+        </span>
+      )}
     </button>
   );
 }
