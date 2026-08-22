@@ -9,6 +9,14 @@ import {
   useTournamentFormFieldsQuery,
   useTournamentRegistrationMutation,
 } from "@/features/tournaments/api/tournaments.queries";
+import type { AppliedCoupon } from "@/features/tournaments/api/coupons.service";
+
+/** `price` arrives as a display string — "$5.00", or "Free". */
+function parseEntryFee(price: string): number {
+  if (!price || price === "Free") return 0;
+  const amount = Number(String(price).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(amount) ? amount : 0;
+}
 
 export function useTournamentRegistration(
   tournament: TournamentRegistrationTarget
@@ -16,6 +24,12 @@ export function useTournamentRegistration(
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [step, setStep] = useState<TournamentRegistrationStep>("registration");
+
+  // Applied on the form before submitting, so the player sees the fee reach
+  // $0.00 before they commit to anything.
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+
+  const entryFee = parseEntryFee(tournament.price);
 
   const { data, isPending: isFieldsPending } = useTournamentFormFieldsQuery(
     tournament.id
@@ -137,13 +151,16 @@ export function useTournamentRegistration(
     const baseUrl =
       typeof window !== "undefined" ? window.location.origin : "";
 
+    // A coupon that covers the whole fee turns this into a free registration,
+    // so no checkout URLs are sent — there is nothing to check out.
     const requiresPayment =
-      tournament.price !== "Free" && tournament.price !== "$0.00";
+      entryFee > 0 && !appliedCoupon?.coversFullFee;
 
     registerMutation.mutate(
       {
         registrationData,
         divisionId,
+        ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
         ...(requiresPayment
           ? {
               successUrl: `${baseUrl}${REGISTERED_TOURNAMENTS_ROUTE}?payment=success`,
@@ -184,5 +201,9 @@ export function useTournamentRegistration(
     onRegistrationSubmit,
     completePayment,
     completeRegistrationSuccess,
+    entryFee,
+    appliedCoupon,
+    applyCoupon: setAppliedCoupon,
+    clearCoupon: () => setAppliedCoupon(null),
   };
 }

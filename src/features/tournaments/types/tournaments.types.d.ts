@@ -102,6 +102,8 @@ interface TournamentRegistrationPayload {
     value: string;
   }[];
   divisionId: string;
+  /** Re-checked server-side; a code covering the whole fee skips checkout. */
+  couponCode?: string;
   successUrl?: string;
   cancelUrl?: string;
 }
