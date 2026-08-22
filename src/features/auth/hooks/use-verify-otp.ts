@@ -66,7 +66,16 @@ export function useVerifyOtp() {
               user: response.user,
               accessToken: response.accessToken,
               dispatch,
-              setCookie: from !== "register" && from !== "forgot-password",
+              // Signing up authenticates you: the rest of onboarding — paying,
+              // linking records, picking a player — runs behind the route
+              // guard, which reads the cookie. Without it the first protected
+              // step bounces to the login page, which reads as being logged
+              // out mid-signup.
+              //
+              // Resetting a password is the exception. That token is carried in
+              // the URL to the reset screen, and a cookie would bounce the user
+              // to the dashboard before they had set the new password.
+              setCookie: from !== "forgot-password",
             });
           }
 
