@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { DEFAULT_REDIRECT } from "@/config/routes";
-import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
 import { useUserTournamentHistoryQuery } from "@/features/players/api/players.queries";
+import { useActivePlayer } from "@/features/players/use-active-player";
 
 const PAGE_SIZE = 10;
 
@@ -24,13 +24,15 @@ function getOrdinalSuffix(i: number) {
 
 export function useMyHistory() {
   const [page, setPage] = useState(1);
-  const { data: authData } = useAuthUserQuery();
-  const userId = authData?.data?.user?._id;
+
+  // A history belongs to a player, not to the account. Passing the parent's id
+  // here returned nothing at all, since no participation is recorded against
+  // an account.
+  const { activePlayer } = useActivePlayer();
 
   const { data, isPending } = useUserTournamentHistoryQuery(
-    userId as string,
+    activePlayer?._id as string,
     { page, limit: PAGE_SIZE, status: "completed" }
-
   );
 
   const history = data?.data?.history || [];
@@ -38,14 +40,20 @@ export function useMyHistory() {
 
   const mappedTournaments = history.map((t: any) => {
     const d = t.tournament?.date ? new Date(t.tournament.date) : null;
+    // Null until the tournament's results have been published.
+    const result = t.result;
+
     return {
       id: t._id || Math.random().toString(),
       name: t.tournament?.title || "Unknown",
       date: d ? `${d.getDate()}${getOrdinalSuffix(d.getDate())}` : "-",
       month: d ? d.toLocaleString("default", { month: "long" }) : "-",
       year: d ? d.getFullYear().toString() : "-",
-      rating: t.rating || "-",
-      ratingChange: t.ratingChange || "-",
+      rating: result?.rating ?? "-",
+      place: result?.place ?? null,
+      points: result?.points ?? null,
+      trophyPlace: result?.trophyPlace ?? null,
+      hasResult: Boolean(result),
     };
   });
 

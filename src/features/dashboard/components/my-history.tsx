@@ -87,7 +87,7 @@ export default function MyHistory() {
             <SortableHeader label="Month" />
             <SortableHeader label="Year" />
             <SortableHeader label="Rating" />
-            <SortableHeader label="Rating Change" />
+            <SortableHeader label="Place" />
             <span>Action</span>
           </div>
 
@@ -116,10 +116,27 @@ export default function MyHistory() {
                 <span>{tournament.month}</span>
                 <span>{tournament.year}</span>
                 <span>{tournament.rating}</span>
-                <span>{tournament.ratingChange}</span>
-                <button type="button" className="text-left font-semibold underline">
-                  Result
-                </button>
+                <span>
+                  {tournament.place ? (
+                    <>
+                      {tournament.place}
+                      {tournament.trophyPlace ? (
+                        <span className="ml-1.5 rounded-full bg-[#FFF4E5] px-2 py-0.5 text-xs font-semibold text-[#B54708]">
+                          Trophy
+                        </span>
+                      ) : null}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </span>
+                {/* Until the results are published there is nothing behind
+                    this, so it says so rather than offering a dead link. */}
+                <span className="text-left font-semibold">
+                  {tournament.hasResult
+                    ? `${tournament.points ?? "-"} pts`
+                    : "Awaiting results"}
+                </span>
               </div>
             ))
           ) : (
