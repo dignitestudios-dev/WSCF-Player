@@ -3,6 +3,8 @@
 import { Controller } from "react-hook-form";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import type { UseFormRegister, Control } from "react-hook-form";
+import CouponField from "@/features/tournaments/components/coupon-field";
+import type { AppliedCoupon } from "@/features/tournaments/api/coupons.service";
 import {
   Select,
   SelectContent,
@@ -127,6 +129,11 @@ interface TournamentRegistrationModalProps {
   divisions?: any[];
   isFieldsPending: boolean;
   isRegistering?: boolean;
+  /** Only offered when there is a fee to discount. */
+  entryFee?: number;
+  appliedCoupon?: AppliedCoupon | null;
+  onCouponApplied?: (coupon: AppliedCoupon) => void;
+  onCouponCleared?: () => void;
 }
 
 export default function TournamentRegistrationModal({
@@ -141,7 +148,14 @@ export default function TournamentRegistrationModal({
   divisions = [],
   isFieldsPending,
   isRegistering,
+  entryFee = 0,
+  appliedCoupon = null,
+  onCouponApplied,
+  onCouponCleared,
 }: TournamentRegistrationModalProps) {
+  // A free tournament has nothing to discount, so the box is not shown at all
+  // rather than shown and then refused.
+  const canUseCoupon = entryFee > 0 && Boolean(onCouponApplied);
   return (
     <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent
@@ -241,12 +255,29 @@ export default function TournamentRegistrationModal({
               )}
             </div>
 
+            {canUseCoupon && (
+              <div className="border-t border-[#EFEFEF] pt-5">
+                <CouponField
+                  tournamentId={tournament.id}
+                  entryFee={entryFee}
+                  applied={appliedCoupon}
+                  onApplied={onCouponApplied!}
+                  onCleared={onCouponCleared!}
+                  disabled={isRegistering}
+                />
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={isRegistering}
               className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isRegistering ? "Submitting..." : "Submit"}
+              {isRegistering
+                ? "Submitting..."
+                : appliedCoupon?.coversFullFee
+                  ? "Register for Free"
+                  : "Submit"}
             </button>
           </form>
         )}
