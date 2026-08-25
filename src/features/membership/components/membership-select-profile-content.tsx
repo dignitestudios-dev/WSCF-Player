@@ -21,7 +21,7 @@ export default function MembershipSelectProfileContent() {
   return (
     <div className="flex w-full flex-col gap-3">
       <div className="h-6 w-2/3 animate-pulse rounded-full bg-[#F2F2F2]" />
-      <div className="h-[84px] w-full animate-pulse rounded-[20px] bg-[#F2F2F2]" />
+      <div className="h-[84px] w-full animate-pulse rounded-[24px] bg-[#F2F2F2]" />
     </div>
   );
 }

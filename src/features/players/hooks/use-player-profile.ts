@@ -44,16 +44,31 @@ export function usePlayerProfile() {
     currentRating: profileData?.rating || 0,
     grade: profileData?.grade || "-",
     status: profileData?.status || "-",
+    team: profileData?.team?.name || "-",
     avatarUrl: account?.profilePicture || fallbackAvatar,
-    tournaments: history.map((t: any) => ({
-      id: t._id || Math.random().toString(),
-      name: t.tournament?.title || "Unknown Tournament",
-      date: t.tournament?.date
-        ? new Date(t.tournament.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-        : "-",
-      rating: t.rating || "-",
-      ratingChange: t.ratingChange || "-",
-    })),
+    // A history row carries its rating and points under `result`, which stays
+    // null until that tournament's results are published. Reading them off the
+    // row itself — as this used to — found nothing and printed "-" for every
+    // tournament the player had ever played.
+    tournaments: history.map((t: any) => {
+      const result = t.result;
+
+      return {
+        id: t._id || Math.random().toString(),
+        name: t.tournament?.title || "Unknown Tournament",
+        date: t.tournament?.date
+          ? new Date(t.tournament.date).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "-",
+        rating: result?.rating ?? "-",
+        points: result?.points ?? "-",
+        place: result?.place ?? null,
+        hasResult: Boolean(result),
+      };
+    }),
   };
 
   return {

@@ -88,6 +88,13 @@ export default function PlayerProfile() {
     { label: "City", value: player.city },
     { label: "Date Of Birth", value: player.dateOfBirth },
     { label: "School", value: player.school && player.school !== "-" && player.school !== "N/A" ? player.school : "Not assigned" },
+    {
+      label: "Team",
+      value:
+        player.team && player.team !== "-" && player.team !== "N/A"
+          ? player.team
+          : "Not assigned",
+    },
   ];
 
   return (
@@ -181,7 +188,7 @@ export default function PlayerProfile() {
                 Rating
                 <SortArrow />
               </span>
-              <span className="ml-auto w-[109px] shrink-0 text-right">Rating change</span>
+              <span className="ml-auto w-[109px] shrink-0 text-right">Points</span>
             </div>
 
             {player.tournaments.map((tournament: any, index: number) => (
@@ -194,9 +201,20 @@ export default function PlayerProfile() {
                 <span className="w-[158px] shrink-0">{tournament.name}</span>
                 <span className="w-[80px] shrink-0">{tournament.date}</span>
                 <span className="w-[80px] shrink-0">{tournament.rating}</span>
-                <span className="ml-auto w-[109px] shrink-0 text-right">{tournament.ratingChange}</span>
+                <span className="ml-auto w-[109px] shrink-0 text-right">
+                  {tournament.points}
+                </span>
               </div>
             ))}
+
+            {/* A player who has entered nothing yet, or whose tournaments have
+                not had their results published, would otherwise get a heading
+                row and then nothing at all. */}
+            {player.tournaments.length === 0 ? (
+              <div className="px-5 py-8 text-center text-sm text-[#787878]">
+                No completed tournaments yet.
+              </div>
+            ) : null}
             </div>
           </div>
         </div>

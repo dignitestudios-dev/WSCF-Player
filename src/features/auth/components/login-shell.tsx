@@ -20,17 +20,19 @@ export default function LoginShell({
   hideLogo = false,
   matchLeftPanelToContent = false,
 }: LoginShellProps) {
-  const leftImageClassName = matchLeftPanelToContent
-    ? "relative min-h-[320px] flex-1 overflow-hidden rounded-[44px] bg-[#eaeaea]"
-    : "relative h-[min(960px,calc(107vh-6rem))] overflow-hidden rounded-[44px] bg-[#eaeaea]";
+  // On a wide screen the picture stays put and only the form scrolls. The
+  // long forms — signup especially — used to push the whole page down, taking
+  // the artwork and the logo off the top of the screen with them.
+  const leftImageClassName =
+    "relative min-h-[320px] flex-1 overflow-hidden rounded-[44px] bg-[#eaeaea]";
 
   const leftColumnClassName = matchLeftPanelToContent
-    ? "relative hidden w-full shrink-0 px-6 py-8 lg:flex lg:w-[682px] lg:flex-col lg:px-10 lg:py-12"
-    : "relative hidden w-full shrink-0 px-6 py-8 lg:block lg:w-[682px] lg:px-10 lg:py-4";
+    ? "relative hidden w-full shrink-0 px-6 py-8 lg:flex lg:h-screen lg:w-[682px] lg:flex-col lg:px-10 lg:py-12"
+    : "relative hidden w-full shrink-0 px-6 py-8 lg:flex lg:h-screen lg:w-[682px] lg:flex-col lg:px-10 lg:py-4";
 
   const rowClassName = matchLeftPanelToContent
-    ? "relative mx-auto flex max-w-[1640px] flex-col lg:flex-row lg:items-stretch"
-    : "relative mx-auto flex min-h-screen max-w-[1640px] flex-col lg:flex-row";
+    ? "relative mx-auto flex max-w-[1640px] flex-col lg:h-screen lg:flex-row lg:items-stretch lg:overflow-hidden"
+    : "relative mx-auto flex min-h-screen max-w-[1640px] flex-col lg:h-screen lg:flex-row lg:overflow-hidden";
   return (
     <div className="relative min-h-screen bg-wscf-bg">
       <div
@@ -72,8 +74,8 @@ export default function LoginShell({
         </div>
 
         <div
-          className={`relative flex flex-1 flex-col px-6 py-8 lg:px-16 lg:py-12 ${
-            matchLeftPanelToContent ? "min-w-0" : "overflow-hidden"
+          className={`relative flex flex-1 flex-col overflow-x-hidden px-6 py-8 lg:h-screen lg:overflow-y-auto lg:px-16 lg:py-12 ${
+            matchLeftPanelToContent ? "min-w-0" : ""
           }`}
         >
           {showBack && (
@@ -83,13 +85,13 @@ export default function LoginShell({
           )}
 
           {!matchLeftPanelToContent && (
-            <div className="pointer-events-none absolute -right-12 bottom-0 z-0 hidden xl:block">
+            <div className="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden xl:block">
               <Image
                 src="/images/loginbottom.png"
                 alt=""
                 width={400}
                 height={400}
-                className="rotate-[-20deg] object-contain opacity-90"
+                className="absolute -right-12 bottom-0 rotate-[-20deg] object-contain opacity-90"
                 aria-hidden="true"
               />
             </div>

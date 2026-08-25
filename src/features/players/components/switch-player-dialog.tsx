@@ -81,7 +81,7 @@ export default function SwitchPlayerDialog({
               onClose();
               router.push(ADD_PLAYER_ROUTE);
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-[20px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+            className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
           >
             <UserPlus className="h-4 w-4" />
             Add another player

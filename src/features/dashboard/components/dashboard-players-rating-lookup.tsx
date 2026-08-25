@@ -100,7 +100,7 @@ export default function DashboardPlayersRatingLookup() {
           </div>
         ) : filteredPlayers.length > 0 ? (
           <div className="overflow-hidden rounded-[12px] border border-[#DADADA] bg-white">
-            {filteredPlayers.map((player: { id: string; name: string; userId: string; rating: number }, index: number) => (
+            {filteredPlayers.map((player: { id: string; name: string; userId: string; rating: number; team: string }, index: number) => (
               <Link
                 key={player.id}
                 href={getDashboardPlayerProfileRoute(player.id)}

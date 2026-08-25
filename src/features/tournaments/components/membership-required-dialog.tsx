@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useMembershipCheckoutMutation } from "@/features/membership/api/membership.mutations";
 import {
   Dialog,
@@ -60,7 +61,14 @@ export default function MembershipRequiredDialog({
             disabled={isPending}
             className="h-12 flex-1 rounded-[24px] bg-[#083F92] text-base font-semibold capitalize leading-[22px] text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition hover:bg-[#063275] disabled:opacity-50"
           >
-            {isPending ? "Loading..." : "Buy / Renew"}
+            {isPending ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Loading
+              </span>
+            ) : (
+              "Buy / Renew"
+            )}
           </button>
         </div>
       </DialogContent>

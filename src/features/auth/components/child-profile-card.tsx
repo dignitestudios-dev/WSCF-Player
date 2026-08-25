@@ -26,7 +26,7 @@ export default function ChildProfileCard({
   onRemove?: () => void;
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-[20px] border border-[#D8D4FF] bg-[#F7F6FF] p-4">
+    <div className="flex items-center gap-4 rounded-[24px] border border-[#D8D4FF] bg-[#F7F6FF] p-4">
       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#083F92] text-base font-semibold text-white">
         {initials(child)}
       </div>

@@ -4,6 +4,7 @@ import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
 
 export interface DashboardSummary {
   membershipStatus: string;
+  hasMembership: boolean;
   validTill: string;
   userId: string;
   currentRating: number;
@@ -94,7 +95,17 @@ export function useDashboard() {
     : "N/A";
 
   const summary: DashboardSummary = {
-    membershipStatus: membership?.status === "active" ? "Active" : "Inactive",
+    // "Inactive" covered two different situations that need different words
+    // and a different button: a lapsed member renews, someone who has never
+    // joined buys. `membership` is null when nothing was ever purchased.
+    membershipStatus: !membership
+      ? "Not a member"
+      : membership.status === "active"
+        ? "Active"
+        : membership.status === "cancelled"
+          ? "Cancelled"
+          : "Expired",
+    hasMembership: Boolean(membership),
     validTill: validTillDate,
     userId: profile?.membershipId || user?._id || "N/A",
     currentRating: profile?.rating || 0,

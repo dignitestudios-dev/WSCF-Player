@@ -28,15 +28,19 @@ export function useDashboardPlayersRatingLookup() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const filteredPlayers = apiUsers.map((user: any) => {
-    const firstName = user.playerProfile?.firstName || user.firstName || "";
-    const lastName = user.playerProfile?.lastName || user.lastName || "";
-    const combinedName = [firstName, lastName].filter(Boolean).join(" ");
-    
+    // GET /user returns the player row flat — firstName, rating and
+    // membershipId sit at the top level, not under a `playerProfile` key.
+    // Reading a nested one silently produced "Rating: 0" for everybody.
+    const combinedName = [user.firstName, user.lastName]
+      .filter(Boolean)
+      .join(" ");
+
     return {
       id: user._id,
       name: combinedName || user.name || "Unknown Player",
-      userId: user.playerProfile?.membershipId || user._id,
-      rating: user.playerProfile?.rating || 0,
+      userId: user.membershipId || user._id,
+      rating: user.rating ?? 0,
+      team: user.team?.name || "",
     };
   });
 

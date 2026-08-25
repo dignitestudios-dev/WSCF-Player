@@ -59,7 +59,7 @@ export default function SelectPlayerContent() {
         {[0, 1].map((key) => (
           <div
             key={key}
-            className="h-[84px] w-full animate-pulse rounded-[20px] bg-[#F2F2F2]"
+            className="h-[84px] w-full animate-pulse rounded-[24px] bg-[#F2F2F2]"
           />
         ))}
       </div>

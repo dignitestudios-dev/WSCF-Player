@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Controller } from "react-hook-form";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import type { UseFormRegister, Control } from "react-hook-form";
@@ -153,6 +154,8 @@ export default function TournamentRegistrationModal({
   onCouponApplied,
   onCouponCleared,
 }: TournamentRegistrationModalProps) {
+  const [isCheckingCoupon, setIsCheckingCoupon] = useState(false);
+
   // A free tournament has nothing to discount, so the box is not shown at all
   // rather than shown and then refused.
   const canUseCoupon = entryFee > 0 && Boolean(onCouponApplied);
@@ -203,10 +206,6 @@ export default function TournamentRegistrationModal({
             <p className="text-[14px] text-[#181818]/70 max-w-[280px]">
               You are not eligible for any divisions in this tournament based on your profile.
             </p>
-          </div>
-        ) : fields.length === 0 ? (
-          <div className="flex justify-center p-8 text-[#181818]/60">
-            No registration fields found.
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
@@ -264,13 +263,17 @@ export default function TournamentRegistrationModal({
                   onApplied={onCouponApplied!}
                   onCleared={onCouponCleared!}
                   disabled={isRegistering}
+                  onCheckingChange={setIsCheckingCoupon}
                 />
               </div>
             )}
 
             <button
               type="submit"
-              disabled={isRegistering}
+              // A coupon still being checked may yet change the fee, so the
+              // registration cannot be submitted against a total that is about
+              // to move.
+              disabled={isRegistering || isCheckingCoupon}
               className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isRegistering

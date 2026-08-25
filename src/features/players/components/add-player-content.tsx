@@ -100,7 +100,7 @@ export default function AddPlayerContent() {
         <button
           type="button"
           onClick={openAddChild}
-          className="flex w-full flex-col items-center gap-2 rounded-[20px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-8 text-center transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+          className="flex w-full flex-col items-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-8 text-center transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
         >
           <UserPlus className="h-6 w-6 text-[#083F92]" />
           <span className="text-sm font-semibold text-[#083F92]">
@@ -124,13 +124,13 @@ export default function AddPlayerContent() {
           <button
             type="button"
             onClick={openAddChild}
-            className="flex w-full items-center justify-center gap-2 rounded-[20px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+            className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
           >
             <UserPlus className="h-4 w-4" />
             Add another player
           </button>
 
-          <div className="flex items-center justify-between rounded-[20px] border border-[#D8D4FF] bg-white px-4 py-3">
+          <div className="flex items-center justify-between rounded-[24px] border border-[#D8D4FF] bg-white px-4 py-3">
             <span className="text-sm leading-5 text-[#565656]">
               {children.length} {children.length === 1 ? "player" : "players"} ×
               ${MEMBERSHIP_UNIT_PRICE.toFixed(2)}

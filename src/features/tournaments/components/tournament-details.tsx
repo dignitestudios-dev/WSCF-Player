@@ -8,6 +8,7 @@ import {
 } from "@/config/routes";
 import { useTournamentDetails } from "@/features/tournaments/hooks/use-tournament-details";
 import { useTournamentParticipantsQuery, useTournamentDetailsQuery } from "@/features/tournaments/api/tournaments.queries";
+import { useActivePlayer } from "@/features/players/use-active-player";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function BackIcon() {
@@ -36,6 +37,7 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
   const { data: participantsData, isPending: isParticipantsPending } = useTournamentParticipantsQuery(tournamentId, { page: 1, limit: 10 });
   
   const apiParticipants = participantsData?.data.participants || [];
+  const { activePlayer } = useActivePlayer();
   const registeredCount = participantsData?.pagination?.totalItems ?? 0;
   const showViewAll = (participantsData?.pagination?.totalPages ?? 0) > 1;
   const tournament = detailsData?.data.tournament;
@@ -133,14 +135,25 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
               apiParticipants.map((participant, index) => {
                 const userId = participant.playerProfile?.membershipId || participant.user._id;
                 const rating = participant.playerProfile?.rating || 0;
-                
+                // The parent is looking at a list their own child is in, so
+                // say which row that is rather than leaving them to spot the
+                // name themselves.
+                const isMe = participant.user._id === activePlayer?._id;
+
                 return (
                   <div
                     key={participant._id}
                     className={`${GRID_COLS} h-[47px] items-center border-b border-[#F2F2F2] bg-white px-6 text-base font-medium text-[#151515] last:border-b-0`}
                   >
                     <span>{index + 1}</span>
-                    <span>{participant.user.name}</span>
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="truncate">{participant.user.name}</span>
+                      {isMe ? (
+                        <span className="shrink-0 rounded-full bg-[#083F92]/10 px-2 py-0.5 text-xs font-semibold text-[#083F92]">
+                          You
+                        </span>
+                      ) : null}
+                    </span>
                     <span>{userId}</span>
                     <span>
                       <span className="inline-flex h-8 min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white">

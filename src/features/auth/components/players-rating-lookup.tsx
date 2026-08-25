@@ -88,7 +88,7 @@ export default function PlayersRatingLookup() {
               No players found.
             </div>
           ) : (
-            filteredPlayers.map((player: {id: string, name: string, userId: string, rating: number}, index: number) => (
+            filteredPlayers.map((player: {id: string; name: string; userId: string; rating: number; team: string}, index: number) => (
               <Link
                 key={player.id}
                 href={getPlayerProfileRoute(player.id)}

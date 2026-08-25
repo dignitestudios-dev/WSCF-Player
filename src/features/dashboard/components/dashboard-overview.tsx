@@ -93,13 +93,16 @@ export default function DashboardOverview() {
                   <span className="inline-flex w-fit rounded-full bg-white px-3 py-2 text-sm font-medium capitalize text-[#083F92]">
                     {summary.membershipStatus}
                   </span>
-                  {summary.membershipStatus === "Inactive" && (
+                  {summary.membershipStatus !== "Active" && (
                     <button
                       type="button"
                       onClick={() => setIsRenewMembershipOpen(true)}
                       className="mt-1 w-fit rounded-full border border-white px-4 py-1.5 text-sm font-medium text-white transition hover:bg-white/10"
                     >
-                      Renew Membership
+                      {/* Someone who has never joined is not renewing. */}
+                      {summary.hasMembership
+                        ? "Renew Membership"
+                        : "Become a Member"}
                     </button>
                   )}
                 </div>
@@ -226,7 +229,10 @@ export default function DashboardOverview() {
       ) : null}
       
       {isRenewMembershipOpen ? (
-        <RenewMembershipConfirmModal onClose={() => setIsRenewMembershipOpen(false)} />
+        <RenewMembershipConfirmModal
+          hasMembership={summary.hasMembership}
+          onClose={() => setIsRenewMembershipOpen(false)}
+        />
       ) : null}
 
       <MembershipRequiredDialog 

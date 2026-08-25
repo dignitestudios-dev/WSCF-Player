@@ -23,6 +23,7 @@ export default function CouponField({
   onApplied,
   onCleared,
   disabled = false,
+  onCheckingChange,
 }: {
   tournamentId: string;
   entryFee: number;
@@ -30,12 +31,16 @@ export default function CouponField({
   onApplied: (coupon: AppliedCoupon) => void;
   onCleared: () => void;
   disabled?: boolean;
+  /** Told whenever a check starts or finishes, so the form can hold Submit. */
+  onCheckingChange?: (checking: boolean) => void;
 }) {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const { mutate: apply, isPending } = useMutation({
     mutationFn: () => validateCoupon({ code: code.trim(), tournamentId }),
+    onMutate: () => onCheckingChange?.(true),
+    onSettled: () => onCheckingChange?.(false),
     onSuccess: (coupon) => {
       setError(null);
       onApplied(coupon);
@@ -61,7 +66,7 @@ export default function CouponField({
   if (applied) {
     return (
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-3 rounded-[20px] border border-[#0F8B4C] bg-[#EDF9F2] px-4 py-3">
+        <div className="flex items-center gap-3 rounded-[24px] border border-[#0F8B4C] bg-[#EDF9F2] px-4 py-3">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0F8B4C]">
             <Check className="h-4 w-4 text-white" />
           </span>

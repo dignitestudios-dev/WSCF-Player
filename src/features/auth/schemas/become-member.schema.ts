@@ -15,7 +15,7 @@ export const becomeMemberSchema = z
     city: z
       .string()
       .min(1, "City is required")
-      .max(100, "City is too long")
+      .max(50, "City cannot exceed 50 characters")
       .regex(/^[a-zA-Z\s]+$/, "City can only contain letters and spaces"),
     streetAddress: z
       .string()

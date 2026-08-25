@@ -23,7 +23,16 @@ export default function PlayerCard({
   selected?: boolean;
   onSelect: () => void;
 }) {
-  const membershipActive = player.membership?.status === "active";
+  // Three states, not two. A membership that was never bought is not an
+  // expired one, and telling a parent their membership "expired" when they
+  // have never had one sends them looking for a renewal that does not exist.
+  const membership = player.membership;
+  const membershipActive = membership?.status === "active";
+  const membershipLabel = !membership
+    ? "Not a member yet"
+    : membership.status === "cancelled"
+      ? "Membership cancelled"
+      : "Membership expired";
 
   // Deactivation is per player: this one cannot be opened, but their siblings
   // are unaffected and the parent still signs in normally.
@@ -36,7 +45,7 @@ export default function PlayerCard({
       disabled={isDeactivated}
       aria-pressed={selected}
       className={cn(
-        "flex w-full items-center gap-4 rounded-[20px] border bg-white p-4 text-left transition-colors",
+        "flex w-full items-center gap-4 rounded-[24px] border bg-white p-4 text-left transition-colors",
         isDeactivated
           ? "cursor-not-allowed border-[#DADADA] opacity-60"
           : selected
@@ -62,8 +71,15 @@ export default function PlayerCard({
             Deactivated
           </span>
         ) : !membershipActive ? (
-          <span className="mt-1 w-fit rounded-full bg-[#FDECEA] px-2.5 py-0.5 text-xs font-medium text-[#B42318]">
-            Membership expired
+          <span
+            className={cn(
+              "mt-1 w-fit rounded-full px-2.5 py-0.5 text-xs font-medium",
+              membership
+                ? "bg-[#FDECEA] text-[#B42318]"
+                : "bg-[#FFF7E6] text-[#B54708]",
+            )}
+          >
+            {membershipLabel}
           </span>
         ) : null}
 

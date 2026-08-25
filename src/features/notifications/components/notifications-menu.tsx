@@ -63,21 +63,33 @@ interface NotificationRowProps {
   onRead: (id: string) => void;
   onRemove: (id: string) => void;
   isBusy: boolean;
+  /** True while the row plays its exit; the delete follows. */
+  isRemoving?: boolean;
 }
+
+/** Kept in step with the row's `duration-200` transition. */
+const REMOVE_ANIMATION_MS = 200;
 
 function NotificationRow({
   notification,
   onRead,
   onRemove,
   isBusy,
+  isRemoving = false,
 }: NotificationRowProps) {
   const Icon = TYPE_ICONS[notification.type] ?? Bell;
 
   return (
     <div
       className={cn(
-        "group relative flex gap-3 border-b border-[#F4F4F4] px-4 py-4 transition-colors last:border-b-0",
+        "group relative flex gap-3 border-b border-[#F4F4F4] px-4 py-4 last:border-b-0",
+        // Collapsing the row rather than only fading it means the rows below
+        // slide up to close the gap, instead of jumping.
+        "origin-top overflow-hidden transition-all duration-200 ease-out",
         notification.isRead ? "bg-white" : "bg-[rgba(8,63,146,0.05)]",
+        isRemoving
+          ? "max-h-0 -translate-x-4 border-b-0 py-0 opacity-0"
+          : "max-h-[200px] translate-x-0 opacity-100",
       )}
     >
       <div
@@ -240,8 +252,26 @@ export default function NotificationsMenu() {
     (id: string) => markRead.mutate(id),
     [markRead],
   );
+  /**
+   * Removes a notification, letting the row collapse on its way out.
+   *
+   * The delete is optimistic, so the row leaves the cache the moment it is
+   * asked for. Holding it for the length of the animation is what turns a row
+   * vanishing mid-click into something the eye can follow.
+   */
+  const [removingIds, setRemovingIds] = useState<string[]>([]);
+
   const handleRemove = useCallback(
-    (id: string) => removeOne.mutate(id),
+    (id: string) => {
+      setRemovingIds((current) =>
+        current.includes(id) ? current : [...current, id],
+      );
+
+      window.setTimeout(() => {
+        removeOne.mutate(id);
+        setRemovingIds((current) => current.filter((item) => item !== id));
+      }, REMOVE_ANIMATION_MS);
+    },
     [removeOne],
   );
 
@@ -343,6 +373,7 @@ export default function NotificationsMenu() {
                     onRead={handleRead}
                     onRemove={handleRemove}
                     isBusy={isBusy}
+                    isRemoving={removingIds.includes(notification._id)}
                   />
                 ))}
 

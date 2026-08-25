@@ -88,7 +88,7 @@ export default function MyHistory() {
             <SortableHeader label="Year" />
             <SortableHeader label="Rating" />
             <SortableHeader label="Place" />
-            <span>Action</span>
+            <span>Points</span>
           </div>
 
           {isPending ? (

@@ -76,7 +76,7 @@ export default function ClaimRatingsContent() {
     return (
       <div className="flex w-full flex-col gap-3">
         <div className="h-6 w-2/3 animate-pulse rounded-full bg-[#F2F2F2]" />
-        <div className="h-[84px] w-full animate-pulse rounded-[20px] bg-[#F2F2F2]" />
+        <div className="h-[84px] w-full animate-pulse rounded-[24px] bg-[#F2F2F2]" />
       </div>
     );
   }
@@ -127,12 +127,12 @@ export default function ClaimRatingsContent() {
           {[0, 1].map((key) => (
             <div
               key={key}
-              className="h-[76px] w-full animate-pulse rounded-[20px] bg-[#F2F2F2]"
+              className="h-[76px] w-full animate-pulse rounded-[24px] bg-[#F2F2F2]"
             />
           ))}
         </div>
       ) : matches.length === 0 ? (
-        <div className="flex w-full flex-col items-center gap-3 rounded-[20px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-8 text-center">
+        <div className="flex w-full flex-col items-center gap-3 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-8 text-center">
           <Search className="h-6 w-6 text-[#083F92]" />
           <p className="text-sm font-semibold text-[#083F92]">
             No existing record found
@@ -140,6 +140,14 @@ export default function ClaimRatingsContent() {
           <p className="max-w-[380px] text-xs leading-4 text-[#565656]">
             {current.firstName} will start with a new profile and no rating.
             That is completely normal for a first-time player.
+          </p>
+          {/* A returning player whose record we failed to find has no way to
+              fix this themselves — the lookup is by name, and a nickname or a
+              changed surname is enough to miss it. */}
+          <p className="max-w-[380px] text-xs leading-4 text-[#8C8C8C]">
+            If {current.firstName} has played in a WSCF tournament before and
+            should already have a rating, please contact an administrator and
+            they can link the record for you.
           </p>
         </div>
       ) : (
@@ -153,7 +161,7 @@ export default function ClaimRatingsContent() {
                 onClick={() => setSelectedMatchId(match._id)}
                 aria-pressed={selected}
                 className={cn(
-                  "flex w-full items-center gap-4 rounded-[20px] border bg-white p-4 text-left transition-colors",
+                  "flex w-full items-center gap-4 rounded-[24px] border bg-white p-4 text-left transition-colors",
                   selected
                     ? "border-[#083F92] bg-[#F2F6FF] shadow-[0px_4px_12px_rgba(8,63,146,0.12)]"
                     : "border-[#DADADA] hover:border-[#083F92]/50 hover:bg-[#F7F6FF]",
@@ -200,7 +208,9 @@ export default function ClaimRatingsContent() {
 
         <button
           type="button"
-          disabled={isSaving}
+          // Pressing Continue before the lookup has answered would skip past
+          // matches that were about to appear.
+          disabled={isSaving || isLoadingMatches}
           onClick={() => setConfirming("none")}
           className={cn(
             "h-12 w-full rounded-[24px] text-sm font-semibold capitalize transition-colors disabled:opacity-50",
@@ -209,7 +219,11 @@ export default function ClaimRatingsContent() {
               : "bg-[#083F92] text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] hover:bg-[#063875]",
           )}
         >
-          {matches.length > 0 ? "None of these" : "Continue"}
+          {isLoadingMatches
+            ? "Checking records..."
+            : matches.length > 0
+              ? "None of these"
+              : "Continue"}
         </button>
       </div>
 

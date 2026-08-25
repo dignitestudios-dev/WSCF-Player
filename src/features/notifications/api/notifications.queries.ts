@@ -87,11 +87,58 @@ export function useMarkAllNotificationsReadMutation() {
   );
 }
 
+/**
+ * Removes one notification, taking it off the list straight away.
+ *
+ * Waiting for the round trip left the row sitting there under the cursor for
+ * as long as the network took, which reads as a dead button. The row is pulled
+ * out of the cache first and put back if the request fails, so the only case
+ * that ever looks slow is the one that did not work.
+ */
 export function useDeleteNotificationMutation() {
-  return useNotificationMutation<string>(
-    deleteNotification,
-    "Could not remove that notification.",
-  );
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteNotification,
+
+    onMutate: async (id: string) => {
+      // Any in-flight refetch would land after this and undo it.
+      await queryClient.cancelQueries({ queryKey: notificationKeys.feed });
+
+      const previous = queryClient.getQueryData(notificationKeys.feed);
+
+      queryClient.setQueryData(notificationKeys.feed, (cached: any) => {
+        if (!cached?.pages) return cached;
+        return {
+          ...cached,
+          pages: cached.pages.map((page: NotificationsApiResponse) => ({
+            ...page,
+            data: {
+              ...page.data,
+              notifications: page.data.notifications.filter(
+                (notification: { _id: string }) => notification._id !== id,
+              ),
+            },
+          })),
+        };
+      });
+
+      return { previous };
+    },
+
+    onError: (error, _id, context) => {
+      // Put it back exactly as it was, then say why.
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(notificationKeys.feed, context.previous);
+      }
+      showApiErrorToast(error, "Could not remove that notification.");
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.feed });
+      queryClient.invalidateQueries({ queryKey: notificationKeys.unread });
+    },
+  });
 }
 
 export function useClearAllNotificationsMutation() {
