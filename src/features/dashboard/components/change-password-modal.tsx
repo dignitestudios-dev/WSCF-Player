@@ -123,6 +123,11 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[33px]">
+        {/* Locked while the request is in flight: disabling only the
+            submit button leaves every field editable after the values
+            have already been sent. `contents` keeps the fieldset out
+            of the layout. */}
+        <fieldset disabled={isPending} className="contents">
               {error ? (
                 <p className="text-sm text-red-600" role="alert">
                   {error}
@@ -163,7 +168,8 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
               >
                 {isPending ? "Saving..." : "Submit"}
               </button>
-            </form>
+            </fieldset>
+        </form>
           </DialogContent>
       </Dialog>
 

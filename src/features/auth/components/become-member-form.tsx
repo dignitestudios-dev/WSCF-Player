@@ -289,6 +289,11 @@ export default function BecomeMemberForm() {
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full max-w-[640px] flex-col gap-4"
       >
+        {/* Locked while the request is in flight: disabling only the
+            submit button leaves every field editable after the values
+            have already been sent. `contents` keeps the fieldset out
+            of the layout. */}
+        <fieldset disabled={isPending} className="contents">
         <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
           Parent / Guardian Details
         </h2>
@@ -412,7 +417,7 @@ export default function BecomeMemberForm() {
               placeholder="NA 235 milwake"
               error={errors.streetAddress?.message}
               register={register}
-              maxLength={100}
+              maxLength={50}
             />
             <FormField
               id="city"
@@ -421,7 +426,7 @@ export default function BecomeMemberForm() {
               placeholder="Milwaukee"
               error={errors.city?.message}
               register={register}
-              maxLength={50}
+              maxLength={30}
             />
           </div>
 
@@ -553,7 +558,8 @@ export default function BecomeMemberForm() {
             {isPending ? "Signing Up..." : "Sign Up"}
           </button>
         </div>
-      </form>
+      </fieldset>
+        </form>
 
       {/* Mounted only while open, so each open starts from a clean form. */}
       {isChildDialogOpen && (

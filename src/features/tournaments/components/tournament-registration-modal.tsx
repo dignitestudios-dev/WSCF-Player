@@ -78,6 +78,7 @@ function SelectField({
   placeholder,
   error,
   control,
+  className,
 }: {
   id: string;
   label: string;
@@ -85,9 +86,10 @@ function SelectField({
   placeholder?: string;
   error?: string;
   control: Control<any>;
+  className?: string;
 }) {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-2">
+    <div className={`flex min-w-0 flex-1 flex-col gap-2 ${className ?? ""}`}>
       <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
         {label}
       </label>
@@ -250,6 +252,7 @@ export default function TournamentRegistrationModal({
                   }))}
                   error={errors.divisionId?.message}
                   control={control}
+                  className={fields.length === 0 ? "sm:col-span-2" : undefined}
                 />
               )}
             </div>

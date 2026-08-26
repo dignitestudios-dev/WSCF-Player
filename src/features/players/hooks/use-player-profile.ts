@@ -35,7 +35,6 @@ export function usePlayerProfile() {
     name: profileData?.name || "-",
     userId: profileData?.membershipId || "-",
     gender: profileData?.gender || "-",
-    school: (typeof profileData?.school === 'object' ? profileData?.school?.name : profileData?.school) || "-",
     // One address per household, held on the account.
     city: account?.address?.city || "-",
     dateOfBirth: profileData?.dob
@@ -64,6 +63,13 @@ export function usePlayerProfile() {
             })
           : "-",
         rating: result?.rating ?? "-",
+        previousRating: result?.previousRating ?? null,
+        // The move, when we know both ends of it. A player who was unrated
+        // before this tournament has no "change" to show, only a new rating.
+        ratingChange:
+          result?.rating != null && result?.previousRating != null
+            ? result.rating - result.previousRating
+            : null,
         points: result?.points ?? "-",
         place: result?.place ?? null,
         hasResult: Boolean(result),

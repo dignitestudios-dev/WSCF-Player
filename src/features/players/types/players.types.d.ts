@@ -11,7 +11,6 @@ interface PlayerProfile {
   name: string;
   userId: string;
   gender: string;
-  school: string;
   city: string;
   dateOfBirth: string;
   currentRating: number;

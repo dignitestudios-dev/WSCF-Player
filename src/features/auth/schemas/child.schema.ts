@@ -4,7 +4,7 @@ import { differenceInYears } from "date-fns";
 /**
  * One child on a parent's account.
  *
- * The membership id is assigned by the server and the school by an admin, so
+ * The membership id is assigned by the server, so
  * neither is collected here.
  */
 export const childSchema = z.object({

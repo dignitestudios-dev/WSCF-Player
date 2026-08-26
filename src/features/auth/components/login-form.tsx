@@ -29,6 +29,11 @@ export default function LoginForm() {
         <CardDescription>Enter your credentials to access your account</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Locked while the request is in flight: disabling only the
+            submit button leaves every field editable after the values
+            have already been sent. `contents` keeps the fieldset out
+            of the layout. */}
+        <fieldset disabled={isPending} className="contents">
         <CardContent className="space-y-4">
           {error && (
             <p className="text-sm text-red-600" role="alert">
@@ -71,7 +76,8 @@ export default function LoginForm() {
             </Link>
           </p>
         </CardFooter>
-      </form>
+      </fieldset>
+        </form>
     </Card>
   );
 }

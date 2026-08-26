@@ -34,41 +34,20 @@ export function useTournamentRegistration(
   const { data, isPending: isFieldsPending } = useTournamentFormFieldsQuery(
     tournament.id
   );
-  const fields = data?.data?.fields || [];
+  // Registration asks for a division and nothing else. This endpoint also
+  // returns the tournament's form-field definitions, which are deliberately
+  // ignored — the dynamic form is switched off, not removed, so putting it
+  // back means reading `data.data.fields` again.
   const divisions = data?.data?.divisions || [];
+  const fields: FormFieldApiData[] = [];
 
   const registerMutation = useTournamentRegistrationMutation(tournament.id);
 
-  // Keep fields in a ref so the resolver always reads the latest field
-  // definitions without needing to be re-created on every render.
-  const fieldsRef = useRef<FormFieldApiData[]>([]);
-  fieldsRef.current = fields;
-
-  // Custom resolver — validates directly against field definitions.
+  // The division is the only answer the form collects.
   const resolver = useCallback(
     (values: Record<string, any>) => {
-      const currentFields = fieldsRef.current;
       const errors: Record<string, { type: string; message: string }> = {};
       const parsed: Record<string, any> = {};
-
-      for (const field of currentFields) {
-        const raw = values[field._id];
-        const str = raw != null ? String(raw).trim() : "";
-        parsed[field._id] = str;
-
-        if (field.nature === "mandatory") {
-          const minLen = Number(field.minLength) || 1;
-          if (str.length < minLen) {
-            errors[field._id] = {
-              type: "validation",
-              message:
-                minLen > 1
-                  ? `${field.fieldName} must be at least ${minLen} characters`
-                  : `${field.fieldName} is required`,
-            };
-          }
-        }
-      }
 
       if (divisions && divisions.length > 0) {
         if (!values["divisionId"]) {
@@ -89,22 +68,15 @@ export function useTournamentRegistration(
         errors,
       };
     },
-    [divisions] // stable — reads fieldsRef.current at call time
+    [divisions]
   );
 
-  // Build reactive default values from the loaded fields.
-  // Returns {} when fields haven't loaded yet, and { fieldId: "" } once loaded.
+  // One value, and only once the divisions have arrived — returning undefined
+  // until then is what lets `values` sync the form on first open.
   const formValues = useMemo(() => {
-    if (fields.length === 0) return undefined;
-    const vals: Record<string, string> = {};
-    for (const f of fields) {
-      vals[f._id] = "";
-    }
-    if (divisions && divisions.length > 0) {
-      vals["divisionId"] = "";
-    }
-    return vals;
-  }, [fields, divisions]);
+    if (!divisions || divisions.length === 0) return undefined;
+    return { divisionId: "" };
+  }, [divisions]);
 
   // Use the `values` option (react-hook-form v7.43+) instead of
   // form.reset() in a useEffect. `values` is reactive — when it changes
@@ -140,12 +112,6 @@ export function useTournamentRegistration(
   }
 
   function onRegistrationSubmit(formData: Record<string, any>) {
-    const registrationData = fields.map((field) => ({
-      name: field.fieldName,
-      value:
-        formData[field._id] !== undefined ? String(formData[field._id]) : "",
-    }));
-    
     const divisionId = formData["divisionId"];
 
     const baseUrl =
@@ -158,7 +124,6 @@ export function useTournamentRegistration(
 
     registerMutation.mutate(
       {
-        registrationData,
         divisionId,
         ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
         ...(requiresPayment

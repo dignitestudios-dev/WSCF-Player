@@ -9,7 +9,6 @@ interface MyProfile {
   userId: string;
   gender: string;
   sigma?: string;
-  school: string;
   team: string;
   city: string;
   dateOfBirth: string;

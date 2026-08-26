@@ -29,7 +29,6 @@ export function useMyProfile() {
     name: playerProfile?.name || "N/A",
     userId: playerProfile?.membershipId || playerProfile?._id || "N/A",
     gender: playerProfile?.gender || "N/A",
-    school: (typeof playerProfile?.school === 'object' ? playerProfile?.school?.name : playerProfile?.school) || "N/A",
     // /user/me returns a team object, or null when the player is on no team.
     team: playerProfile?.team?.name || "N/A",
     city: user?.address?.city || "N/A",

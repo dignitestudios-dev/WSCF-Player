@@ -167,7 +167,7 @@ export const pageMetadata = {
   products: {
     title: "Products",
     description:
-      "Explore WSCF products and offerings for scholastic chess players, parents, and schools.",
+      "Explore WSCF products and offerings for scholastic chess players, parents, and coaches.",
   },
   paymentSuccess: {
     title: "Payment Success",

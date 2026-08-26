@@ -144,6 +144,11 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
           </div>
 
           <form onSubmit={handleSubmit(onSubmit as any)} className="flex w-full flex-col gap-[43px]">
+        {/* Locked while the request is in flight: disabling only the
+            submit button leaves every field editable after the values
+            have already been sent. `contents` keeps the fieldset out
+            of the layout. */}
+        <fieldset disabled={isUpdating} className="contents">
             <div className="flex flex-col gap-6">
               <FormSection title="Personal Information">
                 <FormRow>
@@ -307,7 +312,8 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
             >
               {isUpdating ? "Saving..." : "Save Profile"}
             </button>
-          </form>
+          </fieldset>
+        </form>
         </div>
       </DialogContent>
     </Dialog>

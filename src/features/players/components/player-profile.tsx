@@ -87,7 +87,6 @@ export default function PlayerProfile() {
     { label: "Grade", value: player.grade },
     { label: "City", value: player.city },
     { label: "Date Of Birth", value: player.dateOfBirth },
-    { label: "School", value: player.school && player.school !== "-" && player.school !== "N/A" ? player.school : "Not assigned" },
     {
       label: "Team",
       value:
@@ -200,7 +199,23 @@ export default function PlayerProfile() {
               >
                 <span className="w-[158px] shrink-0">{tournament.name}</span>
                 <span className="w-[80px] shrink-0">{tournament.date}</span>
-                <span className="w-[80px] shrink-0">{tournament.rating}</span>
+                <span className="flex w-[80px] shrink-0 items-baseline gap-1.5">
+                  <span>{tournament.rating}</span>
+                  {tournament.ratingChange !== null ? (
+                    <span
+                      className={`text-xs font-semibold ${
+                        tournament.ratingChange > 0
+                          ? "text-[#0F8B4C]"
+                          : tournament.ratingChange < 0
+                            ? "text-[#B42318]"
+                            : "text-[#8C8C8C]"
+                      }`}
+                    >
+                      {tournament.ratingChange > 0 ? "+" : ""}
+                      {tournament.ratingChange}
+                    </span>
+                  ) : null}
+                </span>
                 <span className="ml-auto w-[109px] shrink-0 text-right">
                   {tournament.points}
                 </span>

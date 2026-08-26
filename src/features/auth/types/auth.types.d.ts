@@ -69,7 +69,6 @@ interface PlayerChild {
   status?: "active" | "inactive";
   deactivationReason?: string | null;
   isActive?: boolean;
-  school?: { _id: string; name: string } | null;
   team?: { _id: string; name: string } | null;
   membership?: {
     _id: string;

@@ -15,12 +15,12 @@ export const becomeMemberSchema = z
     city: z
       .string()
       .min(1, "City is required")
-      .max(50, "City cannot exceed 50 characters")
+      .max(30, "City cannot exceed 30 characters")
       .regex(/^[a-zA-Z\s]+$/, "City can only contain letters and spaces"),
     streetAddress: z
       .string()
       .min(1, "Street address is required")
-      .max(100, "Street address cannot exceed 100 characters"),
+      .max(50, "Street address cannot exceed 50 characters"),
     zipCode: z
       .string()
       .min(1, "Zip code is required")

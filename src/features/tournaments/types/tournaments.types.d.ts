@@ -97,7 +97,14 @@ interface TournamentFormFieldsApiResponse {
 }
 
 interface TournamentRegistrationPayload {
-  registrationData: {
+  /**
+   * Answers to the dynamic registration form.
+   *
+   * Optional because the form is switched off — registration collects a
+   * division and nothing else. The shape is kept so turning it back on needs
+   * no type changes.
+   */
+  registrationData?: {
     name: string;
     value: string;
   }[];

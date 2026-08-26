@@ -52,6 +52,11 @@ export default function MemberLoginForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        {/* Locked while the request is in flight: disabling only the
+            submit button leaves every field editable after the values
+            have already been sent. `contents` keeps the fieldset out
+            of the layout. */}
+        <fieldset disabled={isPending} className="contents">
         <div className="space-y-2">
           <label htmlFor="email" className="text-sm font-medium text-zinc-700">
             Email Address
@@ -110,7 +115,8 @@ export default function MemberLoginForm() {
         >
           {isPending ? "Logging in..." : "Login"}
         </button>
-      </form>
+      </fieldset>
+        </form>
     </div>
   );
 }

@@ -50,6 +50,11 @@ export function useMyHistory() {
       month: d ? d.toLocaleString("default", { month: "long" }) : "-",
       year: d ? d.getFullYear().toString() : "-",
       rating: result?.rating ?? "-",
+      previousRating: result?.previousRating ?? null,
+      ratingChange:
+        result?.rating != null && result?.previousRating != null
+          ? result.rating - result.previousRating
+          : null,
       place: result?.place ?? null,
       points: result?.points ?? null,
       trophyPlace: result?.trophyPlace ?? null,
