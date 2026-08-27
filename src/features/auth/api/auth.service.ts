@@ -228,11 +228,29 @@ export async function getMe() {
   return data;
 }
 
+export interface GuardianPayload {
+  name?: string;
+  phone?: string;
+  email?: string;
+}
+
 export interface UpdateUserProfilePayload {
   name?: string;
   division?: string;
   grade?: string;
+  /**
+   * Each guardian under their own key. Prefer this over the older
+   * `parentName`/`parentNumber` pair below, which can only ever address
+   * whichever guardian is primary — sending an edit to the other one through
+   * it silently overwrites the primary instead.
+   */
+  parents?: {
+    father?: GuardianPayload;
+    mother?: GuardianPayload;
+  };
+  /** @deprecated Superseded by `parents`. Still accepted by the API. */
   parentName?: string;
+  /** @deprecated Superseded by `parents`. Still accepted by the API. */
   parentNumber?: string;
   profileImage?: string;
 }

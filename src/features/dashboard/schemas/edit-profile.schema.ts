@@ -3,6 +3,13 @@ import { z } from "zod";
 const nameRegex = /^[a-zA-Z\s]+$/;
 const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
 
+// A guardian's name takes letters and the punctuation real names carry --
+// apostrophes, hyphens, periods, accents -- but no digits. People do write
+// "O'Brien-Smith" and "Dr. J. Okonkwo"; nobody's name has a number in it.
+const guardianNameRegex = /^[^0-9]+$/;
+const guardianNameMessage = "Name cannot contain numbers";
+
+
 export const editProfileSchema = z.object({
   firstName: z
     .string()
@@ -31,11 +38,18 @@ export const editProfileSchema = z.object({
     .trim()
     .min(1, "Grade is required")
     .regex(/^(K|[1-9]|1[0-2])$/, "Invalid grade"),
-  // A guardian's name is free text, exactly as it is on signup: people write
-  // full names with initials, digits, hyphens, apostrophes and non-Latin
-  // characters, and none of that is invalid.
-  fatherName: z.string().max(100, "Name is too long").optional().or(z.literal("")),
-  motherName: z.string().max(100, "Name is too long").optional().or(z.literal("")),
+  fatherName: z
+    .string()
+    .max(100, "Name is too long")
+    .regex(guardianNameRegex, guardianNameMessage)
+    .optional()
+    .or(z.literal("")),
+  motherName: z
+    .string()
+    .max(100, "Name is too long")
+    .regex(guardianNameRegex, guardianNameMessage)
+    .optional()
+    .or(z.literal("")),
   fatherPhone: z.string().regex(phoneRegex, "Please enter a valid phone number").max(20, "Phone number is too long").optional().or(z.literal("")),
   motherPhone: z.string().regex(phoneRegex, "Please enter a valid phone number").max(20, "Phone number is too long").optional().or(z.literal("")),
   fatherEmail: z.string().email("Invalid email address").optional().or(z.literal("")),

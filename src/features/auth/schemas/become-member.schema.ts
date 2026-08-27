@@ -9,6 +9,12 @@ import { childSchema } from "@/features/auth/schemas/child.schema";
  * the account; everything about a player lives on a child, and at least one is
  * required — an account with no players has nothing to do.
  */
+// A guardian's name takes letters and the punctuation real names carry --
+// apostrophes, hyphens, periods, accents -- but no digits. People do write
+// "O'Brien-Smith" and "Dr. J. Okonkwo"; nobody's name has a number in it.
+const guardianNameRegex = /^[^0-9]+$/;
+const guardianNameMessage = "Name cannot contain numbers";
+
 export const becomeMemberSchema = z
   .object({
     // --- the household address, shared by every child ---
@@ -28,16 +34,16 @@ export const becomeMemberSchema = z
       .max(5, "Zip code must be exactly 5 digits"),
 
     // --- the parents/guardians ---
-    // Names are free text: guardians write full names with initials, hyphens,
-    // apostrophes and non-Latin characters, and none of that is invalid.
     fatherName: z
       .string()
       .max(100, "Name is too long")
+      .regex(guardianNameRegex, guardianNameMessage)
       .optional()
       .or(z.literal("")),
     motherName: z
       .string()
       .max(100, "Name is too long")
+      .regex(guardianNameRegex, guardianNameMessage)
       .optional()
       .or(z.literal("")),
     fatherPhone: z

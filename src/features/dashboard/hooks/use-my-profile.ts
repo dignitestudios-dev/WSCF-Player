@@ -27,6 +27,9 @@ export function useMyProfile() {
 
   const profile: MyProfile = {
     name: playerProfile?.name || "N/A",
+    // The stored halves, not the joined string. `name` is only for display.
+    firstName: playerProfile?.firstName || "",
+    lastName: playerProfile?.lastName || "",
     userId: playerProfile?.membershipId || playerProfile?._id || "N/A",
     gender: playerProfile?.gender || "N/A",
     // /user/me returns a team object, or null when the player is on no team.
@@ -53,6 +56,27 @@ export function useMyProfile() {
       name: parent?.name || user?.name || "N/A",
       email: parent?.email || user?.email || "N/A",
       phone: parent?.phone || user?.phone || "N/A",
+    },
+    // Kept apart, so the edit form can put each guardian in their own row.
+    parents: {
+      ...(father
+        ? {
+            father: {
+              name: father.name || "",
+              email: father.email || "",
+              phone: father.phone || "",
+            },
+          }
+        : {}),
+      ...(mother
+        ? {
+            mother: {
+              name: mother.name || "",
+              email: mother.email || "",
+              phone: mother.phone || "",
+            },
+          }
+        : {}),
     },
   };
 
@@ -96,9 +120,24 @@ export function useMyProfile() {
         });
       }
 
+      // Both guardians are sent under their own key. Collapsing them into a
+      // single `parentName` meant whichever row the admin typed in was written
+      // to whichever guardian happened to be primary -- so editing the father
+      // could rewrite the mother, and edits to the second row were dropped
+      // entirely. `isPrimary` is not sent: the server keeps its own.
       const response = await updateProfile({
-        parentName: values.fatherName || values.motherName || "",
-        parentNumber: values.fatherPhone || values.motherPhone || "",
+        parents: {
+          father: {
+            name: values.fatherName || "",
+            phone: values.fatherPhone || "",
+            email: values.fatherEmail || "",
+          },
+          mother: {
+            name: values.motherName || "",
+            phone: values.motherPhone || "",
+            email: values.motherEmail || "",
+          },
+        },
         ...(profileImageUrl ? { profileImage: profileImageUrl } : {}),
       });
       showApiSuccessToast(response, "Profile updated successfully");
