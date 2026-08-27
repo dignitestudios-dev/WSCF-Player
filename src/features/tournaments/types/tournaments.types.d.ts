@@ -6,10 +6,16 @@ interface TournamentApiData {
   entryFee: number;
   divisions: {
     _id: string;
-    type: "open" | "conditional";
-    divisionName?: string;
-    rating?: number;
-    condition?: "under" | "above";
+    /** The name the admin gave the division. */
+    name?: string;
+    /** Same value as `name`; the API returns both. */
+    label?: string;
+    /** The rules behind the name, e.g. "Grades K-3 - Rating under 600". */
+    criteria?: string | null;
+    gradeMin?: number;
+    gradeMax?: number;
+    rating?: number | null;
+    condition?: "under" | "above" | null;
   }[];
   status: string;
   customDropdownOptions?: any[];

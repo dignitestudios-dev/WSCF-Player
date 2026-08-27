@@ -21,10 +21,16 @@ export interface DashboardTournament {
   price: string;
   divisions: {
     _id: string;
-    type: string;
-    divisionName?: string;
-    rating?: number;
-    condition?: string;
+    /** The name the admin gave the division. */
+    name?: string;
+    /** Same value as `name`; the API returns both. */
+    label?: string;
+    /** The rules behind the name, e.g. "Grades K-3 - Rating under 600". */
+    criteria?: string | null;
+    gradeMin?: number;
+    gradeMax?: number;
+    rating?: number | null;
+    condition?: "under" | "above" | null;
   }[];
 }
 

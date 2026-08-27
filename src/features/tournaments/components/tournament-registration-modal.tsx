@@ -82,7 +82,7 @@ function SelectField({
 }: {
   id: string;
   label: string;
-  options: string[] | { label: string; value: string }[];
+  options: string[] | { label: string; value: string; description?: string }[];
   placeholder?: string;
   error?: string;
   control: Control<any>;
@@ -99,15 +99,35 @@ function SelectField({
         render={({ field }) => (
           <Select onValueChange={field.onChange} value={field.value}>
             <SelectTrigger id={id} className={`${inputClassName} font-normal focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0`}>
-              <SelectValue placeholder={placeholder || "Select drop down"} />
+              {/* An option can carry a second line, and Radix renders the
+                  chosen item's children in the trigger by default - which
+                  would make the closed select two lines tall. Passing the
+                  label explicitly keeps the trigger to one line. Children are
+                  left undefined when nothing is chosen so the placeholder
+                  still shows. */}
+              <SelectValue placeholder={placeholder || "Select drop down"}>
+                {(() => {
+                  const selected = options.find(
+                    (option) => (typeof option === "string" ? option : option.value) === field.value
+                  );
+                  if (!selected) return undefined;
+                  return typeof selected === "string" ? selected : selected.label;
+                })()}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {options.map((option) => {
                 const val = typeof option === "string" ? option : option.value;
                 const lbl = typeof option === "string" ? option : option.label;
+                const description = typeof option === "string" ? undefined : option.description;
                 return (
-                  <SelectItem key={val} value={val}>
-                    {lbl}
+                  <SelectItem key={val} value={val} textValue={lbl}>
+                    <span className="flex flex-col gap-0.5 text-left">
+                      <span>{lbl}</span>
+                      {description ? (
+                        <span className="text-xs font-normal text-[#181818]/55">{description}</span>
+                      ) : null}
+                    </span>
                   </SelectItem>
                 );
               })}
@@ -246,9 +266,13 @@ export default function TournamentRegistrationModal({
                   id="divisionId"
                   label="Division"
                   placeholder="Select division"
+                  // Division names are free text the admin chose, so the
+                  // criteria line is what tells a parent who the section is
+                  // actually for - "Section B" alone says nothing.
                   options={divisions.map((d) => ({
-                    label: d.label || d.divisionName || d.type,
+                    label: d.name || d.label || "Division",
                     value: d._id,
+                    description: d.criteria || undefined,
                   }))}
                   error={errors.divisionId?.message}
                   control={control}
