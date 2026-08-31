@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getTournaments, getTournamentParticipants, getTournamentDetails, getTournamentFormFields, getMyTournaments, registerForTournament } from "@/features/tournaments/api/tournaments.service";
+import { getTournaments, getTournamentParticipants, getTournamentDetails, getEligibleDivisions, getMyTournaments, registerForTournament } from "@/features/tournaments/api/tournaments.service";
 
 export function useTournamentsQuery(params: GetTournamentsParams) {
   return useQuery({
@@ -27,10 +27,10 @@ export function useTournamentDetailsQuery(tournamentId: string) {
   });
 }
 
-export function useTournamentFormFieldsQuery(tournamentId: string) {
+export function useEligibleDivisionsQuery(tournamentId: string) {
   return useQuery({
-    queryKey: ["tournamentFormFields", tournamentId],
-    queryFn: () => getTournamentFormFields(tournamentId),
+    queryKey: ["tournamentDivisions", tournamentId],
+    queryFn: () => getEligibleDivisions(tournamentId),
     enabled: !!tournamentId,
     // Form field definitions don't change mid-session. Prevent background
     // refetches (e.g. window focus) that would give `fields` a new array

@@ -36,7 +36,7 @@ function CancelledIcon() {
 }
 
 /**
- * Shown on the registered tournaments page when Stripe sends the player back.
+ * Shown on the registered tournaments page when PayPal sends the player back.
  *
  * A dialog rather than a standalone page, so the player lands on their list —
  * already refreshed with the new registration — instead of a dead end they have

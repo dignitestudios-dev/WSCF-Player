@@ -9,7 +9,7 @@ import { CLAIM_RATINGS_ROUTE } from "@/features/players/routes";
  *
  * An account now holds several players and each one is matched separately, so
  * this screen has moved to /players/claim-ratings. The route is kept because
- * Stripe redirects and old links still point at it.
+ * PayPal redirects and old links still point at it.
  */
 export default function MembershipSelectProfileContent() {
   const router = useRouter();

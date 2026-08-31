@@ -1,5 +1,14 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { DEFAULT_REDIRECT } from "@/config/routes";
+import { useActivePlayer } from "@/features/players/use-active-player";
+import {
+  CLAIM_RATINGS_ROUTE,
+  SELECT_PLAYER_ROUTE,
+} from "@/features/players/routes";
 import { useMembershipCheckout } from "@/features/membership/hooks/use-membership-checkout";
 import { useMembershipQuoteQuery } from "@/features/membership/api/membership.mutations";
 
@@ -57,7 +66,7 @@ function SummaryRow({
 }
 
 /**
- * The bill, before Stripe.
+ * The bill, before PayPal.
  *
  * A membership is per player, so an account with five children owes five of
  * them. Every player is listed by name and the arithmetic is shown in full —
@@ -67,11 +76,61 @@ function SummaryRow({
  * displayed is exactly what is charged.
  */
 export default function MembershipValidation() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const { handleProceedToPayment, isPending } = useMembershipCheckout();
   const { data: quote, isLoading } = useMembershipQuoteQuery();
+  const { children, needsMasterFileCheck } = useActivePlayer();
 
   const players = quote?.players ?? [];
   const unitPrice = quote?.unitPrice ?? 5;
+
+  // Nothing owed — every player on the account is already covered.
+  const nothingToPay = !isLoading && players.length === 0;
+
+  // Sent on once, never twice: a second navigation while the first is still in
+  // flight is what turns a redirect into a loop.
+  const hasRedirected = useRef(false);
+
+  /**
+   * Nothing to pay means nothing to do here, so the parent is moved along
+   * rather than shown a $0 bill.
+   *
+   * The account payload is refreshed first, deliberately. AuthGuard routes on
+   * `needsMembershipPayment` from /user/me, and it is what sent them here; if
+   * that were still cached as true, navigating away would simply bounce them
+   * straight back. Invalidating it means the guard re-reads the same truth the
+   * quote is reporting.
+   *
+   * Where they go next matches the post-payment screen: ratings first, since
+   * every player has to be answered for before any of them can be shown; then
+   * the picker if there is a choice to make; otherwise the dashboard.
+   */
+  useEffect(() => {
+    if (!nothingToPay || hasRedirected.current) return;
+    hasRedirected.current = true;
+
+    queryClient.invalidateQueries({ queryKey: ["authUser"] });
+
+    const destination = needsMasterFileCheck
+      ? CLAIM_RATINGS_ROUTE
+      : children.length > 1
+        ? SELECT_PLAYER_ROUTE
+        : DEFAULT_REDIRECT;
+
+    router.replace(destination);
+  }, [nothingToPay, needsMasterFileCheck, children.length, router, queryClient]);
+
+  if (nothingToPay) {
+    // Everything is covered; the redirect above is already running. Showing a
+    // $0 summary here, even for one frame, would just look like a bug.
+    return (
+      <div className="flex w-full max-w-[398px] flex-col items-center gap-[15px]">
+        <div className="h-8 w-3/5 animate-pulse rounded-full bg-[#F2F2F2]" />
+        <div className="h-4 w-4/5 animate-pulse rounded-full bg-[#F2F2F2]" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full max-w-[398px] flex-col gap-[15px]">
@@ -140,7 +199,7 @@ export default function MembershipValidation() {
         <button
           type="button"
           onClick={handleProceedToPayment}
-          disabled={isPending || isLoading || players.length === 0}
+          disabled={isPending || isLoading}
           className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
         >
           {isPending ? "Redirecting..." : "Proceed To Payment"}

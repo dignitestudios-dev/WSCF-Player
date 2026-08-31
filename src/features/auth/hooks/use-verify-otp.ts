@@ -29,6 +29,10 @@ export function useVerifyOtp() {
     Array.from({ length: 6 }, () => "")
   );
   const [resendTimer, setResendTimer] = useState(RESEND_COOLDOWN_SECONDS);
+  // Stays true once a code is accepted. The redirect that follows is not
+  // instant, and until it happens the boxes would otherwise still take input —
+  // a second submission against a code the server has already spent.
+  const [isVerified, setIsVerified] = useState(false);
 
   const { mutate: verify, isPending } = useVerifyOtpMutation();
   const { mutate: resend, isPending: isResending } = useResendOtpMutation();
@@ -54,11 +58,16 @@ export function useVerifyOtp() {
 
   function submitOtp(otp: string) {
     if (!email) return;
+    // Typing the sixth digit submits, and the Submit button submits. Without
+    // this guard, doing both sends the same code twice and the second attempt
+    // fails against a code the first one just consumed.
+    if (isPending || isVerified) return;
 
     verify(
       { email, otp },
       {
         onSuccess: (response) => {
+          setIsVerified(true);
           showApiSuccessToast(response, "OTP verified successfully");
 
           if (response.accessToken && response.user) {
@@ -96,6 +105,8 @@ export function useVerifyOtp() {
           );
         },
         onError: (error) => {
+          // Left unlocked deliberately: a rejected code is the one case where
+          // the user needs the boxes back to correct it.
           showApiErrorToast(error, "OTP verification failed. Please try again.");
         },
       }
@@ -115,12 +126,19 @@ export function useVerifyOtp() {
     if (!email || resendTimer > 0 || isResending) return;
 
     resend(
-      { email, type: "email" },
+      {
+        email,
+        type: "email",
+        // The same screen serves both journeys; the mail should read like the
+        // one the user is actually in the middle of.
+        purpose: from === "forgot-password" ? "reset" : "verify",
+      },
       {
         onSuccess: (response) => {
           showApiSuccessToast(response, "OTP resent successfully");
           setOtpDigits(Array.from({ length: 6 }, () => ""));
           form.setValue("otp", "");
+          setIsVerified(false);
           startResendCooldown();
         },
         onError: (error) => {
@@ -135,12 +153,17 @@ export function useVerifyOtp() {
   }
 
   const displayEmail = email || "your email";
-  const canResend = resendTimer === 0 && !isResending;
+  const canResend = resendTimer === 0 && !isResending && !isVerified;
+  // One flag for everything the form must stop accepting: the boxes, Submit
+  // and Resend all read this.
+  const isLocked = isPending || isVerified;
 
   return {
     form,
     onSubmit,
     isPending,
+    isVerified,
+    isLocked,
     otpDigits,
     handleOtpChange,
     submitOtp,

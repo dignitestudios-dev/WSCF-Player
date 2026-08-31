@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import PaymentResultDialog from "@/features/tournaments/components/payment-result-dialog";
+import { usePaypalCapture } from "@/features/payment/use-paypal-capture";
 import { getTournamentDetailsRoute } from "@/config/routes";
 import { useRegisteredTournaments } from "@/features/dashboard/hooks/use-registered-tournaments";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -116,13 +117,18 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
 export default function RegisteredTournaments() {
   const { tournaments, isPending, setPage, pagination, backHref } = useRegisteredTournaments();
 
-  // Stripe returns here with ?payment=success|cancelled. The result is shown
-  // as a dialog over the list, and the query is stripped straight away so a
-  // refresh or a back-navigation does not show it again.
+  // PayPal returns here with ?payment=success|cancelled and, on the success
+  // leg, its own &token=<orderId>. The query is stripped straight away so a
+  // refresh or a back-navigation does not replay the dialog; the capture hook
+  // latches the order id before that happens.
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [paymentOutcome, setPaymentOutcome] = useState<"success" | "cancelled" | null>(null);
+
+  // Approval alone moves no money. Coming back from PayPal means the payment
+  // has to be captured and confirmed before the list may say it succeeded.
+  const { state: captureState } = usePaypalCapture();
 
   useEffect(() => {
     const outcome = searchParams.get("payment");
@@ -134,11 +140,26 @@ export default function RegisteredTournaments() {
 
   const closePaymentDialog = useCallback(() => setPaymentOutcome(null), []);
 
+  // Nothing is shown while the capture is still running: a "thank you" that
+  // appears before the money is confirmed is the exact failure this replaces.
+  const awaitingCapture =
+    paymentOutcome === "success" && captureState === "verifying";
+
   return (
     <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
-      {paymentOutcome ? (
+      {paymentOutcome && !awaitingCapture ? (
         <PaymentResultDialog
-          outcome={paymentOutcome}
+          // The dialog reports what our server confirmed, not what the URL
+          // claimed. A returning buyer whose capture failed is told so rather
+          // than congratulated. While the capture is still in flight the
+          // dialog is held back, so nothing is asserted too early.
+          outcome={
+            paymentOutcome === "cancelled"
+              ? "cancelled"
+              : captureState === "failed"
+                ? "cancelled"
+                : "success"
+          }
           onClose={closePaymentDialog}
         />
       ) : null}

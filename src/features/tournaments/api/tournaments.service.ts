@@ -45,11 +45,11 @@ export async function getTournamentDetails(
   return data;
 }
 
-export async function getTournamentFormFields(
+export async function getEligibleDivisions(
   tournamentId: string
-): Promise<TournamentFormFieldsApiResponse> {
-  const { data } = await axiosInstance.get<TournamentFormFieldsApiResponse>(
-    `/tournament/${tournamentId}/form-fields`
+): Promise<EligibleDivisionsApiResponse> {
+  const { data } = await axiosInstance.get<EligibleDivisionsApiResponse>(
+    `/tournament/${tournamentId}/divisions`
   );
   return data;
 }

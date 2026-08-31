@@ -6,7 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { REGISTERED_TOURNAMENTS_ROUTE } from "@/config/routes";
 import {
-  useTournamentFormFieldsQuery,
+  useEligibleDivisionsQuery,
   useTournamentRegistrationMutation,
 } from "@/features/tournaments/api/tournaments.queries";
 import type { AppliedCoupon } from "@/features/tournaments/api/coupons.service";
@@ -31,15 +31,11 @@ export function useTournamentRegistration(
 
   const entryFee = parseEntryFee(tournament.price);
 
-  const { data, isPending: isFieldsPending } = useTournamentFormFieldsQuery(
+  const { data, isPending: isDivisionsPending } = useEligibleDivisionsQuery(
     tournament.id
   );
-  // Registration asks for a division and nothing else. This endpoint also
-  // returns the tournament's form-field definitions, which are deliberately
-  // ignored — the dynamic form is switched off, not removed, so putting it
-  // back means reading `data.data.fields` again.
+  // Registration asks for a division and nothing else.
   const divisions = data?.data?.divisions || [];
-  const fields: FormFieldApiData[] = [];
 
   const registerMutation = useTournamentRegistrationMutation(tournament.id);
 
@@ -159,9 +155,8 @@ export function useTournamentRegistration(
     tournament,
     step,
     form,
-    fields,
     divisions,
-    isFieldsPending,
+    isDivisionsPending,
     isRegistering: registerMutation.isPending,
     onRegistrationSubmit,
     completePayment,

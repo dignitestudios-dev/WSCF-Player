@@ -20,9 +20,8 @@ export default function TournamentRegistrationFlow({
   const {
     step,
     form,
-    fields,
     divisions,
-    isFieldsPending,
+    isDivisionsPending,
     isRegistering,
     onRegistrationSubmit,
     completePayment,
@@ -54,9 +53,8 @@ export default function TournamentRegistrationFlow({
         control={control}
         errors={errors}
         handleSubmit={handleSubmit}
-        fields={fields}
         divisions={divisions}
-        isFieldsPending={isFieldsPending}
+        isDivisionsPending={isDivisionsPending}
         isRegistering={isRegistering}
         entryFee={entryFee}
         appliedCoupon={appliedCoupon}

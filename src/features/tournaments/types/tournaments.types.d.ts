@@ -18,7 +18,6 @@ interface TournamentApiData {
     condition?: "under" | "above" | null;
   }[];
   status: string;
-  customDropdownOptions?: any[];
   createdBy?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -83,37 +82,15 @@ interface TournamentDetailsApiResponse {
   };
 }
 
-interface FormFieldApiData {
-  _id: string;
-  fieldName: string;
-  fieldType: string; // 'text', 'number', 'dropdown'
-  nature: string; // 'mandatory', 'optional'
-  minLength: number;
-  options: string[];
-  isTournamentSpecific: boolean;
-}
-
-interface TournamentFormFieldsApiResponse {
+interface EligibleDivisionsApiResponse {
   success: boolean;
   message: string;
   data: {
-    fields: FormFieldApiData[];
-    divisions?: any[];
+    divisions: TournamentApiData["divisions"];
   };
 }
 
 interface TournamentRegistrationPayload {
-  /**
-   * Answers to the dynamic registration form.
-   *
-   * Optional because the form is switched off — registration collects a
-   * division and nothing else. The shape is kept so turning it back on needs
-   * no type changes.
-   */
-  registrationData?: {
-    name: string;
-    value: string;
-  }[];
   divisionId: string;
   /** Re-checked server-side; a code covering the whole fee skips checkout. */
   couponCode?: string;
@@ -131,15 +108,12 @@ interface TournamentRegistrationApiResponse {
       userId: string;
       teamId: string | null;
       paymentStatus: string;
-      registrationData: {
-        _id: string;
-        name: string;
-        value: string;
-      }[];
       enrolledAt: string;
     };
     requiresPayment: boolean;
+    /** PayPal's approval link. Present only when requiresPayment is true. */
     checkoutUrl?: string;
-    sessionId?: string;
+    /** PayPal order id, echoed back to the success page as ?token=. */
+    orderId?: string;
   };
 }

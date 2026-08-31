@@ -510,7 +510,7 @@ export default function BecomeMemberForm() {
               />
             ))}
 
-            {/* The bill, shown before they commit rather than at Stripe. */}
+            {/* The bill, shown before they commit rather than at PayPal. */}
             <div className="flex items-center justify-between rounded-[24px] border border-[#D8D4FF] bg-white px-4 py-3">
               <span className="text-sm leading-5 text-[#565656]">
                 {children.length}{" "}

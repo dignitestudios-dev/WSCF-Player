@@ -35,7 +35,7 @@ export default function EmailVerifiedSuccess() {
           <h1 className="text-[32px] font-semibold capitalize leading-[43px] text-[#083F92]">
             You&apos;re All Set!
           </h1>
-          <p className="text-lg capitalize leading-6 text-black">
+          <p className="text-lg leading-6 text-black">
             Your email has been verified successfully, and your User ID has been sent to your email
             address.
           </p>

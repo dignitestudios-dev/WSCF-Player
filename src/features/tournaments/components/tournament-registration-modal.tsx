@@ -148,9 +148,8 @@ interface TournamentRegistrationModalProps {
   control: Control<any>;
   errors: Partial<Record<string, { message?: string }>>;
   handleSubmit: (callback: (data: any) => void) => (event?: React.BaseSyntheticEvent) => void;
-  fields: FormFieldApiData[];
   divisions?: any[];
-  isFieldsPending: boolean;
+  isDivisionsPending: boolean;
   isRegistering?: boolean;
   /** Only offered when there is a fee to discount. */
   entryFee?: number;
@@ -167,9 +166,8 @@ export default function TournamentRegistrationModal({
   control,
   errors,
   handleSubmit,
-  fields,
   divisions = [],
-  isFieldsPending,
+  isDivisionsPending,
   isRegistering,
   entryFee = 0,
   appliedCoupon = null,
@@ -203,7 +201,7 @@ export default function TournamentRegistrationModal({
           Tournament Registration
         </h2>
 
-        {isFieldsPending ? (
+        {isDivisionsPending ? (
           <div className="flex flex-col gap-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[22px] gap-y-8">
               {[...Array(6)].map((_, i) => (
@@ -232,35 +230,6 @@ export default function TournamentRegistrationModal({
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[22px] gap-y-8">
-              {fields.map((field) => {
-                const errorMsg = errors[field._id]?.message;
-
-                if (field.fieldType === "dropdown") {
-                  return (
-                    <SelectField
-                      key={field._id}
-                      id={field._id}
-                      label={field.fieldName}
-                      placeholder={`Select ${field.fieldName}`}
-                      options={field.options}
-                      error={errorMsg}
-                      control={control}
-                    />
-                  );
-                }
-
-                return (
-                  <FormField
-                    key={field._id}
-                    id={field._id}
-                    label={field.fieldName}
-                    placeholder={`Enter ${field.fieldName}`}
-                    type={field.fieldType === "number" ? "number" : "text"}
-                    error={errorMsg}
-                    register={register}
-                  />
-                );
-              })}
               {divisions.length > 0 && (
                 <SelectField
                   id="divisionId"
@@ -276,7 +245,7 @@ export default function TournamentRegistrationModal({
                   }))}
                   error={errors.divisionId?.message}
                   control={control}
-                  className={fields.length === 0 ? "sm:col-span-2" : undefined}
+                  className="sm:col-span-2"
                 />
               )}
             </div>

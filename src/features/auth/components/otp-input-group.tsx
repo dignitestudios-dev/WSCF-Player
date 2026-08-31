@@ -4,14 +4,22 @@ interface OtpInputGroupProps {
   value: string[];
   onChange: (value: string[]) => void;
   onComplete?: (otp: string) => void;
+  /**
+   * Locks every box. Set while a code is being checked, and left set once one
+   * is accepted — a verified code is spent, so there is nothing a further
+   * digit could do except start a second submission.
+   */
+  disabled?: boolean;
 }
 
 export default function OtpInputGroup({
   value,
   onChange,
   onComplete,
+  disabled = false,
 }: OtpInputGroupProps) {
   function handleChange(index: number, digit: string) {
+    if (disabled) return;
     if (digit && !/^\d$/.test(digit)) return;
 
     const next = [...value];
@@ -33,6 +41,7 @@ export default function OtpInputGroup({
     index: number,
     event: React.KeyboardEvent<HTMLInputElement>
   ) {
+    if (disabled) return;
     if (event.key === "Backspace" && !value[index] && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`);
       prevInput?.focus();
@@ -41,6 +50,7 @@ export default function OtpInputGroup({
 
   function handlePaste(event: React.ClipboardEvent<HTMLInputElement>) {
     event.preventDefault();
+    if (disabled) return;
     const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
     if (!pasted) return;
 
@@ -65,10 +75,11 @@ export default function OtpInputGroup({
           inputMode="numeric"
           maxLength={1}
           value={digit}
+          disabled={disabled}
           onChange={(e) => handleChange(index, e.target.value.slice(-1))}
           onKeyDown={(e) => handleKeyDown(index, e)}
           onPaste={handlePaste}
-          className="h-[49px] w-[48px] rounded-[24px] border border-[#3D3775] bg-white text-center text-base font-medium text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15"
+          className="h-[49px] w-[48px] rounded-[24px] border border-[#3D3775] bg-white text-center text-base font-medium text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15 disabled:cursor-not-allowed disabled:border-[#C4C4C4] disabled:bg-[#F4F4F4] disabled:text-[#8A8A8A]"
           aria-label={`OTP digit ${index + 1}`}
         />
       ))}
