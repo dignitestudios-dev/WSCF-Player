@@ -137,6 +137,8 @@ interface ForgotPasswordFormData {
 interface ResendOtpPayload {
   email: string;
   type: "email";
+  // Chooses the wording of the mail. The same code is issued either way.
+  purpose?: "verify" | "reset";
 }
 
 interface VerifyOtpFormData {

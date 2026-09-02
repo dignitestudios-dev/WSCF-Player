@@ -64,7 +64,11 @@ export default function PlayerCard({
         <p className="truncate text-sm leading-5 text-[#636363]">
           {player.grade ? `Grade ${player.grade}` : "Grade not set"}
           {player.membershipId ? ` · ${player.membershipId}` : ""}
-          {typeof player.rating === "number" ? ` · ${player.rating}` : ""}
+          {player.ratingStatus === "pending"
+            ? " · rating being assigned"
+            : typeof player.rating === "number"
+              ? ` · ${player.rating}`
+              : ""}
         </p>
         {isDeactivated ? (
           <span className="mt-1 w-fit rounded-full bg-[#FDECEA] px-2.5 py-0.5 text-xs font-medium text-[#B42318]">

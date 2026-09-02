@@ -8,6 +8,8 @@ export default function VerifyOtpForm() {
   const {
     form,
     isPending,
+    isVerified,
+    isLocked,
     otpDigits,
     handleOtpChange,
     submitOtp,
@@ -42,6 +44,7 @@ export default function VerifyOtpForm() {
             value={otpDigits}
             onChange={handleOtpChange}
             onComplete={submitOtp}
+            disabled={isLocked}
           />
 
           {otpError && (
@@ -51,10 +54,10 @@ export default function VerifyOtpForm() {
           <button
             type="button"
             onClick={handleManualSubmit}
-            disabled={isPending || otpDigits.join("").length !== 6}
+            disabled={isLocked || otpDigits.join("").length !== 6}
             className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
           >
-            {isPending ? "Verifying..." : "Submit"}
+            {isPending ? "Verifying..." : isVerified ? "Verified" : "Submit"}
           </button>
 
           <p className="text-center text-base leading-[22px] tracking-[0.01em] text-[#565656]">
@@ -62,7 +65,7 @@ export default function VerifyOtpForm() {
             <button
               type="button"
               onClick={handleResend}
-              disabled={!canResend || isPending || isResending}
+              disabled={!canResend || isLocked || isResending}
               className="font-medium text-[#083F92] hover:underline disabled:cursor-not-allowed disabled:text-[#565656] disabled:no-underline"
             >
               {isResending

@@ -97,7 +97,7 @@ function TournamentParticipantsContent({
               type="text"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search"
+              placeholder="Search by player name, member ID or team"
               disabled={!tournamentId}
               className="h-12 w-full rounded-[24px] border border-[#3D3775] bg-white pl-6 pr-14 text-sm font-light text-[#808080] outline-none disabled:opacity-60"
             />

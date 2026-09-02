@@ -244,6 +244,18 @@ export default function MyProfile() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <Skeleton className="h-[49px] w-24 bg-white/40" />
               </div>
+            ) : profile.ratingStatus === "pending" ? (
+              // A player nobody has looked up yet is not the same as a player
+              // confirmed to have no rating. Showing a bare 0 reads as a
+              // result; this says the answer is still coming.
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-6 text-center">
+                <p className="text-[20px] font-semibold leading-[28px] text-white">
+                  Being assigned
+                </p>
+                <p className="text-[13px] leading-[18px] text-white/80">
+                  We&apos;re looking up your previous rating
+                </p>
+              </div>
             ) : (
               <p className="absolute inset-0 flex items-center justify-center text-[36px] font-semibold leading-[49px] text-white">
                 {profile.currentRating}

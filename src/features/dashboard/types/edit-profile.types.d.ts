@@ -5,6 +5,7 @@ interface EditProfileFields {
   sigma?: string;
   email: string;
   grade: string;
+  city?: string;
   fatherName?: string;
   motherName?: string;
   fatherPhone?: string;

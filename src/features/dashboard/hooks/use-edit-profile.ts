@@ -21,6 +21,7 @@ function profileToFormValues(profile: MyProfile): EditProfileFields {
         : ("" as any),
     email: profile.email ?? "",
     grade: profile.grade ?? "",
+    city: profile.city ?? "",
     // Each guardian fills their own row. Previously the primary guardian was
     // loaded into the father's row whoever they were, so a mother-led account
     // showed her details under "Father" and left "Mother" blank.

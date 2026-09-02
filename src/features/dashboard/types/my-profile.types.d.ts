@@ -24,6 +24,11 @@ interface MyProfile {
   division?: string;
   avatarUrl: string;
   currentRating: number;
+  /**
+   * Where this player sits in the admin's rating queue. `pending` means nobody
+   * has looked them up yet, which is different from a confirmed 0.
+   */
+  ratingStatus?: "pending" | "assigned" | "unrated";
   enrolledTournaments: number;
   historyScore: string;
   /** The primary guardian, for the read-only profile card. */

@@ -79,7 +79,7 @@ export default function Tournaments() {
             type="text"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search tournaments by title, location, or date"
+            placeholder="Search by tournament name"
             className="w-full bg-transparent text-base font-medium text-[#151515] outline-none placeholder:text-[#ADADAD]"
           />
           {query ? (

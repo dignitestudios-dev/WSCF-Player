@@ -3,10 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { MEMBERSHIP_VALIDATION_ROUTE } from "@/config/routes";
-import {
-  CLAIM_RATINGS_ROUTE,
-  SELECT_PLAYER_ROUTE,
-} from "@/features/players/routes";
+import { SELECT_PLAYER_ROUTE } from "@/features/players/routes";
 import { useActivePlayer } from "@/features/players/use-active-player";
 
 /**
@@ -32,7 +29,6 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     activePlayer,
     hasMultiplePlayers,
     needsMembershipPayment,
-    needsMasterFileCheck,
     isLoading,
   } = useActivePlayer();
 
@@ -40,13 +36,16 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   // missing selection only matters when there are several.
   const needsSelection = hasMultiplePlayers && !activePlayer;
 
+  // Ratings are assigned by an admin now, so nobody is sent to the rating
+  // lookup screen. /players/claim-ratings and everything behind it still work
+  // — they are simply not on any path. Put CLAIM_RATINGS_ROUTE back here, and
+  // restore needsMasterFileCheck in the API's account.helper.js, to return to
+  // the parent-driven flow.
   const destination = needsMembershipPayment
     ? MEMBERSHIP_VALIDATION_ROUTE
-    : needsMasterFileCheck
-      ? CLAIM_RATINGS_ROUTE
-      : needsSelection
-        ? SELECT_PLAYER_ROUTE
-        : null;
+    : needsSelection
+      ? SELECT_PLAYER_ROUTE
+      : null;
 
   const shouldRedirect = !isLoading && Boolean(destination) && pathname !== destination;
 
@@ -83,9 +82,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         <p className="text-lg font-medium text-[#083F92]">
           {needsMembershipPayment
             ? "Redirecting to membership setup..."
-            : needsMasterFileCheck
-              ? "Checking player records..."
-              : "Choosing a player..."}
+            : "Choosing a player..."}
         </p>
       </div>
     );

@@ -50,7 +50,7 @@ export default function PlayersRatingLookup() {
                 type="text"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search players rating"
+                placeholder="Search by first name, last name or member ID"
                 className="min-w-0 flex-1 bg-transparent text-base font-medium text-[#151515] outline-none placeholder:text-[#151515]"
               />
               {query ? (

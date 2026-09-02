@@ -50,6 +50,7 @@ export function useMyProfile() {
       user?.profileImage ||
       "/images/images.png",
     currentRating: playerProfile?.rating || 0,
+    ratingStatus: playerProfile?.ratingStatus,
     enrolledTournaments: upcomingCount,
     historyScore: `${playerProfile?.totalWins || 0}/${playerProfile?.totalTournaments || 0}`,
     parent: {
@@ -126,6 +127,7 @@ export function useMyProfile() {
       // could rewrite the mother, and edits to the second row were dropped
       // entirely. `isPrimary` is not sent: the server keeps its own.
       const response = await updateProfile({
+        city: values.city ?? "",
         parents: {
           father: {
             name: values.fatherName || "",
