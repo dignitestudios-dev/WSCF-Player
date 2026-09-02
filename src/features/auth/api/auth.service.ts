@@ -238,6 +238,8 @@ export interface UpdateUserProfilePayload {
   name?: string;
   division?: string;
   grade?: string;
+  /** Part of the account's address. The API also takes `address` and `zipCode`. */
+  city?: string;
   /**
    * Each guardian under their own key. Prefer this over the older
    * `parentName`/`parentNumber` pair below, which can only ever address

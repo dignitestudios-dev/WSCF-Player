@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { UseFormRegister } from "react-hook-form";
 import { useWatch } from "react-hook-form";
 import { UserPlus } from "lucide-react";
@@ -10,6 +11,7 @@ import ChildProfileDialog from "@/features/auth/components/child-profile-dialog"
 import { useBecomeMember } from "@/features/auth/hooks/use-become-member";
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
 import type { ChildFormData } from "@/features/auth/schemas/child.schema";
+import { MEMBER_LOGIN_ROUTE } from "@/config/routes";
 
 /** What one membership costs, per player. */
 const MEMBERSHIP_UNIT_PRICE = 5;
@@ -557,6 +559,18 @@ export default function BecomeMemberForm() {
           >
             {isPending ? "Signing Up..." : "Sign Up"}
           </button>
+
+          {/* Someone who already has an account should not have to find their
+              way back through the landing page to sign in. */}
+          <p className="text-center text-sm leading-5 text-[#565656]">
+            Already a member?{" "}
+            <Link
+              href={MEMBER_LOGIN_ROUTE}
+              className="font-semibold text-[#083F92] hover:underline"
+            >
+              Login
+            </Link>
+          </p>
         </div>
       </fieldset>
         </form>

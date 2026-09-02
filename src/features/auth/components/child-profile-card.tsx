@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { Pencil, Trash2 } from "lucide-react";
 import type { ChildFormData } from "@/features/auth/schemas/child.schema";
+import { parseCalendarDate } from "@/lib/calendar-date";
 
 /** First initials, so a card reads as a person before you read the name. */
 function initials(child: ChildFormData) {
@@ -38,7 +39,7 @@ export default function ChildProfileCard({
         <p className="truncate text-sm leading-5 text-[#565656]">
           Grade {child.grade}
           {child.birthDate
-            ? ` · Born ${format(new Date(child.birthDate), "d MMM yyyy")}`
+            ? ` · Born ${format(parseCalendarDate(child.birthDate)!, "d MMM yyyy")}`
             : ""}
         </p>
       </div>

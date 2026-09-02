@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { UserPlus } from "lucide-react";
 import PlayerCard from "@/features/players/components/player-card";
 import { useActivePlayer } from "@/features/players/use-active-player";
 import { DEFAULT_REDIRECT } from "@/config/routes";
+import { ADD_PLAYER_ROUTE } from "@/features/players/routes";
 
 /**
  * Which of your children am I opening?
@@ -95,6 +97,19 @@ export default function SelectPlayerContent() {
             onSelect={() => setSelectedId(player._id)}
           />
         ))}
+
+        {/* The same dashed tile the switch-player dialog uses, so adding a
+            player looks the same wherever a parent is choosing between them.
+            Without it, this screen is a dead end for anyone who realises here
+            that a child is missing. */}
+        <button
+          type="button"
+          onClick={() => router.push(ADD_PLAYER_ROUTE)}
+          className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+        >
+          <UserPlus className="h-4 w-4" />
+          Add another player
+        </button>
       </div>
 
       <button

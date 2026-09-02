@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FORGOT_PASSWORD_ROUTE } from "@/config/routes";
+import { BECOME_MEMBER_ROUTE, FORGOT_PASSWORD_ROUTE } from "@/config/routes";
 import { useMemberLogin } from "@/features/auth/hooks/use-member-login";
 
 function EyeIcon({ hidden }: { hidden: boolean }) {
@@ -115,6 +115,18 @@ export default function MemberLoginForm() {
         >
           {isPending ? "Logging in..." : "Login"}
         </button>
+
+        {/* The mirror of the link on the sign-up screen, so the two are one
+            step apart in either direction. */}
+        <p className="text-center text-sm leading-5 text-[#565656]">
+          Not a member yet?{" "}
+          <Link
+            href={BECOME_MEMBER_ROUTE}
+            className="font-semibold text-[#083F92] hover:underline"
+          >
+            Sign Up
+          </Link>
+        </p>
       </fieldset>
         </form>
     </div>

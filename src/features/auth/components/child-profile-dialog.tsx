@@ -23,6 +23,10 @@ import {
   childSchema,
   type ChildFormData,
 } from "@/features/auth/schemas/child.schema";
+import {
+  parseCalendarDate,
+  toCalendarDateString,
+} from "@/lib/calendar-date";
 
 const inputClassName =
   "h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none placeholder:text-[#181818]/60 focus:ring-2 focus:ring-[#083F92]/15";
@@ -255,7 +259,7 @@ export default function ChildProfileDialog({
                     )}
                   >
                     {field.value
-                      ? format(new Date(field.value), "PPP")
+                      ? format(parseCalendarDate(field.value)!, "PPP")
                       : "Select birth date"}
                     <CalendarIcon className="h-4 w-4 opacity-60" />
                   </PopoverTrigger>
@@ -269,11 +273,11 @@ export default function ChildProfileDialog({
                       startMonth={YEAR_RANGE.earliest}
                       endMonth={YEAR_RANGE.latest}
                       defaultMonth={
-                        field.value ? new Date(field.value) : YEAR_RANGE.latest
+                        parseCalendarDate(field.value) ?? YEAR_RANGE.latest
                       }
-                      selected={field.value ? new Date(field.value) : undefined}
+                      selected={parseCalendarDate(field.value) ?? undefined}
                       onSelect={(date) => {
-                        field.onChange(date ? format(date, "yyyy-MM-dd") : "");
+                        field.onChange(toCalendarDateString(date));
                         setIsDateOpen(false);
                       }}
                       disabled={(date) =>

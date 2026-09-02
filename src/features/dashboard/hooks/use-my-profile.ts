@@ -5,6 +5,7 @@ import { useAuthUserQuery, useUpdateProfileMutation } from "@/features/auth/api/
 import { uploadProfileImage } from "@/features/auth/api/auth.service";
 import { useUpdateChildMutation } from "@/features/players/api/children.queries";
 import { showApiSuccessToast, showApiErrorToast } from "@/lib/api-toast";
+import { parseCalendarDate } from "@/lib/calendar-date";
 
 export function useMyProfile() {
   const { data, isPending } = useAuthUserQuery();
@@ -35,12 +36,14 @@ export function useMyProfile() {
     // /user/me returns a team object, or null when the player is on no team.
     team: playerProfile?.team?.name || "N/A",
     city: user?.address?.city || "N/A",
+    // Read as a calendar day, never converted to the browser's timezone — at
+    // UTC-6 that turned a birthday into the day before.
     dateOfBirth: playerProfile?.dob
-      ? new Date(playerProfile.dob).toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric",
-      })
+      ? (parseCalendarDate(playerProfile.dob)?.toLocaleDateString("en-US", {
+          month: "2-digit",
+          day: "2-digit",
+          year: "numeric",
+        }) ?? "N/A")
       : "N/A",
     // The account email: a child has none of their own.
     email: user?.email || "N/A",
