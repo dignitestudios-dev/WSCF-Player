@@ -8,6 +8,7 @@ export interface DashboardSummary {
   validTill: string;
   userId: string;
   currentRating: number;
+  ratingStatus?: "pending" | "assigned" | "unrated";
   lastUpdate: string;
   upcomingCount: number;
   nextTournamentAt: string | null;
@@ -115,6 +116,7 @@ export function useDashboard() {
     validTill: validTillDate,
     userId: profile?.membershipId || user?._id || "N/A",
     currentRating: profile?.rating || 0,
+    ratingStatus: profile?.ratingStatus,
     lastUpdate: lastUpdateDate,
     upcomingCount: upcomingCount,
     nextTournamentAt,

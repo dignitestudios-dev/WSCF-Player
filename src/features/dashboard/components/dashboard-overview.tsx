@@ -134,6 +134,15 @@ export default function DashboardOverview() {
           <h2 className="text-[22px] font-semibold leading-[30px] text-[#083F92]">Current Rating</h2>
           {isSummaryLoading ? (
             <Skeleton className="mt-2 h-[54px] w-24" />
+          ) : summary.ratingStatus === "pending" ? (
+            <div className="mt-2 flex flex-col">
+              <span className="text-[34px] font-semibold leading-[44px] text-[#083F92]">
+                Pending
+              </span>
+              <span className="text-xs font-medium text-[#727272]">
+                Being assigned by admin
+              </span>
+            </div>
           ) : (
             <p className="mt-2 text-[40px] font-semibold leading-[54px] text-[#083F92]">{summary.currentRating}</p>
           )}
@@ -141,7 +150,11 @@ export default function DashboardOverview() {
             {isSummaryLoading ? (
               <Skeleton className="h-[27px] w-32" />
             ) : (
-              <span className="text-xl leading-[27px] text-[#727272]">{summary.lastUpdate}</span>
+              <span className="text-xl leading-[27px] text-[#727272]">
+                {summary.ratingStatus === "pending"
+                  ? "Pending assignment"
+                  : summary.lastUpdate}
+              </span>
             )}
             <span className="text-[22px] font-bold leading-[30px] text-[#083F92]">Last Update</span>
           </div>

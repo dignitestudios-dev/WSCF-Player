@@ -253,7 +253,7 @@ export default function MyProfile() {
                   Being assigned
                 </p>
                 <p className="text-[13px] leading-[18px] text-white/80">
-                  We&apos;re looking up your previous rating
+                  We&apos;re assigning your rating
                 </p>
               </div>
             ) : (

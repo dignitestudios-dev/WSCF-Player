@@ -1,4 +1,5 @@
 import DashboardHeader from "@/features/dashboard/components/dashboard-header";
+import PendingRatingBanner from "@/features/dashboard/components/pending-rating-banner";
 import AuthGuard from "@/components/shared/auth-guard";
 
 export default function DashboardLayout({
@@ -16,6 +17,7 @@ export default function DashboardLayout({
         }}
       >
         <DashboardHeader />
+        <PendingRatingBanner />
         <main>{children}</main>
       </div>
     </AuthGuard>
