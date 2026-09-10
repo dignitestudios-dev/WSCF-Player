@@ -38,6 +38,14 @@ export const editProfileSchema = z.object({
     .trim()
     .min(1, "Grade is required")
     .regex(/^(K|[1-9]|1[0-2])$/, "Invalid grade"),
+  // Shown on the profile page but previously absent from this form, so it
+  // could be read and never corrected.
+  city: z
+    .string()
+    .trim()
+    .max(100, "City is too long")
+    .optional()
+    .or(z.literal("")),
   fatherName: z
     .string()
     .max(100, "Name is too long")

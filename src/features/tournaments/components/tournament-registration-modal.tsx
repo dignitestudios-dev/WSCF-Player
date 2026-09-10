@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useActivePlayer } from "@/features/players/use-active-player";
 
 const inputClassName =
   "h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none placeholder:text-[#181818]/60 focus:ring-2 focus:ring-[#083F92]/15";
@@ -174,6 +175,9 @@ export default function TournamentRegistrationModal({
   onCouponApplied,
   onCouponCleared,
 }: TournamentRegistrationModalProps) {
+  const { activePlayer } = useActivePlayer();
+  const isPendingRating = activePlayer?.ratingStatus === "pending";
+
   const [isCheckingCoupon, setIsCheckingCoupon] = useState(false);
 
   // A free tournament has nothing to discount, so the box is not shown at all
@@ -215,38 +219,56 @@ export default function TournamentRegistrationModal({
           </div>
         ) : divisions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-2">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-2 ${isPendingRating ? "bg-amber-50" : "bg-red-50"}`}>
+              {isPendingRating ? (
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              ) : (
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              )}
             </div>
-            <h3 className="text-[20px] font-semibold text-[#181818] tracking-tight">Not Eligible</h3>
-            <p className="text-[14px] text-[#181818]/70 max-w-[280px]">
-              You are not eligible for any divisions in this tournament based on your profile.
+            <h3 className="text-[20px] font-semibold text-[#181818] tracking-tight">
+              {isPendingRating ? "Rating Assignment Pending" : "Not Eligible"}
+            </h3>
+            <p className="text-[14px] text-[#181818]/70 max-w-[320px]">
+              {isPendingRating
+                ? "This tournament only has rating-restricted divisions. While your rating is pending admin assignment, you can only enter open divisions with no rating requirement."
+                : "You are not eligible for any divisions in this tournament based on your profile."}
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[22px] gap-y-8">
               {divisions.length > 0 && (
-                <SelectField
-                  id="divisionId"
-                  label="Division"
-                  placeholder="Select division"
-                  // Division names are free text the admin chose, so the
-                  // criteria line is what tells a parent who the section is
-                  // actually for - "Section B" alone says nothing.
-                  options={divisions.map((d) => ({
-                    label: d.name || d.label || "Division",
-                    value: d._id,
-                    description: d.criteria || undefined,
-                  }))}
-                  error={errors.divisionId?.message}
-                  control={control}
-                  className="sm:col-span-2"
-                />
+                <>
+                  <SelectField
+                    id="divisionId"
+                    label="Division"
+                    placeholder="Select division"
+                    // Division names are free text the admin chose, so the
+                    // criteria line is what tells a parent who the section is
+                    // actually for - "Section B" alone says nothing.
+                    options={divisions.map((d) => ({
+                      label: d.name || d.label || "Division",
+                      value: d._id,
+                      description: d.criteria || undefined,
+                    }))}
+                    error={errors.divisionId?.message}
+                    control={control}
+                    className={fields.length === 0 ? "sm:col-span-2" : undefined}
+                  />
+                  {isPendingRating && (
+                    <p className="text-xs font-medium text-[#92400E] sm:col-span-2 -mt-4">
+                      * Showing open divisions only. Rating-restricted divisions are unavailable while your rating is pending admin assignment.
+                    </p>
+                  )}
+                </>
               )}
             </div>
 

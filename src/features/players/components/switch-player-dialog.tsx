@@ -54,8 +54,8 @@ export default function SwitchPlayerDialog({
         onClick={onClose}
       />
 
-      <div className="relative z-10 max-h-[85vh] w-full max-w-[480px] overflow-hidden rounded-[24px] bg-white shadow-xl">
-        <div className="border-b border-[#F4F4F4] px-6 py-5">
+      <div className="relative z-10 flex max-h-[90vh] w-full max-w-[480px] flex-col overflow-hidden rounded-[24px] bg-white shadow-xl">
+        <div className="shrink-0 border-b border-[#F4F4F4] px-6 py-5">
           <h2 className="text-xl font-semibold leading-7 text-[#083F92]">
             Switch Player
           </h2>
@@ -65,7 +65,10 @@ export default function SwitchPlayerDialog({
           </p>
         </div>
 
-        <div className="flex max-h-[45vh] flex-col gap-3 overflow-y-auto px-6 py-5">
+        {/* The only scrolling part. `min-h-0` is what lets a flex child
+            actually shrink — without it the list refuses to scroll and pushes
+            the buttons off the bottom instead. */}
+        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-6 py-5">
           {children.map((player) => (
             <PlayerCard
               key={player._id}
@@ -74,7 +77,12 @@ export default function SwitchPlayerDialog({
               onSelect={() => setSelectedId(player._id)}
             />
           ))}
+        </div>
 
+        {/* Outside the scroll on purpose: with several players this used to sit
+            below the fold, so the one action that adds a player was the one you
+            had to scroll to find. */}
+        <div className="shrink-0 px-6 pb-4">
           <button
             type="button"
             onClick={() => {
@@ -88,7 +96,7 @@ export default function SwitchPlayerDialog({
           </button>
         </div>
 
-        <div className="flex gap-3 border-t border-[#F4F4F4] px-6 py-4">
+        <div className="flex shrink-0 gap-3 border-t border-[#F4F4F4] px-6 py-4">
           <button
             type="button"
             onClick={onClose}

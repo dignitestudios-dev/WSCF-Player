@@ -227,6 +227,19 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                 </FormRow>
               </FormSection>
 
+              <FormSection title="Address">
+                <FormRow>
+                  <FormField
+                    id="city"
+                    label="City"
+                    error={errors.city?.message}
+                    disabled={isUpdating}
+                    register={register}
+                    maxLength={100}
+                  />
+                </FormRow>
+              </FormSection>
+
               <FormSection title="Parent Information">
                 <FormRow>
                   <FormField

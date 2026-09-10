@@ -63,6 +63,11 @@ interface PlayerChild {
   gender?: string;
   dob?: string;
   rating?: number;
+  /**
+   * Where this player sits in the admin's rating queue. `pending` means nobody
+   * has looked them up yet — different from a confirmed rating of 0.
+   */
+  ratingStatus?: "pending" | "assigned" | "unrated";
   masterFileChecked?: boolean;
   masterPlayerId?: string | null;
   /** Barring is per player: a sibling can be active alongside a barred one. */

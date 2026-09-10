@@ -2,6 +2,7 @@
 
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { DASHBOARD_PLAYERS_RATING_ROUTE, PLAYERS_RATING_ROUTE } from "@/config/routes";
+import { parseCalendarDate } from "@/lib/calendar-date";
 import {
   useUserProfileQuery,
   useUserTournamentHistoryQuery,
@@ -38,7 +39,7 @@ export function usePlayerProfile() {
     // One address per household, held on the account.
     city: account?.address?.city || "-",
     dateOfBirth: profileData?.dob
-      ? new Date(profileData.dob).toLocaleDateString()
+      ? (parseCalendarDate(profileData.dob)?.toLocaleDateString() ?? "-")
       : "-",
     currentRating: profileData?.rating || 0,
     grade: profileData?.grade || "-",

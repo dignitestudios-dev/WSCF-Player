@@ -13,6 +13,11 @@ export default function ForgotPasswordPage() {
       showBack
       backHref={MEMBER_LOGIN_ROUTE}
       hideLogo
+      // The default for a logo-less screen pins content to the top with no
+      // room beneath it, which leaves a form this short looking cramped
+      // against the back arrow. Centred with breathing space above and below,
+      // matching the other short auth screens.
+      contentClassName="justify-center py-12 lg:py-16"
     >
       <ForgotPasswordForm />
     </LoginShell>

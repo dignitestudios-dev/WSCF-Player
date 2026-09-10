@@ -63,7 +63,7 @@ export default function DashboardPlayersRatingLookup() {
             type="text"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search and view player ratings by name or a USER ID"
+            placeholder="Search by first name, last name or member ID"
             className="min-w-0 flex-1 bg-transparent text-base font-medium text-[#151515] outline-none placeholder:text-[#ADADAD]"
             autoFocus
           />

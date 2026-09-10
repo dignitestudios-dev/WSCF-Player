@@ -85,7 +85,7 @@ export default function UpcomingTournamentsModal({
             type="text"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search tournaments"
+            placeholder="Search by tournament name"
             className="h-12 w-full rounded-[24px] border border-[#DADADA] bg-white pl-6 pr-14 text-sm font-light text-[#181818] outline-none"
           />
           {search ? (

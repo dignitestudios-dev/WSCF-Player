@@ -110,7 +110,7 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
           type="text"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search players by name or user id"
+          placeholder="Search by player name, member ID or team"
           className="w-full bg-transparent text-base font-medium text-[#151515] outline-none placeholder:text-[#ADADAD]"
         />
         {query ? (
