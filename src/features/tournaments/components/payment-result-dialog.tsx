@@ -73,7 +73,7 @@ export default function PaymentResultDialog({
           </h2>
           <p className="text-lg leading-7 tracking-[-0.014em] text-[#565656]">
             {isSuccess
-              ? "You are now registered. Your tournament is listed below."
+              ? "Your payment has been received. Once your payment is confirmed, you will be registered in this tournament and it will appear in your registered tournaments list below."
               : "Your payment was not completed, so you have not been registered for this tournament. You can register again from the tournaments page."}
           </p>
         </div>

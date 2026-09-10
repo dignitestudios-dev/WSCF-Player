@@ -261,7 +261,7 @@ export default function TournamentRegistrationModal({
                     }))}
                     error={errors.divisionId?.message}
                     control={control}
-                    className={fields.length === 0 ? "sm:col-span-2" : undefined}
+                    className="sm:col-span-2"
                   />
                   {isPendingRating && (
                     <p className="text-xs font-medium text-[#92400E] sm:col-span-2 -mt-4">

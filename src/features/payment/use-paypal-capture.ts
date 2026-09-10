@@ -60,38 +60,49 @@ const readOrderId = (params: URLSearchParams): string | null => {
 export function usePaypalCapture(): CaptureResult {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const fromUrl = readOrderId(searchParams as unknown as URLSearchParams);
+  const paymentParam = searchParams.get("payment");
+  const isCancelled = paymentParam === "cancelled";
+  const fromUrl = isCancelled
+    ? null
+    : readOrderId(searchParams as unknown as URLSearchParams);
 
   // Latched on first sight and never cleared.
-  //
-  // Some screens strip the query string as soon as they have read it, so that
-  // a refresh does not replay the outcome. Reading the param directly would
-  // then reset this hook to "idle" mid-flight and throw away the result of a
-  // capture that is still running.
   const latched = useRef<string | null>(null);
-  if (fromUrl && !latched.current) latched.current = fromUrl;
+  if (fromUrl && !latched.current && !isCancelled) {
+    latched.current = fromUrl;
+  }
   const orderId = latched.current;
 
-  const [state, setState] = useState<CaptureState>(orderId ? "verifying" : "idle");
+  const [state, setState] = useState<CaptureState>(
+    orderId && !isCancelled ? "verifying" : "idle",
+  );
   const [message, setMessage] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
-  // Guards the double invocation React runs in development.
   const inFlight = useRef(false);
+  const isMounted = useRef(true);
 
   useEffect(() => {
-    if (!orderId) {
-      setState("idle");
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!orderId || isCancelled) {
+      if (isCancelled) {
+        setState("idle");
+      }
       return;
     }
     if (inFlight.current) return;
     inFlight.current = true;
 
-    let cancelled = false;
     let polls = 0;
 
     const finish = (next: CaptureState, text: string | null) => {
-      if (cancelled) return;
+      if (!isMounted.current) return;
       setState(next);
       setMessage(text);
 
@@ -102,7 +113,14 @@ export function usePaypalCapture(): CaptureResult {
       // them $0, because the quote is fresh and the account payload is not.
       if (next === "paid") {
         queryClient.invalidateQueries({ queryKey: ["authUser"] });
-        queryClient.invalidateQueries({ queryKey: ["membership", "quote"] });
+        queryClient.invalidateQueries({ queryKey: ["membership"] });
+        queryClient.invalidateQueries({ queryKey: ["myTournaments"] });
+        queryClient.invalidateQueries({ queryKey: ["tournaments"] });
+        queryClient.invalidateQueries({ queryKey: ["tournamentParticipants"] });
+        queryClient.invalidateQueries({ queryKey: ["tournamentDetails"] });
+        queryClient.invalidateQueries({ queryKey: ["tournamentDivisions"] });
+        queryClient.invalidateQueries({ queryKey: ["children"] });
+        queryClient.invalidateQueries({ queryKey: ["notifications"] });
       }
     };
 
@@ -115,14 +133,17 @@ export function usePaypalCapture(): CaptureResult {
         );
         if (data?.data?.paid) return finish("paid", null);
         if (data?.data?.status === "declined") {
-          return finish("failed", "The payment was declined. Nothing has been charged.");
+          return finish(
+            "failed",
+            "The payment was declined. Nothing has been charged.",
+          );
         }
       } catch {
         // Fall through to the pending message below.
       }
 
       polls += 1;
-      if (polls < MAX_POLLS && !cancelled) {
+      if (polls < MAX_POLLS && isMounted.current) {
         setTimeout(poll, POLL_DELAY_MS);
         return;
       }
@@ -170,11 +191,7 @@ export function usePaypalCapture(): CaptureResult {
 
     setState("verifying");
     run();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [orderId, attempt, queryClient]);
+  }, [orderId, isCancelled, attempt, queryClient]);
 
   return {
     state,

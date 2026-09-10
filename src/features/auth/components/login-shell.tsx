@@ -43,6 +43,19 @@ export default function LoginShell({
         }}
       />
 
+      {!matchLeftPanelToContent && (
+        <div className="pointer-events-none fixed -right-12 bottom-0 z-0 hidden overflow-hidden xl:block">
+          <Image
+            src="/images/loginbottom.png"
+            alt=""
+            width={400}
+            height={400}
+            className="rotate-[-20deg] object-contain opacity-90"
+            aria-hidden="true"
+          />
+        </div>
+      )}
+
       <div className={rowClassName}>
         <div className={leftColumnClassName}>
           <div className={leftImageClassName}>
@@ -81,19 +94,6 @@ export default function LoginShell({
           {showBack && (
             <div className="absolute left-6 top-8 z-20 lg:left-0 lg:top-12">
               <LoginBackButton href={backHref} />
-            </div>
-          )}
-
-          {!matchLeftPanelToContent && (
-            <div className="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden xl:block">
-              <Image
-                src="/images/loginbottom.png"
-                alt=""
-                width={400}
-                height={400}
-                className="absolute -right-12 bottom-0 rotate-[-20deg] object-contain opacity-90"
-                aria-hidden="true"
-              />
             </div>
           )}
 

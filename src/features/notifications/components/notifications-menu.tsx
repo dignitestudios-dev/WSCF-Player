@@ -27,6 +27,7 @@ import { cn } from "@/utils/cn";
 const TYPE_ICONS: Record<NotificationType, typeof Bell> = {
   "tournament.registered": Trophy,
   "tournament.rescheduled": CalendarClock,
+  "membership.activated": CreditCard,
   "membership.renewed": CreditCard,
   "membership.expired": CreditCard,
   "membership.payment_failed": CreditCard,

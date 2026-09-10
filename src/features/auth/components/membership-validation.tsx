@@ -32,6 +32,17 @@ function CalendarIcon() {
   );
 }
 
+function getMembershipValidUntil(now = new Date()): string {
+  let targetYear = now.getFullYear();
+  // Month is 0-indexed: 7 is August.
+  // Before August 31, valid until August 31 of the current year.
+  // On or after August 31, valid until August 31 of next year.
+  if (now.getMonth() > 7 || (now.getMonth() === 7 && now.getDate() >= 31)) {
+    targetYear += 1;
+  }
+  return `August 31, ${targetYear}`;
+}
+
 function SummaryRow({
   label,
   value,
@@ -84,6 +95,7 @@ export default function MembershipValidation() {
 
   const players = quote?.players ?? [];
   const unitPrice = quote?.unitPrice ?? 5;
+  const validUntil = getMembershipValidUntil();
 
   // Nothing owed — every player on the account is already covered.
   const nothingToPay = !isLoading && players.length === 0;
@@ -144,7 +156,7 @@ export default function MembershipValidation() {
         </div>
         <p className="text-sm leading-[19px] text-white">
           Your membership will be valid until <br />
-          <b>August 31, 2026</b>
+          <b>{validUntil}</b>
         </p>
       </div>
 
@@ -165,7 +177,7 @@ export default function MembershipValidation() {
         ) : (
           <div className="mb-6 flex flex-col gap-[19px]">
             <SummaryRow label="Annual Membership" boldLabel />
-            <SummaryRow label="Valid Until" value="August 31, 2026" />
+            <SummaryRow label="Valid Until" value={validUntil} />
 
             <div className="h-px w-full bg-[#F0F0F0]" />
 

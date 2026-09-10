@@ -77,7 +77,7 @@ export default function PaymentSuccessContent() {
           {state === "verifying"
             ? "Please wait while we confirm your payment with PayPal. Do not close this page."
             : message ||
-              "Your tournament payment was successful! You are now registered."}
+              "Your payment has been received. Once your payment is confirmed, you will be registered in this tournament and it will appear in your registered tournaments list."}
         </p>
       </div>
 

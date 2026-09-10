@@ -135,15 +135,18 @@ export default function RegisteredTournaments() {
     if (outcome !== "success" && outcome !== "cancelled") return;
 
     setPaymentOutcome(outcome);
-    router.replace(pathname, { scroll: false });
-  }, [searchParams, router, pathname]);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", pathname);
+    }
+  }, [searchParams, pathname]);
 
   const closePaymentDialog = useCallback(() => setPaymentOutcome(null), []);
 
   // Nothing is shown while the capture is still running: a "thank you" that
   // appears before the money is confirmed is the exact failure this replaces.
-  const awaitingCapture =
+  const isCapturing =
     paymentOutcome === "success" && captureState === "verifying";
+  const awaitingCapture = isCapturing;
 
   return (
     <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
@@ -178,7 +181,7 @@ export default function RegisteredTournaments() {
         </h1>
 
         <div className="mt-[41px] flex flex-col gap-4">
-          {isPending ? (
+          {isPending || isCapturing ? (
             [...Array(3)].map((_, i) => (
               <div
                 key={i}
