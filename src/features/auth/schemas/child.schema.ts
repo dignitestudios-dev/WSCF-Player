@@ -11,13 +11,19 @@ export const childSchema = z.object({
   firstName: z
     .string()
     .min(1, "First name is required")
-    .max(50, "First name is too long")
-    .regex(/^[a-zA-Z\s'-]+$/, "First name can only contain letters"),
+    .max(50, "First name cannot exceed 50 characters")
+    .regex(
+      /^[a-zA-Z'.-]+(?: [a-zA-Z'.-]+)*$/,
+      "First name can only contain letters, hyphens, periods, and apostrophes",
+    ),
   lastName: z
     .string()
     .min(1, "Last name is required")
-    .max(50, "Last name is too long")
-    .regex(/^[a-zA-Z\s'-]+$/, "Last name can only contain letters"),
+    .max(50, "Last name cannot exceed 50 characters")
+    .regex(
+      /^[a-zA-Z'.-]+(?: [a-zA-Z'.-]+)*$/,
+      "Last name can only contain letters, hyphens, periods, and apostrophes",
+    ),
   gender: z.enum(["male", "female"], {
     errorMap: () => ({ message: "Please select a valid gender" }),
   }),

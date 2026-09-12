@@ -134,7 +134,7 @@ export default function PlayerProfile() {
 
             {/* Profile Details */}
             <div className="w-full flex flex-col items-center lg:items-start">
-              <h2 className="text-2xl lg:text-[32px] font-semibold lg:leading-[43px] text-[#292D32] text-center lg:text-left break-words max-w-full">
+              <h2 className="text-2xl lg:text-[32px] font-semibold lg:leading-[43px] text-[#292D32] text-center lg:text-left break-words break-all [overflow-wrap:anywhere] max-w-full">
                 {player.name}
               </h2>
 
@@ -143,10 +143,10 @@ export default function PlayerProfile() {
                 {stats.map((stat) => (
                   <div
                     key={stat.label}
-                    className="flex flex-col items-center lg:items-start border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0"
+                    className="flex flex-col items-center lg:items-start border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0 max-w-[200px]"
                   >
                     <span className="text-sm font-medium leading-[19px] text-[#083F92]">{stat.label}</span>
-                    <span className={`text-lg lg:text-2xl font-semibold leading-8 break-words text-center lg:text-left max-w-full ${stat.value === "Not assigned" ? "text-gray-400" : "text-[#083F92]"}`}>
+                    <span className={`text-lg lg:text-2xl font-semibold leading-8 break-words break-all [overflow-wrap:anywhere] text-center lg:text-left max-w-full ${stat.value === "Not assigned" ? "text-gray-400" : "text-[#083F92]"}`}>
                       {stat.value}
                     </span>
                   </div>

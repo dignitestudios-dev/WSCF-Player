@@ -212,16 +212,16 @@ function TournamentParticipantsContent({
                     index % 2 === 1 ? "bg-[rgba(8,63,146,0.1)]" : "bg-white"
                   }`}
                 >
-                  <span className="font-semibold">{participant.userId}</span>
-                  <span className={participant.highlightName ? "font-bold" : "font-semibold"}>
+                  <span className="font-semibold break-words break-all [overflow-wrap:anywhere] pr-2">{participant.userId}</span>
+                  <span className={`${participant.highlightName ? "font-bold" : "font-semibold"} break-words break-all [overflow-wrap:anywhere] pr-2`}>
                     {participant.name}
                   </span>
                   <span className={participant.highlightName ? "font-bold" : "font-semibold"}>
                     {participant.grade}
                   </span>
                   <span className="font-semibold">{participant.rating}</span>
-                  <span className="font-semibold tracking-[-0.02em]">{participant.team}</span>
-                  <span className="font-semibold">{participant.division}</span>
+                  <span className="font-semibold tracking-[-0.02em] break-words break-all [overflow-wrap:anywhere] pr-2">{participant.team}</span>
+                  <span className="font-semibold break-words break-all [overflow-wrap:anywhere] pr-2">{participant.division}</span>
                   <Link
                     href={`${getProfileRoute(participant.id)}?backHref=${encodeURIComponent(currentUrl)}`}
                     className="text-right font-semibold tracking-[-0.02em] text-[#636363] underline hover:text-[#083F92]"

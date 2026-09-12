@@ -9,7 +9,13 @@ import { BECOME_MEMBER_ROUTE, FORGOT_PASSWORD_ROUTE } from "@/config/routes";
 function VerifyOtpPageContent() {
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
-  const backHref = from === "register" ? BECOME_MEMBER_ROUTE : FORGOT_PASSWORD_ROUTE;
+  const email = searchParams.get("email");
+  const backHref =
+    from === "register"
+      ? BECOME_MEMBER_ROUTE
+      : email
+        ? `${FORGOT_PASSWORD_ROUTE}?email=${encodeURIComponent(email)}`
+        : FORGOT_PASSWORD_ROUTE;
 
   return (
     <LoginShell

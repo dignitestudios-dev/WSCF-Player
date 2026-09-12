@@ -14,7 +14,6 @@ export default function RegisterPage() {
       showBack
       backHref={AUTH_REDIRECT}
       hideLogo
-      matchLeftPanelToContent
     >
       <BecomeMemberForm />
     </LoginShell>

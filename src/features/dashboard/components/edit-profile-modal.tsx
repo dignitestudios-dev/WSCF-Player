@@ -235,7 +235,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.city?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={100}
+                    maxLength={30}
                   />
                 </FormRow>
               </FormSection>
@@ -248,7 +248,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.fatherName?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={100}
+                    maxLength={50}
                   />
                   <FormField
                     id="motherName"
@@ -256,7 +256,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors?.motherName?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={100}
+                    maxLength={50}
                   />
                 </FormRow>
                 <FormRow>
@@ -266,6 +266,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.fatherPhone?.message}
                     disabled={isUpdating}
                     register={register}
+                    maxLength={14}
                     onChange={(e) => {
                       const value = e.target.value;
                       const phoneNumber = value.replace(/[^\d]/g, "");
@@ -284,6 +285,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.motherPhone?.message}
                     disabled={isUpdating}
                     register={register}
+                    maxLength={14}
                     onChange={(e) => {
                       const value = e.target.value;
                       const phoneNumber = value.replace(/[^\d]/g, "");
@@ -305,6 +307,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.fatherEmail?.message}
                     disabled={isUpdating}
                     register={register}
+                    maxLength={150}
                   />
                   <FormField
                     id="motherEmail"
@@ -313,6 +316,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.motherEmail?.message}
                     disabled={isUpdating}
                     register={register}
+                    maxLength={150}
                   />
                 </FormRow>
               </FormSection>

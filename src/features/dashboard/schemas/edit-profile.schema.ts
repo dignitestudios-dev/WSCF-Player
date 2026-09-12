@@ -1,28 +1,26 @@
 import { z } from "zod";
 
-const nameRegex = /^[a-zA-Z\s]+$/;
-const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
+const nameRegex = /^[a-zA-Z'.-]+(?: [a-zA-Z'.-]+)*$/;
+const phoneRegex = /^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/;
 
 // A guardian's name takes letters and the punctuation real names carry --
-// apostrophes, hyphens, periods, accents -- but no digits. People do write
-// "O'Brien-Smith" and "Dr. J. Okonkwo"; nobody's name has a number in it.
-const guardianNameRegex = /^[^0-9]+$/;
-const guardianNameMessage = "Name cannot contain numbers";
-
+// apostrophes, hyphens, periods, accents -- but no digits.
+const guardianNameRegex = /^[a-zA-Z'.-]+(?: [a-zA-Z'.-]+)*$/;
+const guardianNameMessage = "Name can only contain letters, hyphens, periods, and apostrophes";
 
 export const editProfileSchema = z.object({
   firstName: z
     .string()
     .trim()
     .min(1, "First name is required")
-    .max(50, "First name is too long")
-    .regex(nameRegex, "Name can only contain letters and spaces"),
+    .max(50, "First name cannot exceed 50 characters")
+    .regex(nameRegex, "First name can only contain letters, hyphens, periods, and apostrophes"),
   lastName: z
     .string()
     .trim()
     .min(1, "Last name is required")
-    .max(50, "Last name is too long")
-    .regex(nameRegex, "Name can only contain letters and spaces"),
+    .max(50, "Last name cannot exceed 50 characters")
+    .regex(nameRegex, "Last name can only contain letters, hyphens, periods, and apostrophes"),
   gender: z.enum(["male", "female"], {
     errorMap: () => ({ message: "Please select a valid gender" }),
   }),
@@ -43,25 +41,26 @@ export const editProfileSchema = z.object({
   city: z
     .string()
     .trim()
-    .max(100, "City is too long")
+    .max(30, "City cannot exceed 30 characters")
+    .regex(/^[a-zA-Z.-]+(?: [a-zA-Z.-]+)*$/, "City can only contain letters, periods, and hyphens")
     .optional()
     .or(z.literal("")),
   fatherName: z
     .string()
-    .max(100, "Name is too long")
+    .max(50, "Name cannot exceed 50 characters")
     .regex(guardianNameRegex, guardianNameMessage)
     .optional()
     .or(z.literal("")),
   motherName: z
     .string()
-    .max(100, "Name is too long")
+    .max(50, "Name cannot exceed 50 characters")
     .regex(guardianNameRegex, guardianNameMessage)
     .optional()
     .or(z.literal("")),
-  fatherPhone: z.string().regex(phoneRegex, "Please enter a valid phone number").max(20, "Phone number is too long").optional().or(z.literal("")),
-  motherPhone: z.string().regex(phoneRegex, "Please enter a valid phone number").max(20, "Phone number is too long").optional().or(z.literal("")),
-  fatherEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
-  motherEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
+  fatherPhone: z.string().regex(phoneRegex, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
+  motherPhone: z.string().regex(phoneRegex, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
+  fatherEmail: z.string().email("Invalid email address").max(150, "Email is too long").optional().or(z.literal("")),
+  motherEmail: z.string().email("Invalid email address").max(150, "Email is too long").optional().or(z.literal("")),
 })
 .refine((data) => {
   const hasFather = Boolean(data.fatherName && data.fatherPhone);

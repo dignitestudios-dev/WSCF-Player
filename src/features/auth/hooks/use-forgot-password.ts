@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForgotPasswordMutation } from "@/features/auth/api/auth.mutations";
@@ -9,11 +9,13 @@ import { getVerifyOtpRoute } from "@/config/routes";
 
 export function useForgotPassword() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialEmail = searchParams.get("email") ?? "";
   const { mutate: sendResetLink, isPending, error } = useForgotPasswordMutation();
 
   const form = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
-    defaultValues: { email: "" },
+    defaultValues: { email: initialEmail },
   });
 
   function onSubmit(data: ForgotPasswordFormData) {

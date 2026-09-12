@@ -88,7 +88,7 @@ export default function MembershipCancelContent() {
           href={MEMBERSHIP_VALIDATION_ROUTE}
           className="flex h-12 w-full items-center justify-center rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875]"
         >
-          Pay Again
+          Pay for Membership
         </Link>
 
         <button
@@ -96,7 +96,7 @@ export default function MembershipCancelContent() {
           onClick={logout}
           className="h-12 w-full rounded-[24px] border border-[#3D3775] bg-white text-sm font-semibold capitalize text-[#3D3775] transition-colors hover:bg-[#F7F6FF]"
         >
-          Log Out
+          Logout
         </button>
       </div>
     </div>

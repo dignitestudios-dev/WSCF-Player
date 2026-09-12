@@ -79,14 +79,14 @@ function NotificationItem({ notification }: { notification: DashboardNotificatio
 
       <div className="flex min-w-0 flex-1 flex-col gap-2.5">
         <div className="flex items-center justify-between gap-2.5">
-          <h3 className="text-lg font-semibold leading-[21px] tracking-[-0.005em] text-[#083F92]">
+          <h3 className="text-lg font-semibold leading-[21px] tracking-[-0.005em] text-[#083F92] break-words break-all [overflow-wrap:anywhere]">
             {notification.title}
           </h3>
           <span className="shrink-0 text-sm font-medium leading-[17px] tracking-[-0.005em] text-[#083F92]">
             {notification.time}
           </span>
         </div>
-        <p className="text-sm font-medium leading-[19px] tracking-[-0.005em] text-[#121111]">
+        <p className="text-sm font-medium leading-[19px] tracking-[-0.005em] text-[#121111] break-words break-all [overflow-wrap:anywhere]">
           {notification.message}
         </p>
       </div>

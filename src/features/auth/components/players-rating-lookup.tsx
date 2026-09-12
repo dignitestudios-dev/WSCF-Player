@@ -35,6 +35,8 @@ export default function PlayersRatingLookup() {
     <LoginShell
       contentMaxWidth="max-w-[820px]"
       contentClassName="justify-start pt-16 lg:pt-0"
+      showBack
+      backHref={backHref}
       hideLogo
     >
       <div className="flex w-full flex-col gap-4">

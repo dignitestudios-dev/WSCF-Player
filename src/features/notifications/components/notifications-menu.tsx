@@ -106,7 +106,7 @@ function NotificationRow({
         <div className="flex items-start gap-2">
           <p
             className={cn(
-              "text-sm leading-5 text-[#121111]",
+              "text-sm leading-5 text-[#121111] break-words break-all [overflow-wrap:anywhere]",
               notification.isRead ? "font-medium" : "font-semibold",
             )}
           >
@@ -117,7 +117,7 @@ function NotificationRow({
           ) : null}
         </div>
 
-        <p className="mt-1 text-xs font-medium leading-[18px] text-[#636363]">
+        <p className="mt-1 text-xs font-medium leading-[18px] text-[#636363] break-words break-all [overflow-wrap:anywhere]">
           {notification.body}
         </p>
 

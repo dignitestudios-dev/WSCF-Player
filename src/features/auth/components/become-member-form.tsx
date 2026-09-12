@@ -309,7 +309,7 @@ export default function BecomeMemberForm() {
               placeholder="John Doe"
               error={errors.fatherName?.message}
               register={register}
-              maxLength={100}
+              maxLength={50}
             />
             <FormField
               id="motherName"
@@ -318,7 +318,7 @@ export default function BecomeMemberForm() {
               placeholder="Jane Doe"
               error={errors.motherName?.message}
               register={register}
-              maxLength={100}
+              maxLength={50}
             />
           </div>
 

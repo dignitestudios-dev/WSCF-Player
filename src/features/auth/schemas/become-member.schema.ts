@@ -12,8 +12,8 @@ import { childSchema } from "@/features/auth/schemas/child.schema";
 // A guardian's name takes letters and the punctuation real names carry --
 // apostrophes, hyphens, periods, accents -- but no digits. People do write
 // "O'Brien-Smith" and "Dr. J. Okonkwo"; nobody's name has a number in it.
-const guardianNameRegex = /^[^0-9]+$/;
-const guardianNameMessage = "Name cannot contain numbers";
+const guardianNameRegex = /^[a-zA-Z'.-]+(?: [a-zA-Z'.-]+)*$/;
+const guardianNameMessage = "Name can only contain letters, hyphens, periods, and apostrophes";
 
 export const becomeMemberSchema = z
   .object({
@@ -22,11 +22,12 @@ export const becomeMemberSchema = z
       .string()
       .min(1, "City is required")
       .max(30, "City cannot exceed 30 characters")
-      .regex(/^[a-zA-Z\s]+$/, "City can only contain letters and spaces"),
+      .regex(/^[a-zA-Z.-]+(?: [a-zA-Z.-]+)*$/, "City can only contain letters, periods, and hyphens"),
     streetAddress: z
       .string()
       .min(1, "Street address is required")
-      .max(50, "Street address cannot exceed 50 characters"),
+      .max(50, "Street address cannot exceed 50 characters")
+      .regex(/^[a-zA-Z0-9,.'#-]+(?: [a-zA-Z0-9,.'#-]+)*$/, "Street address contains invalid characters"),
     zipCode: z
       .string()
       .min(1, "Zip code is required")
@@ -36,13 +37,13 @@ export const becomeMemberSchema = z
     // --- the parents/guardians ---
     fatherName: z
       .string()
-      .max(100, "Name is too long")
+      .max(50, "Name cannot exceed 50 characters")
       .regex(guardianNameRegex, guardianNameMessage)
       .optional()
       .or(z.literal("")),
     motherName: z
       .string()
-      .max(100, "Name is too long")
+      .max(50, "Name cannot exceed 50 characters")
       .regex(guardianNameRegex, guardianNameMessage)
       .optional()
       .or(z.literal("")),
