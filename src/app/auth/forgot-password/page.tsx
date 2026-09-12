@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { createPageMetadata } from "@/config/site-metadata";
 import LoginShell from "@/features/auth/components/login-shell";
 import ForgotPasswordForm from "@/features/auth/components/forgot-password-form";
@@ -19,7 +20,9 @@ export default function ForgotPasswordPage() {
       // matching the other short auth screens.
       contentClassName="justify-center py-12 lg:py-16"
     >
-      <ForgotPasswordForm />
+      <Suspense fallback={null}>
+        <ForgotPasswordForm />
+      </Suspense>
     </LoginShell>
   );
 }

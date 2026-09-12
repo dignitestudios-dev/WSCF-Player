@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import PaymentResultDialog from "@/features/tournaments/components/payment-result-dialog";
@@ -114,7 +114,7 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
   );
 }
 
-export default function RegisteredTournaments() {
+function RegisteredTournamentsContent() {
   const { tournaments, isPending, setPage, pagination, backHref } = useRegisteredTournaments();
 
   // PayPal returns here with ?payment=success|cancelled and, on the success
@@ -221,5 +221,13 @@ export default function RegisteredTournaments() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function RegisteredTournaments() {
+  return (
+    <Suspense fallback={null}>
+      <RegisteredTournamentsContent />
+    </Suspense>
   );
 }

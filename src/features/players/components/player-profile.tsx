@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { usePlayerProfile } from "@/features/players/hooks/use-player-profile";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,7 +30,7 @@ function RatingStarIcon({ className }: { className?: string }) {
   );
 }
 
-export default function PlayerProfile() {
+function PlayerProfileContent() {
   const router = useRouter();
   const { player, isLoading } = usePlayerProfile();
 
@@ -235,5 +236,13 @@ export default function PlayerProfile() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PlayerProfile() {
+  return (
+    <Suspense fallback={null}>
+      <PlayerProfileContent />
+    </Suspense>
   );
 }
