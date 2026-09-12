@@ -55,7 +55,7 @@ function FormField({
   maxLength?: number;
 }) {
   return (
-    <div className="flex w-full flex-col gap-2 sm:w-[309px]">
+    <div className="flex w-full flex-col gap-1.5 sm:w-[309px]">
       <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
         {label}
         {required && <RequiredMark />}
@@ -88,7 +88,7 @@ function FormField({
               : undefined,
         })}
       />
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-0.5 text-xs text-red-600">{error}</p>}
     </div>
   );
 }
@@ -113,7 +113,7 @@ function PasswordField({
   maxLength?: number;
 }) {
   return (
-    <div className={`flex w-full flex-col gap-2 sm:w-[309px]`}>
+    <div className="flex w-full flex-col gap-1.5 sm:w-[309px]">
       <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
         {label}
         {required && <RequiredMark />}
@@ -135,7 +135,7 @@ function PasswordField({
           <EyeIcon hidden={!show} />
         </button>
       </div>
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-0.5 text-xs text-red-600">{error}</p>}
     </div>
   );
 }
@@ -164,7 +164,7 @@ function ParentEmailField({
   return (
     <div className="w-full sm:w-[309px]">
       <div className="relative">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
             {label}
             {required && <RequiredMark />}
@@ -289,13 +289,9 @@ export default function BecomeMemberForm() {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex w-full max-w-[640px] flex-col gap-4"
+        className="w-full max-w-[640px]"
       >
-        {/* Locked while the request is in flight: disabling only the
-            submit button leaves every field editable after the values
-            have already been sent. `contents` keeps the fieldset out
-            of the layout. */}
-        <fieldset disabled={isPending} className="contents">
+        <fieldset disabled={isPending} className="flex w-full max-w-[640px] flex-col gap-4 border-0 p-0 m-0">
         <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
           Parent / Guardian Details
         </h2>
@@ -433,7 +429,7 @@ export default function BecomeMemberForm() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <div className="flex w-full flex-col gap-2 sm:w-[309px]">
+            <div className="flex w-full flex-col gap-1.5 sm:w-[309px]">
               <label
                 htmlFor="zipCode"
                 className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
@@ -454,7 +450,7 @@ export default function BecomeMemberForm() {
                 })}
               />
               {errors.zipCode && (
-                <p className="text-xs text-red-600">{errors.zipCode.message}</p>
+                <p className="mt-0.5 text-xs text-red-600">{errors.zipCode.message}</p>
               )}
             </div>
           </div>
@@ -546,7 +542,7 @@ export default function BecomeMemberForm() {
               </span>
             </label>
             {errors.agreeToTerms && (
-              <p className="mt-1 text-xs text-red-600">
+              <p className="mt-0.5 text-xs text-red-600">
                 {errors.agreeToTerms.message}
               </p>
             )}

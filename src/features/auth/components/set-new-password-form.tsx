@@ -50,82 +50,78 @@ export default function SetNewPasswordForm() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[26px]">
-        {/* Locked while the request is in flight: disabling only the
-            submit button leaves every field editable after the values
-            have already been sent. `contents` keeps the fieldset out
-            of the layout. */}
-        <fieldset disabled={isPending} className="contents">
-          {error && (
-            <p className="text-center text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          )}
-
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="password"
-              className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 pr-12 text-sm text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15"
-                {...register("password")}
-              />
-              <button
-                type="button"
-                onClick={togglePassword}
-                className="absolute right-4 top-1/2 -translate-y-1/2"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                <EyeIcon hidden={!showPassword} />
-              </button>
-            </div>
-            {errors.password && (
-              <p className="text-sm text-red-600">{errors.password.message}</p>
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+          <fieldset disabled={isPending} className="flex w-full flex-col gap-[26px] border-0 p-0 m-0">
+            {error && (
+              <p className="text-center text-sm text-red-600" role="alert">
+                {error}
+              </p>
             )}
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="confirmPassword"
-              className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
-            >
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 pr-12 text-sm text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15"
-                {...register("confirmPassword")}
-              />
-              <button
-                type="button"
-                onClick={toggleConfirmPassword}
-                className="absolute right-4 top-1/2 -translate-y-1/2"
-                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
               >
-                <EyeIcon hidden={!showConfirmPassword} />
-              </button>
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 pr-12 text-sm text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15"
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={togglePassword}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  <EyeIcon hidden={!showPassword} />
+                </button>
+              </div>
+              {errors.password && (
+                <p className="mt-0.5 text-xs text-red-600">{errors.password.message}</p>
+              )}
             </div>
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
-            )}
-          </div>
 
-          <button
-            type="submit"
-            disabled={isPending}
-            className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
-          >
-            {isPending ? "Saving..." : "Submit"}
-          </button>
-        </fieldset>
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="confirmPassword"
+                className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
+              >
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 pr-12 text-sm text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15"
+                  {...register("confirmPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={toggleConfirmPassword}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                >
+                  <EyeIcon hidden={!showConfirmPassword} />
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="mt-0.5 text-xs text-red-600">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isPending}
+              className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
+            >
+              {isPending ? "Saving..." : "Submit"}
+            </button>
+          </fieldset>
         </form>
       </div>
 

@@ -27,45 +27,41 @@ export default function ForgotPasswordForm() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[26px]">
-        {/* Locked while the request is in flight: disabling only the
-            submit button leaves every field editable after the values
-            have already been sent. `contents` keeps the fieldset out
-            of the layout. */}
-        <fieldset disabled={isPending} className="contents">
-          {error && (
-            <p className="text-center text-sm text-red-600" role="alert">
-              {error}
-            </p>
-          )}
-
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
-            >
-              Email Address
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="designer@dignitestudios.com"
-              className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none placeholder:text-zinc-400 focus:ring-2 focus:ring-[#083F92]/15"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-sm text-red-600">{errors.email.message}</p>
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+          <fieldset disabled={isPending} className="flex w-full flex-col gap-[26px] border-0 p-0 m-0">
+            {error && (
+              <p className="text-center text-sm text-red-600" role="alert">
+                {error}
+              </p>
             )}
-          </div>
 
-          <button
-            type="submit"
-            disabled={isPending}
-            className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
-          >
-            {isPending ? "Sending..." : "Submit"}
-          </button>
-        </fieldset>
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
+              >
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="designer@dignitestudios.com"
+                className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none placeholder:text-zinc-400 focus:ring-2 focus:ring-[#083F92]/15"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="mt-0.5 text-xs text-red-600">{errors.email.message}</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isPending}
+              className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
+            >
+              {isPending ? "Sending..." : "Submit"}
+            </button>
+          </fieldset>
         </form>
       </div>
     </div>

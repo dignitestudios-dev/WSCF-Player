@@ -86,11 +86,11 @@ export default function TournamentCard({ tournament, onRegister }: TournamentCar
             <ChessIcon />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="line-clamp-1 text-lg font-bold leading-6 break-words text-[#083F92] group-hover:underline">
+            <h3 className="line-clamp-1 text-lg font-bold leading-6 break-words break-all [overflow-wrap:anywhere] text-[#083F92] group-hover:underline">
               {tournament.title}
             </h3>
             <div className="mt-4 flex flex-wrap items-center gap-4">
-              <div className="line-clamp-1 w-[50%]">
+              <div className="line-clamp-1 w-[50%] break-words break-all [overflow-wrap:anywhere]">
                 <MetaItem icon={<LocationIcon />} label={tournament.location} />
               </div>
               <MetaItem icon={<CalendarIcon />} label={tournament.date} />

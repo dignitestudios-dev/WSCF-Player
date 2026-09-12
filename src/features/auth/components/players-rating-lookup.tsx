@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import LoginShell from "@/features/auth/components/login-shell";
+import LoginBackButton from "@/features/auth/components/login-back-button";
 import { usePlayersRatingLookup } from "@/features/auth/hooks/use-players-rating-lookup";
 import { getPlayerProfileRoute } from "@/config/routes";
 
@@ -34,12 +35,13 @@ export default function PlayersRatingLookup() {
   return (
     <LoginShell
       contentMaxWidth="max-w-[820px]"
-      contentClassName="justify-start pt-16 lg:pt-0"
-      showBack
-      backHref={backHref}
+      contentClassName="justify-start pt-8 lg:pt-10"
       hideLogo
     >
       <div className="flex w-full flex-col gap-4">
+        <div className="mb-2">
+          <LoginBackButton href={backHref} />
+        </div>
         <div className="flex h-[70px] w-full items-center justify-between gap-4 rounded-[24px] border border-[#3D3775] bg-white px-5">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <Link href={backHref} aria-label="Back" className="shrink-0">

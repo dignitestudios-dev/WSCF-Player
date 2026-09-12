@@ -92,7 +92,7 @@ export default function LoginShell({
           }`}
         >
           {showBack && (
-            <div className="absolute left-6 top-8 z-20 lg:left-0 lg:top-12">
+            <div className="absolute left-6 top-8 z-20 lg:left-8 lg:top-8">
               <LoginBackButton href={backHref} />
             </div>
           )}

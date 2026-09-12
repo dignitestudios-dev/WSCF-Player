@@ -154,7 +154,7 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
                         </span>
                       ) : null}
                     </span>
-                    <span>{userId}</span>
+                    <span className="truncate pr-2 min-w-0" title={userId}>{userId}</span>
                     <span>
                       <span className="inline-flex h-8 min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white">
                         {rating}

@@ -51,84 +51,80 @@ export default function MemberLoginForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Locked while the request is in flight: disabling only the
-            submit button leaves every field editable after the values
-            have already been sent. `contents` keeps the fieldset out
-            of the layout. */}
-        <fieldset disabled={isPending} className="contents">
-        <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium text-zinc-700">
-            Email Address
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="designer@dignitestudios.com"
-            className="h-14 w-full rounded-full border border-zinc-200 bg-white px-5 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#083F92] focus:ring-2 focus:ring-[#083F92]/15"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-sm text-red-600">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="password" className="text-sm font-medium text-zinc-700">
-            Password
-          </label>
-          <div className="relative">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+        <fieldset disabled={isPending} className="flex w-full flex-col gap-4 border-0 p-0 m-0">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="email" className="text-sm font-medium text-zinc-700">
+              Email Address
+            </label>
             <input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              className="h-14 w-full rounded-full border border-zinc-200 bg-white px-5 pr-12 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#083F92] focus:ring-2 focus:ring-[#083F92]/15"
-              {...register("password")}
+              id="email"
+              type="email"
+              placeholder="designer@dignitestudios.com"
+              className="h-14 w-full rounded-full border border-zinc-200 bg-white px-5 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#083F92] focus:ring-2 focus:ring-[#083F92]/15"
+              {...register("email")}
             />
-            <button
-              type="button"
-              onClick={togglePassword}
-              className="absolute right-4 top-1/2 -translate-y-1/2"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              <EyeIcon hidden={!showPassword} />
-            </button>
+            {errors.email && (
+              <p className="mt-0.5 text-xs text-red-600">{errors.email.message}</p>
+            )}
           </div>
-          {errors.password && (
-            <p className="text-sm text-red-600">{errors.password.message}</p>
-          )}
-        </div>
 
-        <div className="flex justify-end">
-          <Link
-            href={FORGOT_PASSWORD_ROUTE}
-            className="text-sm font-medium text-[#083F92] hover:underline"
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="password" className="text-sm font-medium text-zinc-700">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                className="h-14 w-full rounded-full border border-zinc-200 bg-white px-5 pr-12 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#083F92] focus:ring-2 focus:ring-[#083F92]/15"
+                {...register("password")}
+              />
+              <button
+                type="button"
+                onClick={togglePassword}
+                className="absolute right-4 top-1/2 -translate-y-1/2"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                <EyeIcon hidden={!showPassword} />
+              </button>
+            </div>
+            {errors.password && (
+              <p className="mt-0.5 text-xs text-red-600">{errors.password.message}</p>
+            )}
+          </div>
+
+          <div className="flex justify-end pt-1 pb-2">
+            <Link
+              href={FORGOT_PASSWORD_ROUTE}
+              className="text-sm font-medium text-[#083F92] hover:underline"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isPending}
+            className="h-14 w-full rounded-full bg-[#083F92] text-base font-medium text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
           >
-            Forgot Password?
-          </Link>
-        </div>
+            {isPending ? "Logging in..." : "Login"}
+          </button>
 
-        <button
-          type="submit"
-          disabled={isPending}
-          className="h-14 w-full rounded-full bg-[#083F92] text-base font-medium text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
-        >
-          {isPending ? "Logging in..." : "Login"}
-        </button>
-
-        {/* The mirror of the link on the sign-up screen, so the two are one
-            step apart in either direction. */}
-        <p className="text-center text-sm leading-5 text-[#565656]">
-          Not a member yet?{" "}
-          <Link
-            href={BECOME_MEMBER_ROUTE}
-            className="font-semibold text-[#083F92] hover:underline"
-          >
-            Sign Up
-          </Link>
-        </p>
-      </fieldset>
-        </form>
+          {/* The mirror of the link on the sign-up screen, so the two are one
+              step apart in either direction. */}
+          <p className="pt-1 text-center text-sm leading-5 text-[#565656]">
+            Not a member yet?{" "}
+            <Link
+              href={BECOME_MEMBER_ROUTE}
+              className="font-semibold text-[#083F92] hover:underline"
+            >
+              Sign Up
+            </Link>
+          </p>
+        </fieldset>
+      </form>
     </div>
   );
 }

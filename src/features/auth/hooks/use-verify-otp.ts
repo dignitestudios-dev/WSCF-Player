@@ -11,6 +11,7 @@ import {
 } from "@/features/auth/api/auth.mutations";
 import { verifyOtpSchema } from "@/features/auth/schemas/verify-otp.schema";
 import { persistAuthSession } from "@/features/auth/utils/auth-session";
+import { clearBecomeMemberDraft } from "@/features/auth/hooks/use-become-member";
 import { EMAIL_VERIFIED_ROUTE, SET_NEW_PASSWORD_ROUTE } from "@/config/routes";
 import {
   showApiErrorToast,
@@ -89,6 +90,7 @@ export function useVerifyOtp() {
           }
 
           if (from === "register") {
+            clearBecomeMemberDraft();
             router.push(EMAIL_VERIFIED_ROUTE);
             return;
           }

@@ -120,7 +120,7 @@ export default function ChildProfileDialog({
             a form inside a form submits the outer one. */}
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col gap-1.5">
               <label
                 htmlFor="child-firstName"
                 className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
@@ -136,13 +136,13 @@ export default function ChildProfileDialog({
                 {...register("firstName")}
               />
               {errors.firstName && (
-                <p className="text-xs text-red-600">
+                <p className="mt-0.5 text-xs text-red-600">
                   {errors.firstName.message}
                 </p>
               )}
             </div>
 
-            <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col gap-1.5">
               <label
                 htmlFor="child-lastName"
                 className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
@@ -158,13 +158,13 @@ export default function ChildProfileDialog({
                 {...register("lastName")}
               />
               {errors.lastName && (
-                <p className="text-xs text-red-600">{errors.lastName.message}</p>
+                <p className="mt-0.5 text-xs text-red-600">{errors.lastName.message}</p>
               )}
             </div>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col gap-1.5">
               <label
                 htmlFor="child-gender"
                 className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
@@ -191,13 +191,13 @@ export default function ChildProfileDialog({
                 )}
               />
               {errors.gender && (
-                <p className="text-xs text-red-600">
+                <p className="mt-0.5 text-xs text-red-600">
                   {errors.gender.message as string}
                 </p>
               )}
             </div>
 
-            <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col gap-1.5">
               <label
                 htmlFor="child-grade"
                 className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
@@ -230,14 +230,14 @@ export default function ChildProfileDialog({
                 )}
               />
               {errors.grade && (
-                <p className="text-xs text-red-600">
+                <p className="mt-0.5 text-xs text-red-600">
                   {errors.grade.message as string}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="flex w-full flex-col gap-2">
+          <div className="flex w-full flex-col gap-1.5">
             <label
               htmlFor="child-birthDate"
               className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
@@ -289,7 +289,7 @@ export default function ChildProfileDialog({
               )}
             />
             {errors.birthDate && (
-              <p className="text-xs text-red-600">{errors.birthDate.message}</p>
+              <p className="mt-0.5 text-xs text-red-600">{errors.birthDate.message}</p>
             )}
           </div>
 

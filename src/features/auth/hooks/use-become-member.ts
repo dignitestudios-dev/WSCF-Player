@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +11,32 @@ import {
   type BecomeMemberFormData,
 } from "@/features/auth/schemas/become-member.schema";
 import { showApiErrorToast, showApiSuccessToast } from "@/lib/api-toast";
+
+const BECOME_MEMBER_DRAFT_KEY = "wscf_become_member_draft";
+
+export function getBecomeMemberDraft(): Partial<BecomeMemberFormData> | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(BECOME_MEMBER_DRAFT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveBecomeMemberDraft(data: Partial<BecomeMemberFormData>) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(BECOME_MEMBER_DRAFT_KEY, JSON.stringify(data));
+  } catch {}
+}
+
+export function clearBecomeMemberDraft() {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.removeItem(BECOME_MEMBER_DRAFT_KEY);
+  } catch {}
+}
 
 export function useBecomeMember() {
   const router = useRouter();
@@ -38,6 +64,33 @@ export function useBecomeMember() {
     },
   });
 
+  useEffect(() => {
+    const draft = getBecomeMemberDraft();
+    if (draft) {
+      form.reset({
+        city: draft.city ?? "",
+        streetAddress: draft.streetAddress ?? "",
+        zipCode: draft.zipCode ?? "",
+        fatherName: draft.fatherName ?? "",
+        motherName: draft.motherName ?? "",
+        fatherPhone: draft.fatherPhone ?? "",
+        motherPhone: draft.motherPhone ?? "",
+        fatherEmail: draft.fatherEmail ?? "",
+        motherEmail: draft.motherEmail ?? "",
+        primaryEmail: draft.primaryEmail ?? "father",
+        password: draft.password ?? "",
+        confirmPassword: draft.confirmPassword ?? "",
+        agreeToTerms: draft.agreeToTerms ?? false,
+        children: draft.children ?? [],
+      });
+    }
+
+    const subscription = form.watch((value) => {
+      saveBecomeMemberDraft(value as Partial<BecomeMemberFormData>);
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   function togglePassword() {
     setShowPassword((value) => !value);
   }
@@ -47,6 +100,7 @@ export function useBecomeMember() {
   }
 
   function onSubmit(data: BecomeMemberFormData) {
+    saveBecomeMemberDraft(data);
     registerMember(data, {
       onSuccess: (response) => {
         showApiSuccessToast(response, "Registration successful");

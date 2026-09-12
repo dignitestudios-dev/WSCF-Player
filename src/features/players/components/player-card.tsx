@@ -90,7 +90,7 @@ export default function PlayerCard({
         {/* Whatever the admin wrote when they deactivated this player — it is
             the only explanation the parent gets, so it is shown in full. */}
         {isDeactivated && player.deactivationReason ? (
-          <p className="mt-1 text-xs leading-4 text-[#B42318]">
+          <p className="mt-1 text-xs leading-4 text-[#B42318] break-words break-all [overflow-wrap:anywhere]">
             {player.deactivationReason}
           </p>
         ) : null}
