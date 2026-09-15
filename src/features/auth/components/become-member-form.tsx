@@ -305,7 +305,7 @@ export default function BecomeMemberForm() {
               placeholder="John Doe"
               error={errors.fatherName?.message}
               register={register}
-              maxLength={50}
+              maxLength={30}
             />
             <FormField
               id="motherName"
@@ -314,7 +314,7 @@ export default function BecomeMemberForm() {
               placeholder="Jane Doe"
               error={errors.motherName?.message}
               register={register}
-              maxLength={50}
+              maxLength={30}
             />
           </div>
 
@@ -350,7 +350,7 @@ export default function BecomeMemberForm() {
               isPrimary={primaryEmail === "father"}
               error={errors.fatherEmail?.message}
               register={register}
-              maxLength={150}
+              maxLength={254}
             />
             <ParentEmailField
               id="motherEmail"
@@ -360,7 +360,7 @@ export default function BecomeMemberForm() {
               isPrimary={primaryEmail === "mother"}
               error={errors.motherEmail?.message}
               register={register}
-              maxLength={150}
+              maxLength={254}
             />
           </div>
 
@@ -386,7 +386,7 @@ export default function BecomeMemberForm() {
             onToggle={togglePassword}
             error={errors.password?.message}
             register={register}
-            maxLength={100}
+            maxLength={50}
           />
           <PasswordField
             id="confirmPassword"
@@ -396,7 +396,7 @@ export default function BecomeMemberForm() {
             onToggle={toggleConfirmPassword}
             error={errors.confirmPassword?.message}
             register={register}
-            maxLength={100}
+            maxLength={50}
           />
         </div>
 

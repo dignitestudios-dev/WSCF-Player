@@ -13,13 +13,13 @@ export const editProfileSchema = z.object({
     .string()
     .trim()
     .min(1, "First name is required")
-    .max(50, "First name cannot exceed 50 characters")
+    .max(30, "First name cannot exceed 30 characters")
     .regex(nameRegex, "First name can only contain letters, hyphens, periods, and apostrophes"),
   lastName: z
     .string()
     .trim()
     .min(1, "Last name is required")
-    .max(50, "Last name cannot exceed 50 characters")
+    .max(30, "Last name cannot exceed 30 characters")
     .regex(nameRegex, "Last name can only contain letters, hyphens, periods, and apostrophes"),
   gender: z.enum(["male", "female"], {
     errorMap: () => ({ message: "Please select a valid gender" }),
@@ -30,6 +30,7 @@ export const editProfileSchema = z.object({
     .trim()
     .toLowerCase()
     .min(1, "Email is required")
+    .max(254, "Email cannot exceed 254 characters")
     .email("Please enter a valid email address"),
   grade: z
     .string()
@@ -47,20 +48,20 @@ export const editProfileSchema = z.object({
     .or(z.literal("")),
   fatherName: z
     .string()
-    .max(50, "Name cannot exceed 50 characters")
+    .max(30, "Name cannot exceed 30 characters")
     .regex(guardianNameRegex, guardianNameMessage)
     .optional()
     .or(z.literal("")),
   motherName: z
     .string()
-    .max(50, "Name cannot exceed 50 characters")
+    .max(30, "Name cannot exceed 30 characters")
     .regex(guardianNameRegex, guardianNameMessage)
     .optional()
     .or(z.literal("")),
   fatherPhone: z.string().regex(phoneRegex, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
   motherPhone: z.string().regex(phoneRegex, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
-  fatherEmail: z.string().email("Invalid email address").max(150, "Email is too long").optional().or(z.literal("")),
-  motherEmail: z.string().email("Invalid email address").max(150, "Email is too long").optional().or(z.literal("")),
+  fatherEmail: z.string().email("Invalid email address").max(254, "Email cannot exceed 254 characters").optional().or(z.literal("")),
+  motherEmail: z.string().email("Invalid email address").max(254, "Email cannot exceed 254 characters").optional().or(z.literal("")),
 })
 .refine((data) => {
   const hasFather = Boolean(data.fatherName && data.fatherPhone);

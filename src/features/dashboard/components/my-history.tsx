@@ -17,20 +17,6 @@ function BackIcon() {
   );
 }
 
-function SortArrow() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M8 10L12 14L16 10"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function ChevronLeft({ className }: { className?: string }) {
   return (
     <svg width="8" height="15" viewBox="0 0 8 15" fill="none" aria-hidden="true" className={className}>
@@ -47,15 +33,6 @@ function ChevronLeft({ className }: { className?: string }) {
 
 const GRID_COLS =
   "grid grid-cols-[minmax(140px,1.4fr)_100px_100px_80px_80px_110px_80px] gap-4";
-
-function SortableHeader({ label }: { label: string }) {
-  return (
-    <span className="flex items-center gap-0.5">
-      {label}
-      <SortArrow />
-    </span>
-  );
-}
 
 export default function MyHistory() {
   const { tournaments, page, totalPages, totalItems, pageSize, setPage, backHref, isPending } = useMyHistory();
@@ -83,11 +60,11 @@ export default function MyHistory() {
             className={`${GRID_COLS} rounded-t-[12px] bg-[#083F92] px-6 py-3 text-base font-medium leading-[22px] text-white`}
           >
             <span>Tournaments</span>
-            <SortableHeader label="Date" />
-            <SortableHeader label="Month" />
-            <SortableHeader label="Year" />
-            <SortableHeader label="Rating" />
-            <SortableHeader label="Place" />
+            <span>Date</span>
+            <span>Month</span>
+            <span>Year</span>
+            <span>Rating</span>
+            <span>Place</span>
             <span>Points</span>
           </div>
 

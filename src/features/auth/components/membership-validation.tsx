@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { DEFAULT_REDIRECT } from "@/config/routes";
@@ -11,6 +11,8 @@ import {
 } from "@/features/players/routes";
 import { useMembershipCheckout } from "@/features/membership/hooks/use-membership-checkout";
 import { useMembershipQuoteQuery } from "@/features/membership/api/membership.mutations";
+import { useAuth } from "@/hooks/use-auth";
+import LogoutConfirmModal from "@/features/dashboard/components/logout-confirm-modal";
 
 function CalendarIcon() {
   return (
@@ -89,6 +91,8 @@ function SummaryRow({
 export default function MembershipValidation() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { logout } = useAuth();
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const { handleProceedToPayment, isPending } = useMembershipCheckout();
   const { data: quote, isLoading } = useMembershipQuoteQuery();
   const { children, needsMasterFileCheck } = useActivePlayer();
@@ -212,16 +216,34 @@ export default function MembershipValidation() {
           type="button"
           onClick={handleProceedToPayment}
           disabled={isPending || isLoading}
-          className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
+          className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60 cursor-pointer"
         >
           {isPending ? "Redirecting..." : "Proceed To Payment"}
         </button>
       </div>
 
+      <button
+        type="button"
+        onClick={() => setIsLogoutOpen(true)}
+        className="h-12 w-full rounded-[24px] border border-[#083F92] bg-white text-sm font-semibold capitalize text-[#083F92] transition-colors hover:bg-[#083F92]/5 cursor-pointer shadow-sm"
+      >
+        Logout
+      </button>
+
       <p className="text-sm font-semibold leading-[19px] text-black">
         Note: All memberships expire on August 31 each year and cover one player
         each.
       </p>
+
+      {isLogoutOpen && (
+        <LogoutConfirmModal
+          onClose={() => setIsLogoutOpen(false)}
+          onConfirm={() => {
+            setIsLogoutOpen(false);
+            logout();
+          }}
+        />
+      )}
     </div>
   );
 }

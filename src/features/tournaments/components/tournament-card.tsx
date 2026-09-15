@@ -55,9 +55,9 @@ function MoneyIcon() {
 
 function MetaItem({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <div className="flex items-center gap-1.5">
-      {icon}
-      <span className="text-sm font-medium leading-[19px] text-[#151515]">{label}</span>
+    <div className="flex items-center gap-1.5 min-w-0 max-w-full">
+      <span className="shrink-0">{icon}</span>
+      <span className="truncate text-sm font-medium leading-[19px] text-[#151515]" title={label}>{label}</span>
     </div>
   );
 }
@@ -80,17 +80,17 @@ export default function TournamentCard({ tournament, onRegister }: TournamentCar
         className="absolute inset-0 z-0"
         aria-label={`View details for ${tournament.title}`}
       />
-      <div className="pointer-events-none relative z-10 flex flex-col gap-4 pr-44 sm:pr-52">
-        <div className="flex items-start gap-4">
+      <div className="pointer-events-none relative z-10 flex flex-col gap-4 pr-44 sm:pr-52 min-w-0">
+        <div className="flex items-start gap-4 min-w-0">
           <div className="flex h-[53px] w-[53px] shrink-0 items-center justify-center rounded-full bg-[#083F92]">
             <ChessIcon />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="line-clamp-1 text-lg font-bold leading-6 break-words break-all [overflow-wrap:anywhere] text-[#083F92] group-hover:underline">
+            <h3 className="line-clamp-1 text-lg font-bold leading-6 truncate text-[#083F92] group-hover:underline" title={tournament.title}>
               {tournament.title}
             </h3>
-            <div className="mt-4 flex flex-wrap items-center gap-4">
-              <div className="line-clamp-1 w-[50%] break-words break-all [overflow-wrap:anywhere]">
+            <div className="mt-4 flex flex-wrap items-center gap-4 min-w-0">
+              <div className="min-w-0 max-w-[200px] truncate">
                 <MetaItem icon={<LocationIcon />} label={tournament.location} />
               </div>
               <MetaItem icon={<CalendarIcon />} label={tournament.date} />

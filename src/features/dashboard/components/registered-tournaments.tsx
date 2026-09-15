@@ -78,26 +78,28 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
       </div>
 
       <div className="relative z-10 ml-4 min-w-0 flex-1 pr-36 sm:pr-44 pointer-events-none">
-        <div className="flex items-center gap-3">
-          <h3 className="text-lg font-bold leading-6 text-[#083F92] group-hover:underline">{tournament.title}</h3>
+        <div className="flex items-center gap-3 min-w-0">
+          <h3 className="text-lg font-bold leading-6 text-[#083F92] group-hover:underline truncate" title={tournament.title}>
+            {tournament.title}
+          </h3>
           {tournament.paymentStatus === "pending" && (
-            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">
+            <span className="shrink-0 inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">
               Not Paid
             </span>
           )}
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {tournament.divisionLabel && tournament.divisionLabel !== "-" && (
-            <div className="flex items-center gap-1.5 mr-2">
+            <div className="flex items-center gap-1.5 mr-2 min-w-0 max-w-[200px]" title={tournament.divisionLabel}>
               <DivisionIcon />
-              <span className="text-sm font-medium leading-[19px] text-[#151515]">{tournament.divisionLabel}</span>
+              <span className="text-sm font-medium leading-[19px] text-[#151515] truncate">{tournament.divisionLabel}</span>
             </div>
           )}
-          <div className="flex items-center gap-1.5 mr-2">
+          <div className="flex items-center gap-1.5 mr-2 min-w-0 max-w-[200px] sm:max-w-[260px]" title={tournament.location}>
             <LocationIcon />
-            <span className="text-sm font-medium leading-[19px] text-[#151515]">{tournament.location}</span>
+            <span className="text-sm font-medium leading-[19px] text-[#151515] truncate">{tournament.location}</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0">
             <CalendarIcon />
             <span className="text-sm font-medium leading-[19px] text-[#151515]">{tournament.date}</span>
           </div>

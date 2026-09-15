@@ -5,19 +5,6 @@ import { useRouter } from "next/navigation";
 import { usePlayerProfile } from "@/features/players/hooks/use-player-profile";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function SortArrow() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M8 10L12 14L16 10"
-        stroke="#EBEBEB"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function RatingStarIcon({ className }: { className?: string }) {
   return (
@@ -135,7 +122,7 @@ function PlayerProfileContent() {
 
             {/* Profile Details */}
             <div className="w-full flex flex-col items-center lg:items-start">
-              <h2 className="text-2xl lg:text-[32px] font-semibold lg:leading-[43px] text-[#292D32] text-center lg:text-left break-words break-all [overflow-wrap:anywhere] max-w-full">
+              <h2 className="text-2xl lg:text-[32px] font-semibold lg:leading-[43px] text-[#292D32] text-center lg:text-left break-words [overflow-wrap:anywhere] max-w-full">
                 {player.name}
               </h2>
 
@@ -147,7 +134,7 @@ function PlayerProfileContent() {
                     className="flex flex-col items-center lg:items-start border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0 max-w-[200px]"
                   >
                     <span className="text-sm font-medium leading-[19px] text-[#083F92]">{stat.label}</span>
-                    <span className={`text-lg lg:text-2xl font-semibold leading-8 break-words break-all [overflow-wrap:anywhere] text-center lg:text-left max-w-full ${stat.value === "Not assigned" ? "text-gray-400" : "text-[#083F92]"}`}>
+                    <span className={`text-lg lg:text-2xl font-semibold leading-8 break-words [overflow-wrap:anywhere] text-center lg:text-left max-w-full ${stat.value === "Not assigned" ? "text-gray-400" : "text-[#083F92]"}`}>
                       {stat.value}
                     </span>
                   </div>
@@ -180,14 +167,8 @@ function PlayerProfileContent() {
             <div className="min-w-[611px]">
               <div className="flex items-center gap-8 rounded-t-[12px] bg-[#083F92] px-5 py-3 text-base font-semibold leading-[22px] text-white">
               <span className="w-[158px] shrink-0">Tournaments</span>
-              <span className="flex w-[80px] shrink-0 items-center">
-                Date
-                <SortArrow />
-              </span>
-              <span className="flex w-[80px] shrink-0 items-center">
-                Rating
-                <SortArrow />
-              </span>
+              <span className="w-[80px] shrink-0">Date</span>
+              <span className="w-[80px] shrink-0">Rating</span>
               <span className="ml-auto w-[109px] shrink-0 text-right">Points</span>
             </div>
 

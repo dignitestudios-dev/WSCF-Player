@@ -12,18 +12,6 @@ import { useTournamentDetailsQuery } from "@/features/tournaments/api/tournament
 import UpcomingTournamentsModal from "@/features/tournaments/components/upcoming-tournaments-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function SortArrows() {
-  return (
-    <span className="ml-1 inline-flex flex-col leading-none">
-      <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-        <path d="M5 0L9.33 5H0.67L5 0Z" fill="white" />
-      </svg>
-      <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-        <path d="M5 6L0.67 1H9.33L5 6Z" fill="white" />
-      </svg>
-    </span>
-  );
-}
 
 function SearchButtonIcon() {
   return (
@@ -162,22 +150,10 @@ function TournamentParticipantsContent({
             <div className={`grid ${gridCols} items-center border-b-4 border-[#F4F4F4] bg-[#083F92] px-6 py-4 text-[13px] font-bold leading-5 text-white`}>
               <span>UserId</span>
               <span>Name</span>
-              <span className="flex items-center">
-                Grade
-                <SortArrows />
-              </span>
-              <span className="flex items-center">
-                Rating
-                <SortArrows />
-              </span>
-              <span className="flex items-center">
-                Team
-                <SortArrows />
-              </span>
-              <span className="flex items-center">
-                Division
-                <SortArrows />
-              </span>
+              <span>Grade</span>
+              <span>Rating</span>
+              <span>Team</span>
+              <span>Division</span>
               <span className="text-right">Action</span>
             </div>
 
@@ -212,16 +188,16 @@ function TournamentParticipantsContent({
                     index % 2 === 1 ? "bg-[rgba(8,63,146,0.1)]" : "bg-white"
                   }`}
                 >
-                  <span className="font-semibold break-words break-all [overflow-wrap:anywhere] pr-2">{participant.userId}</span>
-                  <span className={`${participant.highlightName ? "font-bold" : "font-semibold"} break-words break-all [overflow-wrap:anywhere] pr-2`}>
+                  <span className="font-semibold break-words [overflow-wrap:anywhere] pr-2">{participant.userId}</span>
+                  <span className={`${participant.highlightName ? "font-bold" : "font-semibold"} break-words [overflow-wrap:anywhere] pr-2`}>
                     {participant.name}
                   </span>
                   <span className={participant.highlightName ? "font-bold" : "font-semibold"}>
                     {participant.grade}
                   </span>
                   <span className="font-semibold">{participant.rating}</span>
-                  <span className="font-semibold tracking-[-0.02em] break-words break-all [overflow-wrap:anywhere] pr-2">{participant.team}</span>
-                  <span className="font-semibold break-words break-all [overflow-wrap:anywhere] pr-2">{participant.division}</span>
+                  <span className="font-semibold tracking-[-0.02em] break-words [overflow-wrap:anywhere] pr-2">{participant.team}</span>
+                  <span className="font-semibold break-words [overflow-wrap:anywhere] pr-2">{participant.division}</span>
                   <Link
                     href={`${getProfileRoute(participant.id)}?backHref=${encodeURIComponent(currentUrl)}`}
                     className="text-right font-semibold tracking-[-0.02em] text-[#636363] underline hover:text-[#083F92]"

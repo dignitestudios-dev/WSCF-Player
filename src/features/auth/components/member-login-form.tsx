@@ -60,6 +60,7 @@ export default function MemberLoginForm() {
             <input
               id="email"
               type="email"
+              maxLength={254}
               placeholder="designer@dignitestudios.com"
               className="h-14 w-full rounded-full border border-zinc-200 bg-white px-5 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#083F92] focus:ring-2 focus:ring-[#083F92]/15"
               {...register("email")}
@@ -77,6 +78,7 @@ export default function MemberLoginForm() {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                maxLength={50}
                 placeholder="••••••••"
                 className="h-14 w-full rounded-full border border-zinc-200 bg-white px-5 pr-12 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-[#083F92] focus:ring-2 focus:ring-[#083F92]/15"
                 {...register("password")}

@@ -69,6 +69,7 @@ export default function SetNewPasswordForm() {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  maxLength={50}
                   className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 pr-12 text-sm text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15"
                   {...register("password")}
                 />
@@ -97,6 +98,7 @@ export default function SetNewPasswordForm() {
                 <input
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
+                  maxLength={50}
                   className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 pr-12 text-sm text-[#181818] outline-none focus:ring-2 focus:ring-[#083F92]/15"
                   {...register("confirmPassword")}
                 />

@@ -45,6 +45,7 @@ export default function LoginForm() {
             <Input
               id="username"
               type="text"
+              maxLength={30}
               placeholder="johndoe"
               {...register("username")}
             />
@@ -57,6 +58,7 @@ export default function LoginForm() {
             <Input
               id="password"
               type="password"
+              maxLength={50}
               placeholder="••••••••"
               {...register("password")}
             />

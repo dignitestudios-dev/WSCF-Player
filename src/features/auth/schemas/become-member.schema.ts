@@ -37,13 +37,13 @@ export const becomeMemberSchema = z
     // --- the parents/guardians ---
     fatherName: z
       .string()
-      .max(50, "Name cannot exceed 50 characters")
+      .max(30, "Name cannot exceed 30 characters")
       .regex(guardianNameRegex, guardianNameMessage)
       .optional()
       .or(z.literal("")),
     motherName: z
       .string()
-      .max(50, "Name cannot exceed 50 characters")
+      .max(30, "Name cannot exceed 30 characters")
       .regex(guardianNameRegex, guardianNameMessage)
       .optional()
       .or(z.literal("")),
@@ -68,19 +68,22 @@ export const becomeMemberSchema = z
     fatherEmail: z
       .string()
       .email("Invalid email address")
-      .max(150, "Email is too long")
+      .max(254, "Email cannot exceed 254 characters")
       .optional()
       .or(z.literal("")),
     motherEmail: z
       .string()
       .email("Invalid email address")
-      .max(150, "Email is too long")
+      .max(254, "Email cannot exceed 254 characters")
       .optional()
       .or(z.literal("")),
     primaryEmail: z.enum(["father", "mother"]),
 
     password: passwordFieldSchema,
-    confirmPassword: z.string().min(1, "Please confirm your password"),
+    confirmPassword: z
+      .string()
+      .min(1, "Please confirm your password")
+      .max(50, "Password cannot exceed 50 characters"),
     agreeToTerms: z.boolean().refine((value) => value === true, {
       message: "You must agree to the terms",
     }),

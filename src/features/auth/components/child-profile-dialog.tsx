@@ -131,7 +131,7 @@ export default function ChildProfileDialog({
               <input
                 id="child-firstName"
                 placeholder="John"
-                maxLength={50}
+                maxLength={30}
                 className={inputClassName}
                 {...register("firstName")}
               />
@@ -153,7 +153,7 @@ export default function ChildProfileDialog({
               <input
                 id="child-lastName"
                 placeholder="Doe"
-                maxLength={50}
+                maxLength={30}
                 className={inputClassName}
                 {...register("lastName")}
               />

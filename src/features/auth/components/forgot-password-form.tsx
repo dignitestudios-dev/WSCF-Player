@@ -45,6 +45,7 @@ export default function ForgotPasswordForm() {
               <input
                 id="email"
                 type="email"
+                maxLength={254}
                 placeholder="designer@dignitestudios.com"
                 className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none placeholder:text-zinc-400 focus:ring-2 focus:ring-[#083F92]/15"
                 {...register("email")}

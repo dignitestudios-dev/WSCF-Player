@@ -158,7 +158,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.firstName?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={50}
+                    maxLength={30}
                   />
                   <FormField
                     id="lastName"
@@ -166,7 +166,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.lastName?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={50}
+                    maxLength={30}
                   />
                 </FormRow>
                 <FormRow>
@@ -200,6 +200,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.email?.message}
                     disabled={isUpdating}
                     register={register}
+                    maxLength={254}
                   />
                   <div className="flex w-full flex-col gap-2 sm:w-[309px]">
                     <label htmlFor="grade" className={`text-sm font-medium capitalize leading-[19px] text-[#181818] ${isUpdating ? "opacity-50" : ""}`}>
@@ -248,7 +249,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.fatherName?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={50}
+                    maxLength={30}
                   />
                   <FormField
                     id="motherName"
@@ -256,7 +257,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors?.motherName?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={50}
+                    maxLength={30}
                   />
                 </FormRow>
                 <FormRow>
@@ -307,7 +308,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.fatherEmail?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={150}
+                    maxLength={254}
                   />
                   <FormField
                     id="motherEmail"
@@ -316,7 +317,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                     error={errors.motherEmail?.message}
                     disabled={isUpdating}
                     register={register}
-                    maxLength={150}
+                    maxLength={254}
                   />
                 </FormRow>
               </FormSection>

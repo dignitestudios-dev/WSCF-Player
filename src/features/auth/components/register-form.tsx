@@ -53,14 +53,14 @@ export default function RegisterForm() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
-              <Input id="firstName" {...register("firstName")} />
+              <Input id="firstName" maxLength={30} {...register("firstName")} />
               {errors.firstName && (
                 <p className="text-sm text-red-600">{errors.firstName.message}</p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastName">Last name</Label>
-              <Input id="lastName" {...register("lastName")} />
+              <Input id="lastName" maxLength={30} {...register("lastName")} />
               {errors.lastName && (
                 <p className="text-sm text-red-600">{errors.lastName.message}</p>
               )}
@@ -69,7 +69,7 @@ export default function RegisterForm() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" {...register("username")} />
+              <Input id="username" maxLength={30} {...register("username")} />
               {errors.username && (
                 <p className="text-sm text-red-600">{errors.username.message}</p>
               )}
@@ -98,14 +98,14 @@ export default function RegisterForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" {...register("email")} />
+            <Input id="email" type="email" maxLength={254} {...register("email")} />
             {errors.email && (
               <p className="text-sm text-red-600">{errors.email.message}</p>
             )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" {...register("password")} />
+            <Input id="password" type="password" maxLength={50} {...register("password")} />
             {errors.password && (
               <p className="text-sm text-red-600">{errors.password.message}</p>
             )}
