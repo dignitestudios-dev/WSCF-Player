@@ -55,7 +55,7 @@ export function useMyProfile() {
     currentRating: playerProfile?.rating || 0,
     ratingStatus: playerProfile?.ratingStatus,
     enrolledTournaments: upcomingCount,
-    historyScore: `${playerProfile?.totalWins || 0}/${playerProfile?.totalTournaments || 0}`,
+    historyScore: String(playerProfile?.totalTournaments || 0).padStart(2, "0"),
     parent: {
       name: parent?.name || user?.name || "N/A",
       email: parent?.email || user?.email || "N/A",

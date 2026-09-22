@@ -55,7 +55,7 @@ export default function PlayersRatingLookup() {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search by first name, last name or member ID"
-                className="min-w-0 flex-1 bg-transparent text-base font-medium text-[#151515] outline-none placeholder:text-[#151515]"
+                className="min-w-0 flex-1 bg-transparent text-base font-normal text-[#151515] outline-none placeholder:text-[#808080]"
               />
               {query ? (
                 <button
@@ -74,12 +74,6 @@ export default function PlayersRatingLookup() {
               ) : null}
             </div>
           </div>
-          <button
-            type="button"
-            className="h-[42px] shrink-0 rounded-full bg-[#083F92] px-5 text-base font-medium text-white"
-          >
-            Search
-          </button>
         </div>
 
         <div className="overflow-hidden rounded-[12px] border border-[#DADADA] bg-white">
