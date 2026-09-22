@@ -48,20 +48,28 @@ export const editProfileSchema = z.object({
     .or(z.literal("")),
   fatherName: z
     .string()
+    .trim()
     .max(30, "Name cannot exceed 30 characters")
-    .regex(guardianNameRegex, guardianNameMessage)
+    .refine(
+      (val) => !val || guardianNameRegex.test(val),
+      guardianNameMessage,
+    )
     .optional()
     .or(z.literal("")),
   motherName: z
     .string()
+    .trim()
     .max(30, "Name cannot exceed 30 characters")
-    .regex(guardianNameRegex, guardianNameMessage)
+    .refine(
+      (val) => !val || guardianNameRegex.test(val),
+      guardianNameMessage,
+    )
     .optional()
     .or(z.literal("")),
-  fatherPhone: z.string().regex(phoneRegex, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
-  motherPhone: z.string().regex(phoneRegex, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
-  fatherEmail: z.string().email("Invalid email address").max(254, "Email cannot exceed 254 characters").optional().or(z.literal("")),
-  motherEmail: z.string().email("Invalid email address").max(254, "Email cannot exceed 254 characters").optional().or(z.literal("")),
+  fatherPhone: z.string().trim().regex(phoneRegex, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
+  motherPhone: z.string().trim().regex(phoneRegex, "Please enter a valid 10-digit phone number").max(14, "Phone number is too long").optional().or(z.literal("")),
+  fatherEmail: z.string().trim().toLowerCase().email("Invalid email address").max(254, "Email cannot exceed 254 characters").optional().or(z.literal("")),
+  motherEmail: z.string().trim().toLowerCase().email("Invalid email address").max(254, "Email cannot exceed 254 characters").optional().or(z.literal("")),
 })
 .refine((data) => {
   const hasFather = Boolean(data.fatherName && data.fatherPhone);

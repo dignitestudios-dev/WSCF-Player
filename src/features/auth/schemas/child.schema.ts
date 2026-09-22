@@ -10,6 +10,7 @@ import { differenceInYears } from "date-fns";
 export const childSchema = z.object({
   firstName: z
     .string()
+    .trim()
     .min(1, "First name is required")
     .max(30, "First name cannot exceed 30 characters")
     .regex(
@@ -18,6 +19,7 @@ export const childSchema = z.object({
     ),
   lastName: z
     .string()
+    .trim()
     .min(1, "Last name is required")
     .max(30, "Last name cannot exceed 30 characters")
     .regex(

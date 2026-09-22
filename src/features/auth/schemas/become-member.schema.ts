@@ -20,16 +20,19 @@ export const becomeMemberSchema = z
     // --- the household address, shared by every child ---
     city: z
       .string()
+      .trim()
       .min(1, "City is required")
       .max(30, "City cannot exceed 30 characters")
       .regex(/^[a-zA-Z.-]+(?: [a-zA-Z.-]+)*$/, "City can only contain letters, periods, and hyphens"),
     streetAddress: z
       .string()
+      .trim()
       .min(1, "Street address is required")
       .max(50, "Street address cannot exceed 50 characters")
       .regex(/^[a-zA-Z0-9,.'#-]+(?: [a-zA-Z0-9,.'#-]+)*$/, "Street address contains invalid characters"),
     zipCode: z
       .string()
+      .trim()
       .min(1, "Zip code is required")
       .regex(/^\d{5}$/, "Zip code must be exactly 5 digits")
       .max(5, "Zip code must be exactly 5 digits"),
@@ -37,18 +40,27 @@ export const becomeMemberSchema = z
     // --- the parents/guardians ---
     fatherName: z
       .string()
+      .trim()
       .max(30, "Name cannot exceed 30 characters")
-      .regex(guardianNameRegex, guardianNameMessage)
+      .refine(
+        (val) => !val || guardianNameRegex.test(val),
+        guardianNameMessage,
+      )
       .optional()
       .or(z.literal("")),
     motherName: z
       .string()
+      .trim()
       .max(30, "Name cannot exceed 30 characters")
-      .regex(guardianNameRegex, guardianNameMessage)
+      .refine(
+        (val) => !val || guardianNameRegex.test(val),
+        guardianNameMessage,
+      )
       .optional()
       .or(z.literal("")),
     fatherPhone: z
       .string()
+      .trim()
       .regex(
         /^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/,
         "Please enter a valid 10-digit phone number",
@@ -58,6 +70,7 @@ export const becomeMemberSchema = z
       .or(z.literal("")),
     motherPhone: z
       .string()
+      .trim()
       .regex(
         /^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/,
         "Please enter a valid 10-digit phone number",
@@ -67,12 +80,16 @@ export const becomeMemberSchema = z
       .or(z.literal("")),
     fatherEmail: z
       .string()
+      .trim()
+      .toLowerCase()
       .email("Invalid email address")
       .max(254, "Email cannot exceed 254 characters")
       .optional()
       .or(z.literal("")),
     motherEmail: z
       .string()
+      .trim()
+      .toLowerCase()
       .email("Invalid email address")
       .max(254, "Email cannot exceed 254 characters")
       .optional()

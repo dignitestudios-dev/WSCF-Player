@@ -32,7 +32,14 @@ export function useRegister() {
   });
 
   function onSubmit(data: RegisterFormDataSchemaType) {
-    register(data, {
+    const payload = {
+      ...data,
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
+      username: data.username.trim(),
+      email: data.email.trim().toLowerCase(),
+    };
+    register(payload, {
       onSuccess: (response) => {
         const { accessToken, refreshToken, ...user } = response;
         localStorage.setItem(AUTH_TOKEN_KEY, accessToken);
