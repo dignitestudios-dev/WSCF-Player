@@ -86,7 +86,7 @@ export default function UpcomingTournamentsModal({
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search by tournament name"
-            className="h-12 w-full rounded-[24px] border border-[#DADADA] bg-white pl-6 pr-14 text-sm font-light text-[#181818] outline-none"
+            className="h-12 w-full rounded-[24px] border border-[#DADADA] bg-white pl-6 pr-20 text-sm font-light text-[#181818] placeholder:text-[#ADADAD] outline-none"
           />
           {search ? (
             <button
@@ -96,7 +96,7 @@ export default function UpcomingTournamentsModal({
                 event.preventDefault();
                 setSearch('');
               }}
-              className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[#ADADAD] transition-colors hover:bg-[#F2F2F2] hover:text-[#151515]"
+              className="absolute right-12 top-1/2 -translate-y-1/2 flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[#ADADAD] transition-colors hover:bg-[#F2F2F2] hover:text-[#151515]"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                 <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
