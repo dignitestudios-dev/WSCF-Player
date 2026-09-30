@@ -105,6 +105,7 @@ export default function MyProfile() {
   const stats = [
     { label: "USER ID", value: profile.userId },
     { label: "Grade", value: profile.grade },
+    { label: "Sigma", value: profile.sigma },
     { label: "City", value: profile.city },
     { label: "Date Of Birth", value: profile.dateOfBirth },
     { label: "Team", value: profile.team && profile.team !== "N/A" ? profile.team : "Not assigned" },

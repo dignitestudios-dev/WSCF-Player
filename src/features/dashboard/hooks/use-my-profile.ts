@@ -49,6 +49,9 @@ export function useMyProfile() {
     email: user?.email || "N/A",
     division: playerProfile?.division || "N/A",
     grade: playerProfile?.grade || "N/A",
+    // Set by an admin when a rating is assigned, and shown here read-only:
+    // parents see it, they do not edit it.
+    sigma: playerProfile?.sigma || "N/A",
     avatarUrl:
       user?.profileImage ||
       "/images/images.png",
