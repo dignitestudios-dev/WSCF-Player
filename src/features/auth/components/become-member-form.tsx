@@ -12,6 +12,10 @@ import { useBecomeMember } from "@/features/auth/hooks/use-become-member";
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
 import type { ChildFormData } from "@/features/auth/schemas/child.schema";
 import { MEMBER_LOGIN_ROUTE } from "@/config/routes";
+import {
+  MAX_PLAYERS_PER_ACCOUNT,
+  PLAYER_LIMIT_MESSAGE,
+} from "@/config/limits";
 
 /** What one membership costs, per player. */
 const MEMBERSHIP_UNIT_PRICE = 5;
@@ -276,6 +280,10 @@ export default function BecomeMemberForm() {
 
   const total = children.length * MEMBERSHIP_UNIT_PRICE;
 
+  // An account holds four players, so the form stops at four rather than
+  // letting a parent fill in a fifth profile the server is going to refuse.
+  const isAtPlayerLimit = children.length >= MAX_PLAYERS_PER_ACCOUNT;
+
   return (
     <div className="flex w-full flex-col items-center">
       <div className="mb-6 flex w-full max-w-[480px] flex-col items-center gap-3 text-center">
@@ -476,7 +484,9 @@ export default function BecomeMemberForm() {
           <button
             type="button"
             onClick={openAddChild}
-            className="flex h-11 shrink-0 items-center gap-2 rounded-[24px] bg-[#083F92] px-5 text-sm font-semibold text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875]"
+            disabled={isAtPlayerLimit}
+            title={isAtPlayerLimit ? PLAYER_LIMIT_MESSAGE : undefined}
+            className="flex h-11 shrink-0 items-center gap-2 rounded-[24px] bg-[#083F92] px-5 text-sm font-semibold text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#083F92]"
           >
             <UserPlus className="h-4 w-4" />
             Add Player
@@ -520,6 +530,14 @@ export default function BecomeMemberForm() {
               </span>
             </div>
           </div>
+        )}
+
+        {/* Said plainly, next to the button that stopped working, rather than
+            leaving a parent to wonder why it is greyed out. */}
+        {isAtPlayerLimit && (
+          <p className="text-xs leading-4 text-[#565656]">
+            {PLAYER_LIMIT_MESSAGE}
+          </p>
         )}
 
         {errors.children && (

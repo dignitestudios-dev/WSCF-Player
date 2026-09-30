@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_PLAYERS_PER_ACCOUNT } from "@/config/limits";
 import { passwordFieldSchema } from "@/features/auth/schemas/password.schema";
 import { childSchema } from "@/features/auth/schemas/child.schema";
 
@@ -106,7 +107,13 @@ export const becomeMemberSchema = z
     }),
 
     // --- the players ---
-    children: z.array(childSchema).min(1, "Add at least one player profile"),
+    children: z
+      .array(childSchema)
+      .min(1, "Add at least one player profile")
+      .max(
+        MAX_PLAYERS_PER_ACCOUNT,
+        `You can add up to ${MAX_PLAYERS_PER_ACCOUNT} players on one account`,
+      ),
   })
   /**
    * Only the primary guardian is required, and they must be complete: their

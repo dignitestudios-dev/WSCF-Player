@@ -6,6 +6,10 @@ import { UserPlus } from "lucide-react";
 import PlayerCard from "@/features/players/components/player-card";
 import { useActivePlayer } from "@/features/players/use-active-player";
 import { ADD_PLAYER_ROUTE } from "@/features/players/routes";
+import {
+  MAX_PLAYERS_PER_ACCOUNT,
+  PLAYER_LIMIT_MESSAGE,
+} from "@/config/limits";
 
 /**
  * Switching the app to another child.
@@ -22,6 +26,9 @@ export default function SwitchPlayerDialog({
 }) {
   const router = useRouter();
   const { children, activePlayer, switchTo } = useActivePlayer();
+
+  // Same limit as everywhere else: at four, adding is closed off here too.
+  const isAtPlayerLimit = children.length >= MAX_PLAYERS_PER_ACCOUNT;
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -89,11 +96,19 @@ export default function SwitchPlayerDialog({
               onClose();
               router.push(ADD_PLAYER_ROUTE);
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+            disabled={isAtPlayerLimit}
+            title={isAtPlayerLimit ? PLAYER_LIMIT_MESSAGE : undefined}
+            className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#3D3775]/40 disabled:hover:bg-[#F7F6FF]"
           >
             <UserPlus className="h-4 w-4" />
             Add another player
           </button>
+
+          {isAtPlayerLimit && (
+            <p className="mt-2 text-center text-xs leading-4 text-[#565656]">
+              {PLAYER_LIMIT_MESSAGE}
+            </p>
+          )}
         </div>
 
         <div className="flex shrink-0 gap-3 border-t border-[#F4F4F4] px-6 py-4">

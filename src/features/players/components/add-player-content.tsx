@@ -1,14 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserPlus } from "lucide-react";
 import ChildProfileCard from "@/features/auth/components/child-profile-card";
 import ChildProfileDialog from "@/features/auth/components/child-profile-dialog";
 import type { ChildFormData } from "@/features/auth/schemas/child.schema";
-import { useCreateChildMutation } from "@/features/players/api/children.queries";
+import {
+  useChildrenQuery,
+  useCreateChildMutation,
+} from "@/features/players/api/children.queries";
 import { MEMBERSHIP_VALIDATION_ROUTE } from "@/config/routes";
 import { showApiErrorToast } from "@/lib/api-toast";
+import {
+  MAX_PLAYERS_PER_ACCOUNT,
+  PLAYER_LIMIT_MESSAGE,
+} from "@/config/limits";
 
 /** What one membership costs, per player. */
 const MEMBERSHIP_UNIT_PRICE = 5;
@@ -27,11 +34,23 @@ export default function AddPlayerContent() {
   const router = useRouter();
 
   const [children, setChildren] = useState<ChildFormData[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(true);
+  // Starts closed, then opens itself once — see the effect below. It used to
+  // start open, which cannot work now that whether there is room to add is
+  // something the screen has to load first.
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const hasAutoOpened = useRef(false);
   // Which card the dialog is editing; null means it is adding a new one.
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const { mutateAsync: createChildren, isPending } = useCreateChildMutation();
+
+  // This screen builds a fresh list, so on its own it has no idea the account
+  // already holds players. Without the existing count it would happily collect
+  // a fifth profile and only fail at the server.
+  const { data: existingData, isLoading: isLoadingExisting } =
+    useChildrenQuery();
+  const existingCount = existingData?.children?.length ?? 0;
+  const remainingSlots = Math.max(MAX_PLAYERS_PER_ACCOUNT - existingCount, 0);
 
   const openAddChild = () => {
     setEditingIndex(null);
@@ -45,7 +64,12 @@ export default function AddPlayerContent() {
 
   const saveChild = (child: ChildFormData) => {
     setChildren((current) => {
-      if (editingIndex === null) return [...current, child];
+      // Guarded here as well as on the buttons: editing is allowed at the
+      // limit, adding is not, and this is the one place both arrive.
+      if (editingIndex === null) {
+        if (current.length >= remainingSlots) return current;
+        return [...current, child];
+      }
 
       const next = [...current];
       next[editingIndex] = child;
@@ -58,6 +82,19 @@ export default function AddPlayerContent() {
   };
 
   const total = children.length * MEMBERSHIP_UNIT_PRICE;
+
+  const isAtLimit = children.length >= remainingSlots;
+  const hasNoSlots = remainingSlots === 0;
+
+  // Arriving here is itself the intent to add someone, so the form opens on its
+  // own rather than making the parent press Add first. Only once, and only when
+  // the account has room — opening a form that cannot be submitted would be a
+  // worse welcome than the message explaining why.
+  useEffect(() => {
+    if (hasAutoOpened.current || isLoadingExisting) return;
+    hasAutoOpened.current = true;
+    if (remainingSlots > 0) setIsDialogOpen(true);
+  }, [isLoadingExisting, remainingSlots]);
 
   const continueToPayment = async () => {
     if (children.length === 0) return;
@@ -96,7 +133,20 @@ export default function AddPlayerContent() {
         </p>
       </div>
 
-      {children.length === 0 ? (
+      {hasNoSlots ? (
+        /* The account is full. Nothing to add, so the screen says so instead of
+           offering a form that cannot be submitted. */
+        <div className="flex w-full flex-col items-center gap-2 rounded-[24px] border border-[#D8D4FF] bg-[#F7F6FF] px-4 py-8 text-center">
+          <UserPlus className="h-6 w-6 text-[#083F92]" />
+          <span className="text-sm font-semibold text-[#083F92]">
+            {PLAYER_LIMIT_MESSAGE}
+          </span>
+          <span className="text-xs text-[#565656]">
+            Your account already has {existingCount}{" "}
+            {existingCount === 1 ? "player" : "players"}.
+          </span>
+        </div>
+      ) : children.length === 0 ? (
         <button
           type="button"
           onClick={openAddChild}
@@ -124,11 +174,21 @@ export default function AddPlayerContent() {
           <button
             type="button"
             onClick={openAddChild}
-            className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+            disabled={isAtLimit}
+            title={isAtLimit ? PLAYER_LIMIT_MESSAGE : undefined}
+            className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#3D3775]/40 disabled:hover:bg-[#F7F6FF]"
           >
             <UserPlus className="h-4 w-4" />
             Add another player
           </button>
+
+          {isAtLimit && (
+            <p className="text-center text-xs leading-4 text-[#565656]">
+              {existingCount > 0
+                ? `That is all ${MAX_PLAYERS_PER_ACCOUNT} players your account can hold.`
+                : PLAYER_LIMIT_MESSAGE}
+            </p>
+          )}
 
           <div className="flex items-center justify-between rounded-[24px] border border-[#D8D4FF] bg-white px-4 py-3">
             <span className="text-sm leading-5 text-[#565656]">
@@ -146,7 +206,7 @@ export default function AddPlayerContent() {
         <button
           type="button"
           onClick={continueToPayment}
-          disabled={children.length === 0 || isPending}
+          disabled={children.length === 0 || isPending || hasNoSlots}
           className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-50"
         >
           {isPending ? "Saving..." : "Continue"}

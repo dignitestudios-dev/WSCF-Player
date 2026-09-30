@@ -7,6 +7,10 @@ import PlayerCard from "@/features/players/components/player-card";
 import { useActivePlayer } from "@/features/players/use-active-player";
 import { DEFAULT_REDIRECT } from "@/config/routes";
 import { ADD_PLAYER_ROUTE } from "@/features/players/routes";
+import {
+  MAX_PLAYERS_PER_ACCOUNT,
+  PLAYER_LIMIT_MESSAGE,
+} from "@/config/limits";
 
 /**
  * Which of your children am I opening?
@@ -25,6 +29,10 @@ export default function SelectPlayerContent() {
     isLoading,
     switchTo,
   } = useActivePlayer();
+
+  // Four players is the account limit, so this tile stops offering a screen
+  // that would only refuse them.
+  const isAtPlayerLimit = children.length >= MAX_PLAYERS_PER_ACCOUNT;
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -105,11 +113,19 @@ export default function SelectPlayerContent() {
         <button
           type="button"
           onClick={() => router.push(ADD_PLAYER_ROUTE)}
-          className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+          disabled={isAtPlayerLimit}
+          title={isAtPlayerLimit ? PLAYER_LIMIT_MESSAGE : undefined}
+          className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#3D3775]/40 disabled:hover:bg-[#F7F6FF]"
         >
           <UserPlus className="h-4 w-4" />
           Add another player
         </button>
+
+        {isAtPlayerLimit && (
+          <p className="text-center text-xs leading-4 text-[#565656]">
+            {PLAYER_LIMIT_MESSAGE}
+          </p>
+        )}
       </div>
 
       <button
