@@ -90,24 +90,22 @@ export default function SwitchPlayerDialog({
             below the fold, so the one action that adds a player was the one you
             had to scroll to find. */}
         <div className="shrink-0 px-6 pb-4">
-          <button
-            type="button"
-            onClick={() => {
-              onClose();
-              router.push(ADD_PLAYER_ROUTE);
-            }}
-            disabled={isAtPlayerLimit}
-            title={isAtPlayerLimit ? PLAYER_LIMIT_MESSAGE : undefined}
-            className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#3D3775]/40 disabled:hover:bg-[#F7F6FF]"
-          >
-            <UserPlus className="h-4 w-4" />
-            Add another player
-          </button>
-
-          {isAtPlayerLimit && (
-            <p className="mt-2 text-center text-xs leading-4 text-[#565656]">
+          {isAtPlayerLimit ? (
+            <p className="rounded-[24px] bg-[#F7F6FF] px-4 py-4 text-center text-xs leading-4 text-[#565656]">
               {PLAYER_LIMIT_MESSAGE}
             </p>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                router.push(ADD_PLAYER_ROUTE);
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+            >
+              <UserPlus className="h-4 w-4" />
+              Add another player
+            </button>
           )}
         </div>
 

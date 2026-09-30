@@ -171,23 +171,23 @@ export default function AddPlayerContent() {
             />
           ))}
 
-          <button
-            type="button"
-            onClick={openAddChild}
-            disabled={isAtLimit}
-            title={isAtLimit ? PLAYER_LIMIT_MESSAGE : undefined}
-            className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-[#3D3775]/40 disabled:hover:bg-[#F7F6FF]"
-          >
-            <UserPlus className="h-4 w-4" />
-            Add another player
-          </button>
-
-          {isAtLimit && (
-            <p className="text-center text-xs leading-4 text-[#565656]">
+          {/* The button goes entirely at the limit; the message stands in its
+              place so the list does not simply end without explanation. */}
+          {isAtLimit ? (
+            <p className="rounded-[24px] bg-[#F7F6FF] px-4 py-4 text-center text-xs leading-4 text-[#565656]">
               {existingCount > 0
                 ? `That is all ${MAX_PLAYERS_PER_ACCOUNT} players your account can hold.`
                 : PLAYER_LIMIT_MESSAGE}
             </p>
+          ) : (
+            <button
+              type="button"
+              onClick={openAddChild}
+              className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+            >
+              <UserPlus className="h-4 w-4" />
+              Add another player
+            </button>
           )}
 
           <div className="flex items-center justify-between rounded-[24px] border border-[#D8D4FF] bg-white px-4 py-3">

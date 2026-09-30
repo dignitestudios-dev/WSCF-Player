@@ -481,16 +481,18 @@ export default function BecomeMemberForm() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={openAddChild}
-            disabled={isAtPlayerLimit}
-            title={isAtPlayerLimit ? PLAYER_LIMIT_MESSAGE : undefined}
-            className="flex h-11 shrink-0 items-center gap-2 rounded-[24px] bg-[#083F92] px-5 text-sm font-semibold text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#083F92]"
-          >
-            <UserPlus className="h-4 w-4" />
-            Add Player
-          </button>
+          {/* At the limit the button goes rather than greying out, and the
+              message below carries the explanation on its own. */}
+          {!isAtPlayerLimit && (
+            <button
+              type="button"
+              onClick={openAddChild}
+              className="flex h-11 shrink-0 items-center gap-2 rounded-[24px] bg-[#083F92] px-5 text-sm font-semibold text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875]"
+            >
+              <UserPlus className="h-4 w-4" />
+              Add Player
+            </button>
+          )}
         </div>
 
         {children.length === 0 ? (
@@ -532,10 +534,10 @@ export default function BecomeMemberForm() {
           </div>
         )}
 
-        {/* Said plainly, next to the button that stopped working, rather than
-            leaving a parent to wonder why it is greyed out. */}
+        {/* Stands in for the button that is no longer there, so the screen
+            explains itself rather than simply lacking a way forward. */}
         {isAtPlayerLimit && (
-          <p className="text-xs leading-4 text-[#565656]">
+          <p className="rounded-[16px] bg-[#F7F6FF] px-4 py-3 text-center text-xs leading-4 text-[#565656]">
             {PLAYER_LIMIT_MESSAGE}
           </p>
         )}
