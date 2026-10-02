@@ -38,8 +38,8 @@ export default function PendingRatingBanner() {
         <p className="flex-1">
           <strong className="font-semibold">Rating Assignment Pending:</strong>{" "}
           {hasMultiplePlayers
-            ? `${playerName}'s profile is pending rating assignment from an administrator. While pending, ${playerName} can only register for open tournament divisions (divisions with no rating requirement).`
-            : "Your profile is pending rating assignment from an administrator. While pending, you can only register for open tournament divisions (divisions with no rating requirement)."}
+            ? `${playerName}'s rating has not been entered yet. ${playerName} can register for a tournament once WSCF enters a rating, or marks ${playerName} as having no rating.`
+            : "Your rating has not been entered yet. You can register for a tournament once WSCF enters a rating, or marks you as having no rating."}
         </p>
       </div>
     </aside>

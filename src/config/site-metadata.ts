@@ -21,11 +21,9 @@ export const rootMetadata: Metadata = {
     "player ratings",
     "chess membership",
   ],
-  icons: {
-    icon: "/images/favicon.png",
-    shortcut: "/images/favicon.png",
-    apple: "/images/favicon.png",
-  },
+  // Icons come from src/app/icon.png, apple-icon.png and favicon.ico, which
+  // Next wires up (with a cache-busting hash) on its own. Declaring them here
+  // as well would emit a second, competing set of <link> tags.
 };
 
 type PageMetadataEntry = {
@@ -45,7 +43,7 @@ export const pageMetadata = {
       "Log in to your Wisconsin Scholastic Chess Federation member account to manage your profile and chess activity.",
   },
   register: {
-    title: "Become a Member",
+    title: "Become a WSCF Parent",
     description:
       "Create your WSCF membership to register for tournaments, track ratings, and join Wisconsin scholastic chess programs.",
   },
@@ -125,7 +123,7 @@ export const pageMetadata = {
       "Your WSCF dashboard for membership status, ratings, upcoming tournaments, and account activity.",
   },
   myProfile: {
-    title: "My Profile",
+    title: "Player Profile",
     description:
       "Manage your WSCF player profile, parent information, tournament history, and current rating.",
   },

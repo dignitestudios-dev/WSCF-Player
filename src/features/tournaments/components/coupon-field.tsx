@@ -112,8 +112,8 @@ export default function CouponField({
         htmlFor="couponCode"
         className="flex items-center gap-1.5 text-sm font-medium leading-[19px] text-[#181818]"
       >
-        <TicketPercent className="h-4 w-4 text-[#083F92]" />
-        Have a coupon code?
+        <TicketPercent className="h-4 w-4 shrink-0 text-[#083F92]" />
+        If you have a coupon code please enter it here
       </label>
 
       <div className="flex gap-2">

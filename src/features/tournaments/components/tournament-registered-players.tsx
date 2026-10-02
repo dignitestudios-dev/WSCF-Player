@@ -7,6 +7,10 @@ import { useTournamentParticipantsQuery, useTournamentDetailsQuery } from "@/fea
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomPagination } from "@/components/ui/custom-pagination";
+import {
+  getDivisionCell,
+  getTeamCell,
+} from "@/features/tournaments/utils/participant-columns";
 
 function SearchIcon() {
   return (
@@ -31,7 +35,8 @@ function BackIcon() {
   );
 }
 
-const GRID_COLS = "grid grid-cols-[126px_1.2fr_1fr_120px_120px]";
+// No | Player | User ID | Division | Team | Rating | Action
+const GRID_COLS = "grid grid-cols-[72px_1.2fr_1fr_1.3fr_1fr_100px_110px]";
 
 interface TournamentRegisteredPlayersProps {
   tournamentId: string;
@@ -132,13 +137,15 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
 
       <div className="relative">
         <div className="overflow-x-auto">
-          <div className="min-w-[900px]">
+          <div className="min-w-[1100px]">
             <div
               className={`${GRID_COLS} h-[47px] items-center rounded-t-[12px] bg-[#083F92] px-5 text-base font-semibold text-white`}
             >
               <span>No</span>
               <span>Player</span>
               <span>USER ID</span>
+              <span>Division</span>
+              <span>Team</span>
               <span>Rating</span>
               <span className="text-right">Action</span>
             </div>
@@ -153,6 +160,8 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
                     <Skeleton className="h-4 w-4 rounded" />
                     <Skeleton className="h-4 w-32 rounded" />
                     <Skeleton className="h-4 w-24 rounded" />
+                    <Skeleton className="h-4 w-28 rounded" />
+                    <Skeleton className="h-4 w-20 rounded" />
                     <Skeleton className="h-8 w-[78px] rounded-[22px]" />
                     <Skeleton className="h-4 w-16 justify-self-end rounded" />
                   </div>
@@ -166,6 +175,8 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
               apiParticipants.map((participant, index) => {
                 const userId = participant.playerProfile?.membershipId || participant.user._id;
                 const rating = participant.playerProfile?.rating || 0;
+                const division = getDivisionCell(participant.division);
+                const team = getTeamCell(participant.team);
                 
                 return (
                   <div
@@ -175,6 +186,8 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
                     <span>{index + 1}</span>
                     <span className="truncate pr-2 min-w-0" title={participant.user.name}>{participant.user.name}</span>
                     <span className="truncate pr-2 min-w-0" title={userId}>{userId}</span>
+                    <span className="truncate pr-2 min-w-0" title={division.hint ?? division.label}>{division.label}</span>
+                    <span className="truncate pr-2 min-w-0" title={team}>{team}</span>
                     <span>
                       <span className="inline-flex h-8 min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white">
                         {rating}

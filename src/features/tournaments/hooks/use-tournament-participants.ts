@@ -7,6 +7,10 @@ import {
   getTournamentDetailsRoute,
 } from "@/config/routes";
 import { useTournamentParticipantsQuery } from "@/features/tournaments/api/tournaments.queries";
+import {
+  getDivisionCell,
+  getTeamCell,
+} from "@/features/tournaments/utils/participant-columns";
 
 export function useTournamentParticipants(options?: {
   context?: "auth" | "dashboard";
@@ -54,8 +58,12 @@ export function useTournamentParticipants(options?: {
     name: p.user?.name || "-",
     grade: p.playerProfile?.grade || "-",
     rating: p.playerProfile?.rating || "-",
-    team: p.team?.name || "-",
-    division: p.playerProfile?.division || "-", // Assuming division might be here if applicable
+    // From the same helpers as the details table, so every list agrees.
+    team: getTeamCell(p.team),
+    // The API sends the division at the top level of the participant, not under
+    // playerProfile. This used to read playerProfile.division, which does not
+    // exist, so the column showed "-" for everybody.
+    division: getDivisionCell(p.division).label,
     highlightName: false,
   }));
 

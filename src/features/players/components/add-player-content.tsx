@@ -209,7 +209,7 @@ export default function AddPlayerContent() {
           disabled={children.length === 0 || isPending || hasNoSlots}
           className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-50"
         >
-          {isPending ? "Saving..." : "Continue"}
+          {isPending ? "Saving..." : "Save and make payment"}
         </button>
         <button
           type="button"

@@ -288,7 +288,7 @@ export default function BecomeMemberForm() {
     <div className="flex w-full flex-col items-center">
       <div className="mb-6 flex w-full max-w-[480px] flex-col items-center gap-3 text-center">
         <h1 className="text-[32px] font-semibold leading-[43px] text-[#083F92]">
-          Become A WSCF Member
+          Become A WSCF Parent
         </h1>
         <p className="text-base font-medium leading-[22px] tracking-[0.01em] text-[#565656]">
           Create your parent account, then add each child who will play
@@ -573,13 +573,13 @@ export default function BecomeMemberForm() {
             disabled={isPending}
             className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
           >
-            {isPending ? "Signing Up..." : "Sign Up"}
+            {isPending ? "Saving..." : "Save and make payment"}
           </button>
 
           {/* Someone who already has an account should not have to find their
               way back through the landing page to sign in. */}
           <p className="text-center text-sm leading-5 text-[#565656]">
-            Already a member?{" "}
+            Already WSCF Parent?{" "}
             <Link
               href={MEMBER_LOGIN_ROUTE}
               className="font-semibold text-[#083F92] hover:underline"

@@ -122,7 +122,7 @@ export default function MyProfile() {
     <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl md:text-[45px] font-bold md:leading-[61px] text-[#083F92]">My Profile</h1>
+          <h1 className="text-3xl md:text-[45px] font-bold md:leading-[61px] text-[#083F92]">Player Profile</h1>
           <p className="text-lg md:text-[22px] md:leading-[30px] text-[#151515]">Manage your personal information</p>
         </div>
         <button

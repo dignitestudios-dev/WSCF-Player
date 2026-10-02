@@ -53,10 +53,19 @@ interface TournamentParticipantApiData {
     _id: string;
     name: string;
   };
+  // null when the player is on no team.
   team?: {
     _id: string;
     name: string;
-  };
+  } | null;
+  // The division they registered in. `label` is the name the admin typed and
+  // may be empty; `criteria` is the grade/rating rule, e.g. "Grades K–3".
+  division?: {
+    _id: string;
+    label: string | null;
+    name: string | null;
+    criteria: string | null;
+  } | null;
   playerProfile?: {
     _id: string;
     grade: string;

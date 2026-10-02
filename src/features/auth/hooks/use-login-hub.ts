@@ -36,13 +36,13 @@ export function useLoginHub() {
   const topActions: LoginHubAction[] = [
     {
       id: "become-member",
-      label: "Become A WSCF Member",
+      label: "Become A WSCF Parent",
       icon: "user",
       href: BECOME_MEMBER_ROUTE,
     },
     {
       id: "already-member",
-      label: "Already A Member?",
+      label: "Already WSCF Parent?",
       icon: "user",
       href: "/auth/member-login",
     },

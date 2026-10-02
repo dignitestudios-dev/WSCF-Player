@@ -14,26 +14,6 @@ import { useMembershipQuoteQuery } from "@/features/membership/api/membership.mu
 import { useAuth } from "@/hooks/use-auth";
 import LogoutConfirmModal from "@/features/dashboard/components/logout-confirm-modal";
 
-function CalendarIcon() {
-  return (
-    <svg
-      width="36"
-      height="36"
-      viewBox="0 0 36 36"
-      fill="none"
-      aria-hidden="true"
-    >
-      <rect x="4" y="6" width="28" height="26" rx="4" fill="white" />
-      <rect x="4" y="6" width="28" height="8" rx="4" fill="#DADADA" />
-      <rect x="10" y="18" width="4" height="4" rx="1" fill="#083F92" />
-      <rect x="16" y="18" width="4" height="4" rx="1" fill="#083F92" />
-      <rect x="22" y="18" width="4" height="4" rx="1" fill="#083F92" />
-      <rect x="10" y="24" width="4" height="4" rx="1" fill="#083F92" />
-      <rect x="16" y="24" width="4" height="4" rx="1" fill="#083F92" />
-    </svg>
-  );
-}
-
 function getMembershipValidUntil(now = new Date()): string {
   let targetYear = now.getFullYear();
   // Month is 0-indexed: 7 is August.
@@ -153,16 +133,6 @@ export default function MembershipValidation() {
       <h1 className="text-center text-[32px] font-semibold leading-[43px] text-[#083F92]">
         Membership Validation
       </h1>
-
-      <div className="relative flex items-center rounded-[12px] bg-[#083F92] px-[60px] py-3 pl-14">
-        <div className="absolute left-[14px] top-[13px]">
-          <CalendarIcon />
-        </div>
-        <p className="text-sm leading-[19px] text-white">
-          Your membership will be valid until <br />
-          <b>{validUntil}</b>
-        </p>
-      </div>
 
       <div className="rounded-[12px] border border-[#DADADA] bg-white p-3">
         <h2 className="mb-6 text-[22px] font-medium leading-[30px] text-[#181818]">

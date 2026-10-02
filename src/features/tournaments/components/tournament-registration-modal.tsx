@@ -238,7 +238,7 @@ export default function TournamentRegistrationModal({
             </h3>
             <p className="text-[14px] text-[#181818]/70 max-w-[320px]">
               {isPendingRating
-                ? "This tournament only has rating-restricted divisions. While your rating is pending admin assignment, you can only enter open divisions with no rating requirement."
+                ? "You can register for a tournament once WSCF has entered your rating or marked you as having no rating."
                 : "You are not eligible for any divisions in this tournament based on your profile."}
             </p>
           </div>

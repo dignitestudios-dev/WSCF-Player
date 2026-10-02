@@ -10,6 +10,10 @@ import { useTournamentDetails } from "@/features/tournaments/hooks/use-tournamen
 import { useTournamentParticipantsQuery, useTournamentDetailsQuery } from "@/features/tournaments/api/tournaments.queries";
 import { useActivePlayer } from "@/features/players/use-active-player";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  getDivisionCell,
+  getTeamCell,
+} from "@/features/tournaments/utils/participant-columns";
 
 function BackIcon() {
   return (
@@ -25,7 +29,8 @@ function BackIcon() {
   );
 }
 
-const GRID_COLS = "grid grid-cols-[80px_1.2fr_1fr_120px_120px]";
+// No | Player | User ID | Division | Team | Rating | Action
+const GRID_COLS = "grid grid-cols-[64px_1.2fr_1fr_1.3fr_1fr_100px_110px]";
 
 interface TournamentDetailsProps {
   tournamentId: string;
@@ -101,13 +106,15 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
         </div>
 
         <div className="overflow-x-auto">
-          <div className="min-w-[760px]">
+          <div className="min-w-[1040px]">
             <div
               className={`${GRID_COLS} h-[47px] items-center rounded-t-[12px] bg-[#083F92] px-6 text-base font-medium text-white`}
             >
               <span>No</span>
               <span>Player</span>
               <span>USER ID</span>
+              <span>Division</span>
+              <span>Team</span>
               <span>Rating</span>
               <span className="text-right">Action</span>
             </div>
@@ -122,6 +129,8 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
                     <Skeleton className="h-4 w-4 rounded" />
                     <Skeleton className="h-4 w-32 rounded" />
                     <Skeleton className="h-4 w-24 rounded" />
+                    <Skeleton className="h-4 w-28 rounded" />
+                    <Skeleton className="h-4 w-20 rounded" />
                     <Skeleton className="h-8 w-[78px] rounded-[22px]" />
                     <Skeleton className="h-4 w-16 justify-self-end rounded" />
                   </div>
@@ -139,6 +148,8 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
                 // say which row that is rather than leaving them to spot the
                 // name themselves.
                 const isMe = participant.user._id === activePlayer?._id;
+                const division = getDivisionCell(participant.division);
+                const team = getTeamCell(participant.team);
 
                 return (
                   <div
@@ -155,6 +166,8 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
                       ) : null}
                     </span>
                     <span className="truncate pr-2 min-w-0" title={userId}>{userId}</span>
+                    <span className="truncate pr-2 min-w-0" title={division.hint ?? division.label}>{division.label}</span>
+                    <span className="truncate pr-2 min-w-0" title={team}>{team}</span>
                     <span>
                       <span className="inline-flex h-8 min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white">
                         {rating}

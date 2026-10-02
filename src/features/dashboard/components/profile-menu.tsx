@@ -142,7 +142,7 @@ export default function ProfileMenu() {
           <div className="flex flex-col gap-1 p-2">
             <ProfileMenuItem
               href={profileHref}
-              label="My Profile"
+              label="Player Profile"
               icon={<CircleUser className="h-[18px] w-[18px] text-[#083F92]" />}
               onNavigate={closeMenu}
             />
@@ -152,7 +152,7 @@ export default function ProfileMenu() {
                 thing that is actually useful: adding another. */}
             {hasMultiplePlayers ? (
               <ProfileMenuItem
-                label="Switch Profile"
+                label="Switch Player"
                 icon={<Users className="h-[18px] w-[18px] text-[#083F92]" />}
                 onClick={() => {
                   closeMenu();

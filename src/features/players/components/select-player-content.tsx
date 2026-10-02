@@ -91,8 +91,8 @@ export default function SelectPlayerContent() {
           Who are we opening?
         </h1>
         <p className="text-sm font-medium leading-5 text-[#565656]">
-          Pick a player to continue. You can switch at any time from your
-          profile menu.
+          Pick a player to continue. You can switch players at any time from
+          the menu.
         </p>
       </div>
 
