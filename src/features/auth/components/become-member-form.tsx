@@ -12,10 +12,7 @@ import { useBecomeMember } from "@/features/auth/hooks/use-become-member";
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
 import type { ChildFormData } from "@/features/auth/schemas/child.schema";
 import { MEMBER_LOGIN_ROUTE } from "@/config/routes";
-import {
-  MAX_PLAYERS_PER_ACCOUNT,
-  PLAYER_LIMIT_MESSAGE,
-} from "@/config/limits";
+import { MAX_PLAYERS_PER_ACCOUNT, PLAYER_LIMIT_MESSAGE } from "@/config/limits";
 
 /** What one membership costs, per player. */
 const MEMBERSHIP_UNIT_PRICE = 5;
@@ -60,7 +57,10 @@ function FormField({
 }) {
   return (
     <div className="flex w-full flex-col gap-1.5 sm:w-[309px]">
-      <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
+      <label
+        htmlFor={id}
+        className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
+      >
         {label}
         {required && <RequiredMark />}
       </label>
@@ -86,10 +86,10 @@ function FormField({
                   }
                 }
               : numericOnly
-              ? (e) => {
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                }
-              : undefined,
+                ? (e) => {
+                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                  }
+                : undefined,
         })}
       />
       {error && <p className="mt-0.5 text-xs text-red-600">{error}</p>}
@@ -118,7 +118,10 @@ function PasswordField({
 }) {
   return (
     <div className="flex w-full flex-col gap-1.5 sm:w-[309px]">
-      <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
+      <label
+        htmlFor={id}
+        className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
+      >
         {label}
         {required && <RequiredMark />}
       </label>
@@ -169,7 +172,10 @@ function ParentEmailField({
     <div className="w-full sm:w-[309px]">
       <div className="relative">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor={id} className="text-sm font-medium capitalize leading-[19px] text-[#181818]">
+          <label
+            htmlFor={id}
+            className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
+          >
             {label}
             {required && <RequiredMark />}
           </label>
@@ -201,7 +207,9 @@ function ParentEmailField({
           >
             <span
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
-                isPrimary ? "border-[#083F92] bg-[#083F92]" : "border-black/50 bg-white"
+                isPrimary
+                  ? "border-[#083F92] bg-[#083F92]"
+                  : "border-black/50 bg-white"
               }`}
             >
               {isPrimary && <span className="h-2 w-2 rounded-full bg-white" />}
@@ -295,301 +303,304 @@ export default function BecomeMemberForm() {
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-[640px]"
-      >
-        <fieldset disabled={isPending} className="flex w-full max-w-[640px] flex-col gap-4 border-0 p-0 m-0">
-        <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
-          Parent / Guardian Details
-        </h2>
-
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <FormField
-              id="fatherName"
-              required={primaryEmail === "father"}
-              label="Father's/Guardian Full Name"
-              placeholder="John Doe"
-              error={errors.fatherName?.message}
-              register={register}
-              maxLength={30}
-            />
-            <FormField
-              id="motherName"
-              required={primaryEmail === "mother"}
-              label="Mother's/Guardian Full Name"
-              placeholder="Jane Doe"
-              error={errors.motherName?.message}
-              register={register}
-              maxLength={30}
-            />
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <FormField
-              id="fatherPhone"
-              required={primaryEmail === "father"}
-              label="Father's/Guardian Phone"
-              type="tel"
-              placeholder="(123) 456-7890"
-              error={errors.fatherPhone?.message}
-              register={register}
-              maxLength={14}
-            />
-            <FormField
-              id="motherPhone"
-              required={primaryEmail === "mother"}
-              label="Mother's/Guardian Phone"
-              type="tel"
-              placeholder="(098) 765-4321"
-              error={errors.motherPhone?.message}
-              register={register}
-              maxLength={14}
-            />
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <ParentEmailField
-              id="fatherEmail"
-              required={primaryEmail === "father"}
-              label="Email Address"
-              primaryValue="father"
-              isPrimary={primaryEmail === "father"}
-              error={errors.fatherEmail?.message}
-              register={register}
-              maxLength={254}
-            />
-            <ParentEmailField
-              id="motherEmail"
-              required={primaryEmail === "mother"}
-              label="Email Address"
-              primaryValue="mother"
-              isPrimary={primaryEmail === "mother"}
-              error={errors.motherEmail?.message}
-              register={register}
-              maxLength={254}
-            />
-          </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-[640px]">
+        <fieldset
+          disabled={isPending}
+          className="flex w-full max-w-[640px] flex-col gap-4 border-0 p-0 m-0"
+        >
+          <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
+            Parent / Guardian Details
+          </h2>
 
           <p className="text-xs leading-4 text-[#565656]">
-            The primary guardian&apos;s name, phone and email are required — that
-            email is the one you will sign in with. The other guardian is
+            The primary guardian&apos;s name, phone and email are required —
+            that email is the one you will sign in with. The other guardian is
             optional.
           </p>
-        </div>
 
-        <div className="h-px w-full border-t border-[#DDDDDD]" />
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
+              <FormField
+                id="fatherName"
+                required={primaryEmail === "father"}
+                label="Father's/Guardian Full Name"
+                placeholder="John Doe"
+                error={errors.fatherName?.message}
+                register={register}
+                maxLength={30}
+              />
+              <FormField
+                id="motherName"
+                required={primaryEmail === "mother"}
+                label="Mother's/Guardian Full Name"
+                placeholder="Jane Doe"
+                error={errors.motherName?.message}
+                register={register}
+                maxLength={30}
+              />
+            </div>
 
-        <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
-          Password
-        </h2>
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
+              <FormField
+                id="fatherPhone"
+                required={primaryEmail === "father"}
+                label="Father's/Guardian Phone"
+                type="tel"
+                placeholder="(123) 456-7890"
+                error={errors.fatherPhone?.message}
+                register={register}
+                maxLength={14}
+              />
+              <FormField
+                id="motherPhone"
+                required={primaryEmail === "mother"}
+                label="Mother's/Guardian Phone"
+                type="tel"
+                placeholder="(098) 765-4321"
+                error={errors.motherPhone?.message}
+                register={register}
+                maxLength={14}
+              />
+            </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-          <PasswordField
-            id="password"
-            required
-            label="Password"
-            show={showPassword}
-            onToggle={togglePassword}
-            error={errors.password?.message}
-            register={register}
-            maxLength={50}
-          />
-          <PasswordField
-            id="confirmPassword"
-            required
-            label="Confirm Password"
-            show={showConfirmPassword}
-            onToggle={toggleConfirmPassword}
-            error={errors.confirmPassword?.message}
-            register={register}
-            maxLength={50}
-          />
-        </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
+              <ParentEmailField
+                id="fatherEmail"
+                required={primaryEmail === "father"}
+                label="Email Address"
+                primaryValue="father"
+                isPrimary={primaryEmail === "father"}
+                error={errors.fatherEmail?.message}
+                register={register}
+                maxLength={254}
+              />
+              <ParentEmailField
+                id="motherEmail"
+                required={primaryEmail === "mother"}
+                label="Email Address"
+                primaryValue="mother"
+                isPrimary={primaryEmail === "mother"}
+                error={errors.motherEmail?.message}
+                register={register}
+                maxLength={254}
+              />
+            </div>
+          </div>
 
-        <div className="h-px w-full border-t border-[#DDDDDD]" />
+          <div className="h-px w-full border-t border-[#DDDDDD]" />
 
-        <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
-          Home Address
-        </h2>
+          <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
+            Password
+          </h2>
 
-        <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <FormField
-              id="streetAddress"
+            <PasswordField
+              id="password"
               required
-              label="Street Address"
-              placeholder="NA 235 milwake"
-              error={errors.streetAddress?.message}
+              label="Password"
+              show={showPassword}
+              onToggle={togglePassword}
+              error={errors.password?.message}
               register={register}
               maxLength={50}
             />
-            <FormField
-              id="city"
+            <PasswordField
+              id="confirmPassword"
               required
-              label="City"
-              placeholder="Milwaukee"
-              error={errors.city?.message}
+              label="Confirm Password"
+              show={showConfirmPassword}
+              onToggle={toggleConfirmPassword}
+              error={errors.confirmPassword?.message}
               register={register}
-              maxLength={30}
+              maxLength={50}
             />
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
-            <div className="flex w-full flex-col gap-1.5 sm:w-[309px]">
-              <label
-                htmlFor="zipCode"
-                className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
-              >
-                Zip Code
-                <RequiredMark />
-              </label>
-              <input
-                id="zipCode"
-                inputMode="numeric"
-                maxLength={5}
-                placeholder="54231"
-                className={inputClassName}
-                {...register("zipCode", {
-                  onChange: (e) => {
-                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                  },
-                })}
+          <div className="h-px w-full border-t border-[#DDDDDD]" />
+
+          <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
+            Home Address
+          </h2>
+
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
+              <FormField
+                id="streetAddress"
+                required
+                label="Street Address"
+                placeholder="NA 235 milwake"
+                error={errors.streetAddress?.message}
+                register={register}
+                maxLength={50}
               />
-              {errors.zipCode && (
-                <p className="mt-0.5 text-xs text-red-600">{errors.zipCode.message}</p>
-              )}
+              <FormField
+                id="city"
+                required
+                label="City"
+                placeholder="Milwaukee"
+                error={errors.city?.message}
+                register={register}
+                maxLength={30}
+              />
             </div>
-          </div>
 
-          <p className="text-xs leading-4 text-[#565656]">
-            One address for the household — it applies to every player you add.
-          </p>
-        </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-[22px]">
+              <div className="flex w-full flex-col gap-1.5 sm:w-[309px]">
+                <label
+                  htmlFor="zipCode"
+                  className="text-sm font-medium capitalize leading-[19px] text-[#181818]"
+                >
+                  Zip Code
+                  <RequiredMark />
+                </label>
+                <input
+                  id="zipCode"
+                  inputMode="numeric"
+                  maxLength={5}
+                  placeholder="54231"
+                  className={inputClassName}
+                  {...register("zipCode", {
+                    onChange: (e) => {
+                      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    },
+                  })}
+                />
+                {errors.zipCode && (
+                  <p className="mt-0.5 text-xs text-red-600">
+                    {errors.zipCode.message}
+                  </p>
+                )}
+              </div>
+            </div>
 
-        <div className="h-px w-full border-t border-[#DDDDDD]" />
-
-        {/* --- the players ------------------------------------------------ */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
-              Player Profiles
-            </h2>
-            <p className="text-sm leading-5 text-[#565656]">
-              Add each child who will play. At least one is required.
+            <p className="text-xs leading-4 text-[#565656]">
+              One address for the household — it applies to every player you
+              add.
             </p>
           </div>
 
-          {/* At the limit the button goes rather than greying out, and the
-              message below carries the explanation on its own. */}
-          {!isAtPlayerLimit && (
-            <button
-              type="button"
-              onClick={openAddChild}
-              className="flex h-11 shrink-0 items-center gap-2 rounded-[24px] bg-[#083F92] px-5 text-sm font-semibold text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875]"
-            >
-              <UserPlus className="h-4 w-4" />
-              Add Player
-            </button>
-          )}
-        </div>
+          <div className="h-px w-full border-t border-[#DDDDDD]" />
 
-        {children.length === 0 ? (
-          <button
-            type="button"
-            onClick={openAddChild}
-            className="flex w-full flex-col items-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-8 text-center transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
-          >
-            <UserPlus className="h-6 w-6 text-[#083F92]" />
-            <span className="text-sm font-semibold text-[#083F92]">
-              Add your first player
-            </span>
-            <span className="text-xs text-[#565656]">
-              Each player costs ${MEMBERSHIP_UNIT_PRICE} per season
-            </span>
-          </button>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {children.map((child, index) => (
-              <ChildProfileCard
-                key={`${child.firstName}-${child.lastName}-${index}`}
-                child={child}
-                onEdit={() => openEditChild(index)}
-                onRemove={() => removeChild(index)}
-              />
-            ))}
-
-            {/* The bill, shown before they commit rather than at PayPal. */}
-            <div className="flex items-center justify-between rounded-[24px] border border-[#D8D4FF] bg-white px-4 py-3">
-              <span className="text-sm leading-5 text-[#565656]">
-                {children.length}{" "}
-                {children.length === 1 ? "player" : "players"} × $
-                {MEMBERSHIP_UNIT_PRICE.toFixed(2)}
-              </span>
-              <span className="text-base font-semibold text-[#083F92]">
-                ${total.toFixed(2)}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Stands in for the button that is no longer there, so the screen
-            explains itself rather than simply lacking a way forward. */}
-        {isAtPlayerLimit && (
-          <p className="rounded-[16px] bg-[#F7F6FF] px-4 py-3 text-center text-xs leading-4 text-[#565656]">
-            {PLAYER_LIMIT_MESSAGE}
-          </p>
-        )}
-
-        {errors.children && (
-          <p className="text-xs text-red-600">
-            {errors.children.message as string}
-          </p>
-        )}
-
-        <div className="flex flex-col gap-6 pt-2">
-          <div>
-            <label className="flex cursor-pointer items-start gap-3">
-              <input
-                type="checkbox"
-                className="mt-0.5 h-5 w-5 shrink-0 rounded-full border border-black/30 accent-[#083F92]"
-                {...register("agreeToTerms")}
-              />
-              <span className="text-sm leading-[19px] text-[#3D3775]">
-                I agree to the Terms and Conditions of the Wisconsin Scholastic
-                Chess Federation
-              </span>
-            </label>
-            {errors.agreeToTerms && (
-              <p className="mt-0.5 text-xs text-red-600">
-                {errors.agreeToTerms.message}
+          {/* --- the players ------------------------------------------------ */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-lg font-semibold capitalize leading-6 text-[#181818]">
+                Player Profiles
+              </h2>
+              <p className="text-sm leading-5 text-[#565656]">
+                Add each child who will play. At least one is required.
               </p>
+            </div>
+
+            {/* At the limit the button goes rather than greying out, and the
+              message below carries the explanation on its own. */}
+            {!isAtPlayerLimit && (
+              <button
+                type="button"
+                onClick={openAddChild}
+                className="flex h-11 shrink-0 items-center gap-2 rounded-[24px] bg-[#083F92] px-5 text-sm font-semibold text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875]"
+              >
+                <UserPlus className="h-4 w-4" />
+                Add Player
+              </button>
             )}
           </div>
 
-          <button
-            type="submit"
-            disabled={isPending}
-            className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
-          >
-            {isPending ? "Saving..." : "Save and make payment"}
-          </button>
-
-          {/* Someone who already has an account should not have to find their
-              way back through the landing page to sign in. */}
-          <p className="text-center text-sm leading-5 text-[#565656]">
-            Already WSCF Parent?{" "}
-            <Link
-              href={MEMBER_LOGIN_ROUTE}
-              className="-my-3 inline-block py-3 font-semibold text-[#083F92] hover:underline"
+          {children.length === 0 ? (
+            <button
+              type="button"
+              onClick={openAddChild}
+              className="flex w-full flex-col items-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-8 text-center transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
             >
-              Login
-            </Link>
-          </p>
-        </div>
-      </fieldset>
-        </form>
+              <UserPlus className="h-6 w-6 text-[#083F92]" />
+              <span className="text-sm font-semibold text-[#083F92]">
+                Add your first player
+              </span>
+              <span className="text-xs text-[#565656]">
+                Each player costs ${MEMBERSHIP_UNIT_PRICE} per season
+              </span>
+            </button>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {children.map((child, index) => (
+                <ChildProfileCard
+                  key={`${child.firstName}-${child.lastName}-${index}`}
+                  child={child}
+                  onEdit={() => openEditChild(index)}
+                  onRemove={() => removeChild(index)}
+                />
+              ))}
+
+              {/* The bill, shown before they commit rather than at PayPal. */}
+              <div className="flex items-center justify-between rounded-[24px] border border-[#D8D4FF] bg-white px-4 py-3">
+                <span className="text-sm leading-5 text-[#565656]">
+                  {children.length}{" "}
+                  {children.length === 1 ? "player" : "players"} × $
+                  {MEMBERSHIP_UNIT_PRICE.toFixed(2)}
+                </span>
+                <span className="text-base font-semibold text-[#083F92]">
+                  ${total.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Stands in for the button that is no longer there, so the screen
+            explains itself rather than simply lacking a way forward. */}
+          {isAtPlayerLimit && (
+            <p className="rounded-[16px] bg-[#F7F6FF] px-4 py-3 text-center text-xs leading-4 text-[#565656]">
+              {PLAYER_LIMIT_MESSAGE}
+            </p>
+          )}
+
+          {errors.children && (
+            <p className="text-xs text-red-600">
+              {errors.children.message as string}
+            </p>
+          )}
+
+          <div className="flex flex-col gap-6 pt-2">
+            <div>
+              <label className="flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 h-5 w-5 shrink-0 rounded-full border border-black/30 accent-[#083F92]"
+                  {...register("agreeToTerms")}
+                />
+                <span className="text-sm leading-[19px] text-[#3D3775]">
+                  I agree to the Terms and Conditions of the Wisconsin
+                  Scholastic Chess Federation
+                </span>
+              </label>
+              {errors.agreeToTerms && (
+                <p className="mt-0.5 text-xs text-red-600">
+                  {errors.agreeToTerms.message}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isPending}
+              className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60"
+            >
+              {isPending ? "Saving..." : "Save and make payment"}
+            </button>
+
+            {/* Someone who already has an account should not have to find their
+              way back through the landing page to sign in. */}
+            <p className="text-center text-sm leading-5 text-[#565656]">
+              Already WSCF Parent?{" "}
+              <Link
+                href={MEMBER_LOGIN_ROUTE}
+                className="-my-3 inline-block py-3 font-semibold text-[#083F92] hover:underline"
+              >
+                Login
+              </Link>
+            </p>
+          </div>
+        </fieldset>
+      </form>
 
       {/* Mounted only while open, so each open starts from a clean form. */}
       {isChildDialogOpen && (
