@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { UseFormRegister } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { useEditProfile } from "@/features/dashboard/hooks/use-edit-profile";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 import {
   Select,
   SelectContent,
@@ -112,10 +112,11 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
   } = form;
 
   return (
-    <Dialog open={true} onOpenChange={(open) => { if (!open && !isUpdating) onClose(); }}>
-      <DialogContent
+    <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open && !isUpdating) onClose(); }}>
+      <ResponsiveDialogContent
+        mobileClassName="pt-8"
         showCloseButton={false}
-        className="flex max-h-[90vh] w-full max-w-[759px] flex-col overflow-y-auto rounded-[12px] px-6 py-[60px] sm:px-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        className="flex max-h-[90dvh] w-full max-w-[759px] flex-col overflow-y-auto rounded-[12px] px-6 py-[60px] sm:px-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #F7F6FF",
@@ -135,7 +136,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
           <div className="flex flex-col items-center gap-[23px]">
             <h2
               id="edit-profile-title"
-              className="text-center text-[32px] font-bold capitalize leading-[43px] tracking-[-0.018em] text-[#181818]"
+              className="text-center text-2xl sm:text-[32px] font-bold capitalize leading-8 sm:leading-[43px] tracking-[-0.018em] text-[#181818]"
             >
               Edit Profile
             </h2>
@@ -333,7 +334,7 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
           </fieldset>
         </form>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

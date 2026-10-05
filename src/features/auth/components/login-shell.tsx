@@ -27,14 +27,14 @@ export default function LoginShell({
     "relative min-h-[320px] flex-1 overflow-hidden rounded-[44px] bg-[#eaeaea]";
 
   const leftColumnClassName = matchLeftPanelToContent
-    ? "relative hidden w-full shrink-0 px-6 py-8 lg:flex lg:h-screen lg:w-[682px] lg:flex-col lg:px-10 lg:py-12"
-    : "relative hidden w-full shrink-0 px-6 py-8 lg:flex lg:h-screen lg:w-[682px] lg:flex-col lg:px-10 lg:py-4";
+    ? "relative hidden w-full shrink-0 px-6 py-8 lg:flex lg:h-dvh lg:w-[682px] lg:flex-col lg:px-10 lg:py-12"
+    : "relative hidden w-full shrink-0 px-6 py-8 lg:flex lg:h-dvh lg:w-[682px] lg:flex-col lg:px-10 lg:py-4";
 
   const rowClassName = matchLeftPanelToContent
-    ? "relative mx-auto flex max-w-[1640px] flex-col lg:h-screen lg:flex-row lg:items-stretch lg:overflow-hidden"
-    : "relative mx-auto flex min-h-screen max-w-[1640px] flex-col lg:h-screen lg:flex-row lg:overflow-hidden";
+    ? "relative mx-auto flex max-w-[1640px] flex-col lg:h-dvh lg:flex-row lg:items-stretch lg:overflow-hidden"
+    : "relative mx-auto flex min-h-dvh max-w-[1640px] flex-col lg:h-dvh lg:flex-row lg:overflow-hidden";
   return (
-    <div className="relative min-h-screen bg-wscf-bg">
+    <div className="relative min-h-dvh bg-wscf-bg">
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -87,24 +87,24 @@ export default function LoginShell({
         </div>
 
         <div
-          className={`relative flex flex-1 flex-col overflow-x-hidden px-6 py-8 lg:h-screen lg:overflow-y-auto lg:px-16 lg:py-12 ${
+          className={`relative flex flex-1 flex-col overflow-x-hidden px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 lg:h-dvh lg:overflow-y-auto lg:px-16 lg:py-12 ${
             matchLeftPanelToContent ? "min-w-0" : ""
           }`}
         >
           {showBack && (
-            <div className="absolute left-6 top-8 z-20 lg:left-8 lg:top-8">
+            <div className="relative z-20 mb-1 lg:absolute lg:left-8 lg:top-8 lg:mb-0">
               <LoginBackButton href={backHref} />
             </div>
           )}
 
           {!hideLogo && (
-            <div className="relative z-10 mb-8 flex justify-center lg:mb-10">
+            <div className="relative z-10 mb-5 flex justify-center lg:mb-10">
               <Image
                 src="/images/logo.png"
                 alt="WSCF - Wisconsin Scholastic Chess Federation"
                 width={197}
                 height={100}
-                className="h-[100px] w-auto object-contain"
+                className="h-16 w-auto object-contain sm:h-[100px]"
                 priority
               />
             </div>
@@ -115,7 +115,7 @@ export default function LoginShell({
               matchLeftPanelToContent ? "" : "flex-1"
             } ${
               contentClassName ??
-              (hideLogo ? "justify-start pt-16 lg:pt-20" : "justify-center")
+              (hideLogo ? "justify-start pt-4 sm:pt-16 lg:pt-20" : "justify-center")
             }`}
           >
             {children}

@@ -133,7 +133,7 @@ function PasswordField({
         <button
           type="button"
           onClick={onToggle}
-          className="absolute right-4 top-1/2 -translate-y-1/2"
+          className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center"
           aria-label={show ? "Hide password" : "Show password"}
         >
           <EyeIcon hidden={!show} />
@@ -582,7 +582,7 @@ export default function BecomeMemberForm() {
             Already WSCF Parent?{" "}
             <Link
               href={MEMBER_LOGIN_ROUTE}
-              className="font-semibold text-[#083F92] hover:underline"
+              className="-my-3 inline-block py-3 font-semibold text-[#083F92] hover:underline"
             >
               Login
             </Link>

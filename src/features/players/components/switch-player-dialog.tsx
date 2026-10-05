@@ -7,6 +7,12 @@ import PlayerCard from "@/features/players/components/player-card";
 import { useActivePlayer } from "@/features/players/use-active-player";
 import { ADD_PLAYER_ROUTE } from "@/features/players/routes";
 import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogTitle,
+} from "@/components/ui/responsive-dialog";
+import {
   MAX_PLAYERS_PER_ACCOUNT,
   PLAYER_LIMIT_MESSAGE,
 } from "@/config/limits";
@@ -37,8 +43,6 @@ export default function SwitchPlayerDialog({
     if (open) setSelectedId(activePlayer?._id ?? null);
   }, [open, activePlayer?._id]);
 
-  if (!open) return null;
-
   const isUnchanged = !selectedId || selectedId === activePlayer?._id;
 
   const confirmSwitch = () => {
@@ -53,23 +57,24 @@ export default function SwitchPlayerDialog({
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-      <button
-        type="button"
-        aria-label="Close"
-        className="absolute inset-0 cursor-default bg-black/40"
-        onClick={onClose}
-      />
-
-      <div className="relative z-10 flex max-h-[90vh] w-full max-w-[480px] flex-col overflow-hidden rounded-[24px] bg-white shadow-xl">
+    <ResponsiveDialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
+    >
+      <ResponsiveDialogContent
+        className="flex max-h-[90dvh] max-w-[480px] flex-col gap-0 overflow-hidden rounded-[24px] bg-white p-0"
+        mobileClassName="px-0 pt-0 pb-0"
+      >
         <div className="shrink-0 border-b border-[#F4F4F4] px-6 py-5">
-          <h2 className="text-xl font-semibold leading-7 text-[#083F92]">
+          <ResponsiveDialogTitle className="text-xl font-semibold leading-7 text-[#083F92]">
             Switch Player
-          </h2>
-          <p className="mt-1 text-sm leading-5 text-[#636363]">
+          </ResponsiveDialogTitle>
+          <ResponsiveDialogDescription className="mt-1 text-sm leading-5 text-[#636363]">
             Choose which player to view. Everything in the app will show their
             details.
-          </p>
+          </ResponsiveDialogDescription>
         </div>
 
         {/* The only scrolling part. `min-h-0` is what lets a flex child
@@ -109,7 +114,7 @@ export default function SwitchPlayerDialog({
           )}
         </div>
 
-        <div className="flex shrink-0 gap-3 border-t border-[#F4F4F4] px-6 py-4">
+        <div className="flex shrink-0 gap-3 border-t border-[#F4F4F4] px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <button
             type="button"
             onClick={onClose}
@@ -126,7 +131,7 @@ export default function SwitchPlayerDialog({
             Switch
           </button>
         </div>
-      </div>
-    </div>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

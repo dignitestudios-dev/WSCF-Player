@@ -119,7 +119,7 @@ export default function MyProfile() {
 
   return (
     <>
-    <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+    <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl md:text-[45px] font-bold md:leading-[61px] text-[#083F92]">Player Profile</h1>
@@ -149,12 +149,12 @@ export default function MyProfile() {
             )}
 
             {/* Stats Flex Row */}
-            <div className="mt-3 flex flex-wrap items-center justify-center lg:justify-start gap-y-4">
+            <div className="mt-3 grid w-full grid-cols-2 gap-2 lg:flex lg:w-auto lg:flex-wrap lg:items-center lg:justify-start lg:gap-2">
               {isPending
                 ? [...Array(5)].map((_, i) => (
                     <div
                       key={i}
-                      className="flex flex-col items-center lg:items-start gap-2 border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0"
+                      className="flex flex-col items-center lg:items-start gap-2 min-w-0 rounded-xl bg-[#F7F6FF] px-3 py-3 last:odd:col-span-2 lg:rounded-none lg:bg-transparent lg:p-0 lg:border-r lg:border-[#3D3775]/20 lg:pr-6 lg:mr-6 lg:last:border-r-0 lg:last:mr-0 lg:last:pr-0"
                     >
                       <Skeleton className="h-[19px] w-16" />
                       <Skeleton className="h-[32px] w-24" />
@@ -163,7 +163,7 @@ export default function MyProfile() {
                 : stats.map((stat) => (
                     <div
                       key={stat.label}
-                      className="flex flex-col items-center lg:items-start border-r border-[#3D3775]/20 pr-6 mr-6 last:border-r-0 last:mr-0 last:pr-0 max-w-[200px]"
+                      className="flex flex-col items-center lg:items-start min-w-0 rounded-xl bg-[#F7F6FF] px-3 py-3 last:odd:col-span-2 lg:rounded-none lg:bg-transparent lg:p-0 lg:border-r lg:border-[#3D3775]/20 lg:pr-6 lg:mr-6 lg:last:border-r-0 lg:last:mr-0 lg:last:pr-0 lg:max-w-[200px]"
                     >
                       <span className="text-sm font-medium leading-[19px] text-[#083F92]">{stat.label}</span>
                       <span className={`text-lg lg:text-2xl font-semibold leading-8 break-words [overflow-wrap:anywhere] text-center lg:text-left max-w-full ${stat.value === "Not assigned" ? "text-gray-400" : "text-[#083F92]"}`}>

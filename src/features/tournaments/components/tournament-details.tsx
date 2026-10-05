@@ -10,6 +10,7 @@ import { useTournamentDetails } from "@/features/tournaments/hooks/use-tournamen
 import { useTournamentParticipantsQuery, useTournamentDetailsQuery } from "@/features/tournaments/api/tournaments.queries";
 import { useActivePlayer } from "@/features/players/use-active-player";
 import { Skeleton } from "@/components/ui/skeleton";
+import ParticipantCards from "@/features/tournaments/components/participant-cards";
 import {
   getDivisionCell,
   getTeamCell,
@@ -49,7 +50,7 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
 
   if (isDetailsPending) {
     return (
-      <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+      <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
         <div className="mb-6 flex flex-col gap-3">
           <Skeleton className="h-6 w-24 rounded" />
           <Skeleton className="h-[44px] w-64 rounded lg:h-[61px] lg:w-96" />
@@ -67,10 +68,10 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
 
   if (!tournament) {
     return (
-      <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+      <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
         <Link
           href={backHref}
-          className="mb-6 inline-flex items-center gap-3 text-lg font-medium leading-6 text-[#083F92]"
+          className="mb-6 inline-flex min-h-11 items-center gap-2 pr-3 text-base font-medium leading-6 text-[#083F92] md:gap-3 md:pr-0 md:text-lg"
         >
           <BackIcon />
           Back
@@ -81,11 +82,11 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
   }
 
   return (
-    <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+    <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
       <div className="mb-6 flex flex-col gap-3">
         <Link
           href={backHref}
-          className="inline-flex items-center gap-3 text-lg font-medium leading-6 text-[#083F92]"
+          className="inline-flex min-h-11 items-center gap-2 pr-3 text-base font-medium leading-6 text-[#083F92] md:gap-3 md:pr-0 md:text-lg"
         >
           <BackIcon />
           Back
@@ -105,7 +106,8 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
           </p>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* The table is for md and up; a phone gets the cards below. */}
+        <div className="hidden overflow-x-auto md:block">
           <div className="min-w-[1040px]">
             <div
               className={`${GRID_COLS} h-[47px] items-center rounded-t-[12px] bg-[#083F92] px-6 text-base font-medium text-white`}
@@ -188,11 +190,17 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
           </div>
         </div>
 
+        <ParticipantCards
+          participants={apiParticipants}
+          isPending={isParticipantsPending}
+          activePlayerId={activePlayer?._id}
+        />
+
         {showViewAll ? (
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex md:justify-end">
             <Link
               href={getDashboardTournamentParticipantsRoute(tournament._id)}
-              className="inline-flex h-[39px] items-center justify-center rounded-[8px] bg-[#083F92] px-2.5 text-sm font-medium text-white"
+              className="inline-flex h-12 w-full items-center justify-center rounded-[24px] bg-[#083F92] px-4 text-sm font-semibold text-white md:h-[39px] md:w-auto md:rounded-[8px] md:px-2.5 md:font-medium"
             >
               View All
             </Link>

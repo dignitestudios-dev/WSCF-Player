@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 interface TournamentPaymentSuccessModalProps {
   tournament: TournamentRegistrationTarget;
@@ -14,10 +14,11 @@ export default function TournamentPaymentSuccessModal({
   isRegistrationOnly,
 }: TournamentPaymentSuccessModalProps) {
   return (
-    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent 
+    <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <ResponsiveDialogContent 
         showCloseButton={false}
         className="flex w-full max-w-[515px] flex-col items-center gap-[18px] rounded-[12px] px-10 py-[43px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="items-center gap-4"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
@@ -40,7 +41,7 @@ export default function TournamentPaymentSuccessModal({
             <div className="flex flex-col items-center gap-4 text-center">
               <h2
                 id="tournament-payment-success-title"
-                className="text-[32px] font-semibold capitalize leading-[43px] tracking-[-0.008em] text-[#181818]"
+                className="text-2xl sm:text-[32px] font-semibold capitalize leading-8 sm:leading-[43px] tracking-[-0.008em] text-[#181818]"
               >
                 {isRegistrationOnly ? "Registered Successfully" : "Payment Successfully"}
               </h2>
@@ -64,7 +65,7 @@ export default function TournamentPaymentSuccessModal({
         <p className="text-center text-base font-medium leading-[22px] tracking-[-0.014em] text-[#565656]">
           {isRegistrationOnly ? "Thank you for registering" : "Thank you for the payment"}
         </p>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

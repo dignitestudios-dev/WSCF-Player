@@ -5,7 +5,7 @@ import {
   EyeIcon,
 } from "@/features/auth/components/set-new-password-icons";
 import { useSetNewPassword } from "@/features/auth/hooks/use-set-new-password";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 export default function SetNewPasswordForm() {
   const {
@@ -42,7 +42,7 @@ export default function SetNewPasswordForm() {
 
       <div className="flex w-full flex-col gap-[33px]">
         <div className="flex flex-col items-center gap-3 text-center">
-          <h1 className="text-[36px] font-semibold capitalize leading-[49px] tracking-[-0.008em] text-[#083F92]">
+          <h1 className="text-[28px] sm:text-[36px] font-semibold capitalize leading-9 sm:leading-[49px] tracking-[-0.008em] text-[#083F92]">
             Set New Password
           </h1>
           <p className="text-base leading-[22px] tracking-[-0.014em] text-[#565656]">
@@ -76,7 +76,7 @@ export default function SetNewPasswordForm() {
                 <button
                   type="button"
                   onClick={togglePassword}
-                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                  className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   <EyeIcon hidden={!showPassword} />
@@ -105,7 +105,7 @@ export default function SetNewPasswordForm() {
                 <button
                   type="button"
                   onClick={toggleConfirmPassword}
-                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                  className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center"
                   aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                 >
                   <EyeIcon hidden={!showConfirmPassword} />
@@ -128,10 +128,11 @@ export default function SetNewPasswordForm() {
       </div>
 
       {isSuccessModalOpen && (
-        <Dialog open={true} onOpenChange={(open) => { if (!open) closeSuccessModal(); }}>
-          <DialogContent 
+        <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open) closeSuccessModal(); }}>
+          <ResponsiveDialogContent 
             showCloseButton={false}
             className="flex w-full max-w-[482px] flex-col items-center gap-[25px] rounded-xl bg-white px-4 py-[26px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="items-center gap-5"
           >
             <div className="flex h-[107px] w-[107px] items-center justify-center rounded-full bg-[#083F92]">
               <svg width="40" height="30" viewBox="0 0 40 30" fill="none" aria-hidden="true">
@@ -164,8 +165,8 @@ export default function SetNewPasswordForm() {
             >
               Continue
             </button>
-          </DialogContent>
-        </Dialog>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
       )}
     </div>
   );

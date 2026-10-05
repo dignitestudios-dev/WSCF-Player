@@ -1,12 +1,12 @@
 "use client";
 
+import TournamentCardSkeleton from "@/features/tournaments/components/tournament-card-skeleton";
 import { useMemo, useState } from "react";
 import type { DashboardTournament } from "@/features/dashboard/hooks/use-dashboard";
 import TournamentCard from "@/features/tournaments/components/tournament-card";
 import TournamentRegistrationFlow from "@/features/tournaments/components/tournament-registration-flow";
 import { useTournamentsQuery } from "@/features/tournaments/api/tournaments.queries";
 import { useEffect } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
 import MembershipRequiredDialog from "@/features/tournaments/components/membership-required-dialog";
@@ -65,9 +65,9 @@ export default function Tournaments() {
 
   return (
     <>
-      <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+      <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
         <div className="mb-6 flex max-w-[736px] flex-col gap-3">
-          <h1 className="text-[45px] font-bold leading-[61px] text-[#083F92]">Tournaments</h1>
+          <h1 className="text-3xl font-bold leading-10 md:text-[45px] md:leading-[61px] text-[#083F92]">Tournaments</h1>
           <p className="text-[22px] leading-[30px] text-[#151515]">
             Browse and register for upcoming tournaments.
           </p>
@@ -103,20 +103,7 @@ export default function Tournaments() {
           {isPending ? (
             <>
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="relative h-[108px] rounded-[12px] border border-gray-200 bg-white p-6 shadow-sm">
-                  <div className="flex items-start gap-6 pr-40">
-                    <Skeleton className="h-[53px] w-[53px] shrink-0 rounded-full" />
-                    <div className="flex min-w-0 flex-1 flex-col justify-center">
-                      <Skeleton className="h-6 w-48 mb-4" />
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Skeleton className="h-[19px] w-24" />
-                        <Skeleton className="h-[19px] w-24" />
-                        <Skeleton className="h-[19px] w-24" />
-                      </div>
-                    </div>
-                  </div>
-                  <Skeleton className="absolute right-6 top-1/2 h-12 w-[136px] -translate-y-1/2 rounded-full" />
-                </div>
+                <TournamentCardSkeleton key={i} />
               ))}
             </>
           ) : mappedTournaments.length === 0 ? (
@@ -133,8 +120,8 @@ export default function Tournaments() {
         </div>
 
         {pagination && pagination.totalPages > 0 && (
-          <div className="mt-8 flex items-center justify-between">
-            <p className="text-base text-[#083F92]">
+          <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:items-center md:justify-between">
+            <p className="hidden text-base text-[#083F92] md:block">
               You are on page {pagination.currentPage} of {pagination.totalPages} Pages
             </p>
             <CustomPagination

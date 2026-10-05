@@ -51,7 +51,7 @@ export default function DashboardPlayersRatingLookup() {
       <div className="flex flex-col gap-3">
         <Link
           href={backHref}
-          className="inline-flex w-fit items-center gap-3 px-6 text-lg font-medium leading-6 text-[#083F92]"
+          className="inline-flex min-h-11 w-fit items-center gap-3 px-6 text-lg font-medium leading-6 text-[#083F92]"
         >
           <BackIcon />
           Back
@@ -124,8 +124,8 @@ export default function DashboardPlayersRatingLookup() {
       </div>
 
       {pagination && pagination.totalPages > 0 && (
-        <div className="mt-8 flex items-center justify-between">
-          <p className="text-base text-[#083F92]">
+        <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:items-center md:justify-between">
+          <p className="hidden text-base text-[#083F92] md:block">
             You are on page {pagination.currentPage} of {pagination.totalPages} Pages
           </p>
           <CustomPagination

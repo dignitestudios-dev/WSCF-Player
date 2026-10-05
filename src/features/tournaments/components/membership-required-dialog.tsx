@@ -3,12 +3,12 @@
 import { Loader2 } from "lucide-react";
 import { useMembershipCheckoutMutation } from "@/features/membership/api/membership.mutations";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@/components/ui/responsive-dialog";
 
 interface MembershipRequiredDialogProps {
   open: boolean;
@@ -38,14 +38,14 @@ export default function MembershipRequiredDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-[#083F92]">Membership Required</DialogTitle>
-          <DialogDescription className="text-base text-[#181818] opacity-70 mt-2">
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
+      <ResponsiveDialogContent className="sm:max-w-[425px]" mobileClassName="pt-1">
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle className="text-xl font-bold text-[#083F92]">Membership Required</ResponsiveDialogTitle>
+          <ResponsiveDialogDescription className="text-base text-[#181818] opacity-70 mt-2">
             Please buy or renew your membership to register for tournaments.
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveDialogDescription>
+        </ResponsiveDialogHeader>
         <div className="flex gap-3 mt-4">
           <button
             type="button"
@@ -71,7 +71,7 @@ export default function MembershipRequiredDialog({
             )}
           </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

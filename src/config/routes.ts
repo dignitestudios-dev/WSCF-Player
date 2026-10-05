@@ -65,7 +65,10 @@ export function getTournamentDetailsRoute(id: string, from?: "dashboard" | "regi
 }
 
 export function getTournamentRegisteredPlayersRoute(tournamentId: string) {
-  return `${DASHBOARD_TOURNAMENT_DETAILS_ROUTE}/${tournamentId}/participants`;
+  // The page lives in app/dashboard/tournaments/[id]/players. This used to end
+  // in /participants, a route that does not exist, so "View All" — which only
+  // appears once a tournament has more than one page of players — led to a 404.
+  return `${DASHBOARD_TOURNAMENT_DETAILS_ROUTE}/${tournamentId}/players`;
 }
 
 export function getDashboardTournamentParticipantsRoute(tournamentId?: string) {

@@ -1,5 +1,6 @@
 "use client";
 
+import TournamentCardSkeleton from "@/features/tournaments/components/tournament-card-skeleton";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -59,7 +60,7 @@ export default function DashboardOverview() {
 
   return (
     <>
-    <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+    <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
       <div className="mb-8 flex max-w-[736px] flex-col gap-3">
         <div className="flex flex-col gap-1.5">
           <h1 className="text-[32px] font-bold leading-[44px] text-[#083F92] lg:text-[45px] lg:leading-[61px]">
@@ -193,22 +194,7 @@ export default function DashboardOverview() {
           {isPending ? (
             <>
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="relative rounded-[12px] border border-gray-200 bg-white p-6 shadow-sm">
-                  <div className="flex flex-col gap-4 pr-44 sm:pr-52">
-                    <div className="flex items-start gap-4">
-                      <Skeleton className="h-[53px] w-[53px] shrink-0 rounded-full" />
-                      <div className="flex min-w-0 flex-1 flex-col justify-center">
-                        <Skeleton className="h-6 w-48 mb-4" />
-                        <div className="flex flex-wrap items-center gap-4">
-                          <Skeleton className="h-[19px] w-24" />
-                          <Skeleton className="h-[19px] w-24" />
-                          <Skeleton className="h-[19px] w-24" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <Skeleton className="absolute right-6 top-1/2 h-14 w-[136px] -translate-y-1/2 rounded-full px-8" />
-                </div>
+                <TournamentCardSkeleton key={i} />
               ))}
             </>
           ) : mappedTournaments.length === 0 ? (

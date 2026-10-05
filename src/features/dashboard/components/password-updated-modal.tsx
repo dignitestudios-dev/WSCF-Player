@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 interface PasswordUpdatedModalProps {
   onClose: () => void;
@@ -21,10 +21,11 @@ function CloseIcon() {
 
 export default function PasswordUpdatedModal({ onClose }: PasswordUpdatedModalProps) {
   return (
-    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent 
+    <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <ResponsiveDialogContent 
         showCloseButton={false}
         className="flex w-full max-w-[515px] flex-col items-center gap-8 rounded-[12px] bg-white px-6 py-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="items-center gap-5 pt-8"
       >
         <button
           type="button"
@@ -50,7 +51,7 @@ export default function PasswordUpdatedModal({ onClose }: PasswordUpdatedModalPr
         <div className="flex flex-col items-center gap-4 text-center">
           <h2
             id="password-updated-title"
-            className="text-[36px] font-semibold capitalize leading-[44px] tracking-[-0.008em] text-black"
+            className="text-[28px] sm:text-[36px] font-semibold capitalize leading-[44px] tracking-[-0.008em] text-black"
           >
             Password Updated!
           </h2>
@@ -58,7 +59,7 @@ export default function PasswordUpdatedModal({ onClose }: PasswordUpdatedModalPr
             Your password has been updated successfully.
           </p>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

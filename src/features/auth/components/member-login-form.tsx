@@ -86,7 +86,7 @@ export default function MemberLoginForm() {
               <button
                 type="button"
                 onClick={togglePassword}
-                className="absolute right-4 top-1/2 -translate-y-1/2"
+                className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 <EyeIcon hidden={!showPassword} />
@@ -100,7 +100,7 @@ export default function MemberLoginForm() {
           <div className="flex justify-end pt-1 pb-2">
             <Link
               href={FORGOT_PASSWORD_ROUTE}
-              className="text-sm font-medium text-[#083F92] hover:underline"
+              className="-my-3 inline-block py-3 text-sm font-medium text-[#083F92] hover:underline"
             >
               Forgot Password?
             </Link>
@@ -120,7 +120,7 @@ export default function MemberLoginForm() {
             Not a member yet?{" "}
             <Link
               href={BECOME_MEMBER_ROUTE}
-              className="font-semibold text-[#083F92] hover:underline"
+              className="-my-3 inline-block py-3 font-semibold text-[#083F92] hover:underline"
             >
               Sign Up
             </Link>

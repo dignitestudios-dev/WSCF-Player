@@ -129,9 +129,9 @@ export default function Settings() {
 
   return (
     <>
-      <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+      <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
         <div className="mb-6 flex flex-col gap-3">
-          <h1 className="text-[45px] font-bold leading-[61px] text-[#083F92]">Settings</h1>
+          <h1 className="text-3xl font-bold leading-10 md:text-[45px] md:leading-[61px] text-[#083F92]">Settings</h1>
           <p className="text-[22px] leading-[30px] text-[#151515]">View all settings</p>
         </div>
 

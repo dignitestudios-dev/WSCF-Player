@@ -13,6 +13,15 @@ export const rootMetadata: Metadata = {
   },
   description: DEFAULT_DESCRIPTION,
   applicationName: SITE_SHORT_NAME,
+  // Launched from the home screen on iOS: no Safari chrome, and the status bar
+  // sits over the app's own header instead of a black strip.
+  appleWebApp: {
+    capable: true,
+    title: SITE_SHORT_NAME,
+    statusBarStyle: "default",
+  },
+  // A phone number in the text must stay text, not become a tap-to-call link.
+  formatDetection: { telephone: false },
   keywords: [
     "Wisconsin Scholastic Chess Federation",
     "WSCF",

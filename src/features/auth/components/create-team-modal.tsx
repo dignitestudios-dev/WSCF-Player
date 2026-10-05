@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 interface CreateTeamModalProps {
   open: boolean;
@@ -11,10 +11,11 @@ export default function CreateTeamModal({ open, onClose }: CreateTeamModalProps)
   if (!open) return null;
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
-      <DialogContent 
+    <ResponsiveDialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+      <ResponsiveDialogContent 
         showCloseButton={false}
         className="flex h-[24em] w-full max-w-[588px] flex-col items-center gap-[25px] rounded-xl bg-white px-4 py-[26px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="items-center gap-5 pt-8"
       >
         <button
           type="button"
@@ -55,7 +56,7 @@ export default function CreateTeamModal({ open, onClose }: CreateTeamModalProps)
         >
           Redirecting Link For Team Creation
         </a>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

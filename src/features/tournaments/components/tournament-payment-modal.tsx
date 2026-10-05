@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 function CloseIcon() {
   return (
@@ -42,8 +42,9 @@ export default function TournamentPaymentModal({
   onPay,
 }: TournamentPaymentModalProps) {
   return (
-    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent 
+    <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <ResponsiveDialogContent
+        mobileClassName="pt-8" 
         showCloseButton={false}
         className="flex w-full max-w-[515px] flex-col rounded-[12px] p-10 border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
@@ -62,7 +63,7 @@ export default function TournamentPaymentModal({
 
         <div className="flex flex-col gap-[33px]">
           <div className="flex flex-col items-center gap-1.5 text-center">
-            <h2 id="tournament-payment-title" className="text-[32px] font-semibold leading-[43px] text-[#181818]">
+            <h2 id="tournament-payment-title" className="text-2xl sm:text-[32px] font-semibold leading-8 sm:leading-[43px] text-[#181818]">
               Payment
             </h2>
             <p className="text-base font-medium leading-[22px] text-black">
@@ -97,7 +98,7 @@ export default function TournamentPaymentModal({
             </button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

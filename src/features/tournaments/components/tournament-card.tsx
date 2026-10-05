@@ -74,23 +74,23 @@ interface TournamentCardProps {
  */
 export default function TournamentCard({ tournament, onRegister }: TournamentCardProps) {
   return (
-    <div className="group relative h-[110px] overflow-hidden rounded-[12px] border border-[#083F92] bg-white p-6 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer">
+    <div className="group relative cursor-pointer overflow-hidden rounded-[12px] border border-[#083F92] bg-white p-4 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 md:h-[110px] md:p-6">
       <Link
         href={getTournamentDetailsRoute(tournament.id, "dashboard")}
         className="absolute inset-0 z-0"
         aria-label={`View details for ${tournament.title}`}
       />
-      <div className="pointer-events-none relative z-10 flex flex-col gap-4 pr-44 sm:pr-52 min-w-0">
+      <div className="pointer-events-none relative z-10 flex min-w-0 flex-col gap-4 md:pr-52">
         <div className="flex items-start gap-4 min-w-0">
-          <div className="flex h-[53px] w-[53px] shrink-0 items-center justify-center rounded-full bg-[#083F92]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#083F92] md:h-[53px] md:w-[53px]">
             <ChessIcon />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="line-clamp-1 text-lg font-bold leading-6 truncate text-[#083F92] group-hover:underline" title={tournament.title}>
+            <h3 className="line-clamp-2 text-base font-bold leading-5 text-[#083F92] group-hover:underline md:line-clamp-1 md:text-lg md:leading-6" title={tournament.title}>
               {tournament.title}
             </h3>
-            <div className="mt-4 flex flex-wrap items-center gap-4 min-w-0">
-              <div className="min-w-0 max-w-[200px] truncate">
+            <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 md:mt-4 md:gap-4">
+              <div className="min-w-0 max-w-full truncate md:max-w-[200px]">
                 <MetaItem icon={<LocationIcon />} label={tournament.location} />
               </div>
               <MetaItem icon={<CalendarIcon />} label={tournament.date} />
@@ -103,7 +103,9 @@ export default function TournamentCard({ tournament, onRegister }: TournamentCar
       <button
         type="button"
         onClick={() => onRegister(tournament)}
-        className="absolute right-6 top-1/2 z-10 h-14 -translate-y-1/2 rounded-full bg-[#083F92] px-8 text-base font-semibold text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)] transition-colors hover:bg-[#063875]"
+        // Full width under the details on a phone; floated to the right edge of
+        // the row from md up, exactly as before.
+        className="relative z-10 mt-4 h-12 w-full rounded-full bg-[#083F92] px-8 text-base font-semibold text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)] transition-colors hover:bg-[#063875] active:bg-[#063875] md:absolute md:right-6 md:top-1/2 md:mt-0 md:h-14 md:w-auto md:-translate-y-1/2"
       >
         Register Now
       </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 interface PaymentResultDialogProps {
   outcome: "success" | "cancelled";
@@ -49,15 +49,16 @@ export default function PaymentResultDialog({
   const isSuccess = outcome === "success";
 
   return (
-    <Dialog
+    <ResponsiveDialog
       open={true}
       onOpenChange={(open) => {
         if (!open) onClose();
       }}
     >
-      <DialogContent
+      <ResponsiveDialogContent
         showCloseButton={false}
         className="flex w-full max-w-[515px] flex-col items-center gap-[26px] rounded-[12px] border-none px-10 py-[43px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="items-center gap-5"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
@@ -68,7 +69,7 @@ export default function PaymentResultDialog({
         </div>
 
         <div className="flex w-full flex-col items-center gap-4 text-center">
-          <h2 className="text-[32px] font-semibold capitalize leading-[43px] tracking-[-0.008em] text-[#181818]">
+          <h2 className="text-2xl sm:text-[32px] font-semibold capitalize leading-8 sm:leading-[43px] tracking-[-0.008em] text-[#181818]">
             {isSuccess ? "Payment Successful" : "Payment Cancelled"}
           </h2>
           <p className="text-lg leading-7 tracking-[-0.014em] text-[#565656]">
@@ -85,7 +86,7 @@ export default function PaymentResultDialog({
         >
           {isSuccess ? "View My Tournaments" : "Close"}
         </button>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

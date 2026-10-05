@@ -1,7 +1,7 @@
 "use client";
 
 import { useNotificationSettings } from "@/features/dashboard/hooks/use-notification-settings";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 interface NotificationSettingsModalProps {
   onClose: () => void;
@@ -68,9 +68,10 @@ export default function NotificationSettingsModal({ onClose }: NotificationSetti
   const { settings, toggleSetting } = useNotificationSettings();
 
   return (
-    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent 
+    <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <ResponsiveDialogContent 
         showCloseButton={false}
+        mobileClassName="pt-8"
         className="w-full max-w-[761px] rounded-[12px] px-[60px] pb-[60px] pt-[60px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
         style={{
           background:
@@ -88,7 +89,7 @@ export default function NotificationSettingsModal({ onClose }: NotificationSetti
 
         <h2
           id="notification-settings-title"
-          className="mb-[30px] text-center text-[32px] font-bold capitalize leading-[43px] tracking-[-0.018em] text-[#181818]"
+          className="mb-5 text-center text-2xl font-bold capitalize leading-8 tracking-[-0.018em] text-[#181818] sm:mb-[30px] sm:text-[32px] sm:leading-[43px]"
         >
           Notification Settings
         </h2>
@@ -102,7 +103,7 @@ export default function NotificationSettingsModal({ onClose }: NotificationSetti
             />
           ))}
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

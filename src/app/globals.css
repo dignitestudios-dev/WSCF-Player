@@ -48,3 +48,111 @@ input[type="password"]::-ms-clear {
   display: none;
 }
 
+/* =====================================================================
+   Mobile app foundations
+   ===================================================================== */
+
+/* Safe areas: the page runs edge to edge (viewport-fit=cover), so anything
+   fixed to the top or bottom pads itself by the notch / home-bar inset. */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+:root {
+  /* One number for the bottom bar, so the page can leave exactly that much room. */
+  --bottom-nav-height: 64px;
+  --app-bar-height: 56px;
+}
+
+html {
+  /* A rotated phone must not silently inflate the text. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  /* The grey flash on every tap is a browser-chrome tell. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* No 300ms tap delay and no double-tap zoom on controls, while pinch-zoom on the
+   page itself stays available. */
+a,
+button,
+[role="button"],
+[role="tab"],
+summary,
+label,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+/* iOS Safari zooms the whole page when a field under 16px gets focus. On phones
+   every text field is 16px, whatever its design size on desktop. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Sheets: a bottom sheet slides up from the bottom edge; on larger screens the
+   same panel fades in, centred, as the old modals did. */
+@keyframes sheet-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes sheet-slide-down {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sheet-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes modal-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

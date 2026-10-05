@@ -26,6 +26,12 @@ export default function SocketProvider({
       return;
     }
 
+    // No server configured, nothing to connect to. Without this the client
+    // defaulted to the web app's own address and retried against it for as long
+    // as the app stayed open — a stream of failed requests that on a phone costs
+    // battery and data for nothing. (The API's socket server is not enabled.)
+    if (!process.env.NEXT_PUBLIC_SOCKET_URL) return;
+
     socket.connect();
     socket.on(SOCKET_EVENTS.CONNECT, () => setIsConnected(true));
     socket.on(SOCKET_EVENTS.DISCONNECT, () => setIsConnected(false));

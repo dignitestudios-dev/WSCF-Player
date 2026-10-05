@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 interface SubscriptionSuccessModalProps {
   open: boolean;
@@ -14,10 +14,11 @@ export default function SubscriptionSuccessModal({
   if (!open) return null;
 
   return (
-    <Dialog open={open}>
-      <DialogContent 
+    <ResponsiveDialog open={open}>
+      <ResponsiveDialogContent 
         showCloseButton={false}
         className="flex w-full max-w-[515px] flex-col items-center gap-[22px] rounded-xl bg-white px-[44px] py-[43px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="items-center gap-4"
       >
         <div className="flex w-full max-w-[428px] flex-col items-center gap-8">
           <div className="flex h-[120px] w-[120px] items-center justify-center rounded-full bg-[#083F92]">
@@ -35,7 +36,7 @@ export default function SubscriptionSuccessModal({
           <div className="flex w-full flex-col items-center gap-4 text-center">
             <h2
               id="subscription-success-title"
-              className="text-[32px] font-semibold capitalize leading-[39px] tracking-[-0.008em] text-[#181818]"
+              className="text-2xl sm:text-[32px] font-semibold capitalize leading-[39px] tracking-[-0.008em] text-[#181818]"
             >
               Congratulations
             </h2>
@@ -52,7 +53,7 @@ export default function SubscriptionSuccessModal({
         >
           Continue
         </button>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

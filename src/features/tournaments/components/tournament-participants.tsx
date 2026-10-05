@@ -11,6 +11,9 @@ import { useTournamentParticipants } from "@/features/tournaments/hooks/use-tour
 import { useTournamentDetailsQuery } from "@/features/tournaments/api/tournaments.queries";
 import UpcomingTournamentsModal from "@/features/tournaments/components/upcoming-tournaments-modal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { CustomPagination } from "@/components/ui/custom-pagination";
 
 
 function SearchButtonIcon() {
@@ -48,16 +51,14 @@ function TournamentParticipantsContent({
   const getProfileRoute =
     resolvedContext === "dashboard" ? getDashboardPlayerProfileRoute : getPlayerProfileRoute;
 
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
-
   return (
-    <div className="min-h-screen bg-[#F7F6FF] p-4">
-      <div className="relative mx-auto min-h-[calc(100vh-2rem)] max-w-[1408px] rounded-none p-4 lg:p-6 bg-[#F7F6FF]">
+    <div className="min-h-dvh bg-[#F7F6FF] p-4">
+      <div className="relative mx-auto min-h-[calc(100dvh-2rem)] max-w-[1408px] rounded-none p-4 lg:p-6 bg-[#F7F6FF]">
         <Link
           href={backHref}
-          className="mb-6 inline-flex items-center gap-3 text-lg font-medium text-[#083F92]"
+          className="mb-4 inline-flex min-h-11 items-center gap-2 pr-3 text-base font-medium text-[#083F92] md:mb-6 md:gap-3 md:text-lg"
         >
-          <svg width="15" height="27" viewBox="0 0 15 27" fill="none" aria-hidden="true">
+          <svg width="15" height="27" viewBox="0 0 15 27" fill="none" aria-hidden="true" className="h-5 w-3 md:h-[27px] md:w-[15px]">
             <path
               d="M13 2L2 13.5L13 25"
               stroke="currentColor"
@@ -70,11 +71,11 @@ function TournamentParticipantsContent({
         </Link>
 
         <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-          <h1 className="text-[32px] font-bold leading-[48px] text-[#083F92] lg:text-[42px] lg:leading-[63px]">
+          <h1 className="text-2xl font-bold leading-8 text-[#083F92] sm:text-[32px] sm:leading-[48px] lg:text-[42px] lg:leading-[63px]">
             Current Tournament Participants
           </h1>
 
-          <div className="relative h-12 w-full max-w-[310px]">
+          <div className="relative h-12 w-full md:max-w-[310px]">
             <input
               type="text"
               value={query}
@@ -113,7 +114,7 @@ function TournamentParticipantsContent({
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 rounded-full border border-[#F3F4F6] bg-white px-4 py-2 text-sm font-medium text-[#121111] shadow-[0px_1px_3px_rgba(0,0,0,0.1),0px_1px_2px_-1px_rgba(0,0,0,0.1)] transition hover:bg-gray-50"
+            className="flex min-h-11 items-center gap-2 rounded-full border border-[#F3F4F6] bg-white px-4 py-2 text-sm font-medium text-[#121111] shadow-[0px_1px_3px_rgba(0,0,0,0.1),0px_1px_2px_-1px_rgba(0,0,0,0.1)] transition hover:bg-gray-50"
           >
             Upcoming Tournaments
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -140,7 +141,8 @@ function TournamentParticipantsContent({
             <p className="mt-2 text-sm text-[#727272]">Click &quot;Upcoming Tournaments&quot; to select a tournament and view its participants.</p>
           </div>
         ) : (
-          <div className="relative overflow-hidden rounded-[24px] border border-[#DADADA] bg-white pb-20">
+          <>
+          <div className="relative hidden overflow-hidden rounded-[24px] border border-[#DADADA] bg-white pb-20 md:block">
             <div className={`grid ${gridCols} items-center border-b-4 border-[#F4F4F4] bg-[#083F92] px-6 py-4 text-[13px] font-bold leading-5 text-white`}>
               <span>UserId</span>
               <span>Name</span>
@@ -203,62 +205,81 @@ function TournamentParticipantsContent({
             )}
 
             {totalPages > 1 && (
-              <div className="absolute bottom-4 right-6 flex items-center gap-3 rounded-full bg-white px-5 py-3 shadow-sm border border-[#DADADA]">
-                <button
-                  type="button"
-                  onClick={() => setPage(Math.max(1, page - 1))}
-                  disabled={page === 1}
-                  className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[#EDEDED] disabled:opacity-50 transition hover:bg-[#E0E0E0]"
-                  aria-label="Previous page"
-                >
-                  <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true">
-                    <path
-                      d="M7 1L1 7L7 13"
-                      stroke="#919191"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-
-                <div className="flex items-center overflow-hidden rounded-full bg-[#EDEDED]">
-                  {pages.map((pageNumber) => (
-                    <button
-                      key={pageNumber}
-                      type="button"
-                      onClick={() => setPage(pageNumber)}
-                      className={`min-w-[43px] px-4 py-2 text-sm font-bold capitalize transition ${
-                        pageNumber === page
-                          ? "rounded-full bg-[#083F92] text-white"
-                          : "text-[#636363] hover:bg-[#E0E0E0]"
-                      }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setPage(Math.min(totalPages, page + 1))}
-                  disabled={page === totalPages}
-                  className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-[#EDEDED] disabled:opacity-50 transition hover:bg-[#E0E0E0]"
-                  aria-label="Next page"
-                >
-                  <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true">
-                    <path
-                      d="M1 1L7 7L1 13"
-                      stroke="#000000"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
+              <div className="absolute bottom-4 right-6 rounded-full border border-[#DADADA] bg-white px-3 py-2 shadow-sm">
+                <CustomPagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
               </div>
             )}
           </div>
+
+          {/* phone: one card per player, then the compact pager */}
+          <div className="md:hidden">
+            {isPending ? (
+              <div className="flex flex-col gap-3" aria-busy="true">
+                {[...Array(5)].map((_, i) => (
+                  <Card key={i} className="flex items-center gap-3 rounded-2xl p-4 shadow-none">
+                    <div className="flex flex-1 flex-col gap-2">
+                      <Skeleton className="h-4 w-2/3" />
+                      <Skeleton className="h-3 w-1/3" />
+                    </div>
+                    <Skeleton className="h-8 w-14 rounded-full" />
+                  </Card>
+                ))}
+              </div>
+            ) : participants.length === 0 ? (
+              <p className="py-8 text-center text-sm text-[#727272]">
+                No participants found.
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-3">
+                {participants.map((participant) => (
+                  <li key={participant.id}>
+                    <Link
+                      href={`${getProfileRoute(participant.id)}?backHref=${encodeURIComponent(currentUrl)}`}
+                      aria-label={`${participant.name}, view profile`}
+                      className="block rounded-2xl outline-none transition-transform active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#083F92]/40"
+                    >
+                      <Card className="flex items-center gap-3 rounded-2xl border-[#E4E4EC] p-4 shadow-none">
+                        <div className="min-w-0 flex-1">
+                          <p className={`truncate text-base leading-5 text-[#181818] ${participant.highlightName ? "font-bold" : "font-semibold"}`}>
+                            {participant.name}
+                          </p>
+                          <p className="mt-0.5 truncate text-xs text-[#636363]">
+                            {participant.userId} · Grade {participant.grade}
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            <Badge variant="outline" className="max-w-full truncate">
+                              {participant.division}
+                            </Badge>
+                            <Badge variant="outline" className="max-w-full truncate">
+                              {participant.team}
+                            </Badge>
+                          </div>
+                        </div>
+                        <span className="inline-flex h-8 min-w-[56px] shrink-0 items-center justify-center rounded-full bg-[#083F92] px-3 text-sm font-medium text-white">
+                          {participant.rating}
+                        </span>
+                      </Card>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {totalPages > 1 && (
+              <div className="mt-5">
+                <CustomPagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
+              </div>
+            )}
+          </div>
+          </>
         )}
 
         {isModalOpen && (

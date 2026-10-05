@@ -102,7 +102,7 @@ function NotificationRow({
         <Icon className="h-[18px] w-[18px] text-white" />
       </div>
 
-      <div className="min-w-0 flex-1 pr-5">
+      <div className="min-w-0 flex-1 pr-8 md:pr-5">
         <div className="flex w-full min-w-0 items-start gap-2">
           <p
             className={cn(
@@ -145,7 +145,9 @@ function NotificationRow({
         disabled={isBusy}
         aria-label="Remove notification"
         onClick={() => onRemove(notification._id)}
-        className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-[#083F92] opacity-0 shadow-[0px_2px_4px_rgba(6,62,145,0.25)] transition-opacity hover:opacity-90 focus-visible:opacity-100 group-hover:opacity-100 disabled:opacity-40"
+        // Hover does not exist on a phone, so there it is always shown (and big
+        // enough to hit); a mouse still reveals it on hover.
+        className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#083F92] shadow-[0px_2px_4px_rgba(6,62,145,0.25)] transition-opacity hover:opacity-90 disabled:opacity-40 md:right-3 md:top-3 md:h-7 md:w-7 md:opacity-0 md:focus-visible:opacity-100 md:group-hover:opacity-100"
       >
         <X className="h-3.5 w-3.5 text-white" />
       </button>
@@ -204,7 +206,7 @@ export default function NotificationsMenu() {
   useEffect(() => {
     if (!open) return;
 
-    function handlePointerDown(event: MouseEvent) {
+    function handlePointerDown(event: PointerEvent) {
       if (!menuRef.current?.contains(event.target as Node)) {
         setOpen(false);
       }
@@ -214,11 +216,11 @@ export default function NotificationsMenu() {
       if (event.key === "Escape") setOpen(false);
     }
 
-    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("pointerdown", handlePointerDown);
     document.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleEscape);
     };
   }, [open]);
@@ -276,37 +278,10 @@ export default function NotificationsMenu() {
     [removeOne],
   );
 
-  return (
-    <div ref={menuRef} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((prev) => !prev)}
-        className={cn(
-          "relative flex h-[42px] w-[42px] items-center justify-center rounded-full bg-[#083F92] shadow-[0px_4px_8px_rgba(6,62,145,0.25)] transition-opacity",
-          open && "opacity-90",
-        )}
-        aria-label={
-          unreadCount > 0
-            ? `Notifications, ${unreadCount} unread`
-            : "Notifications"
-        }
-        aria-haspopup="menu"
-        aria-expanded={open}
-      >
-        <Bell className="h-[18px] w-[18px] text-white" />
-        {unreadCount > 0 ? (
-          <span className="absolute -right-1 -top-1 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#D92D20] px-1 text-[10px] font-bold leading-none text-white">
-            {unreadCount > 99 ? "99+" : unreadCount}
-          </span>
-        ) : null}
-      </button>
-
-      {open ? (
-        <div
-          className="absolute right-0 top-[calc(100%+10px)] z-[60] w-[calc(100vw-2rem)] max-w-[400px] overflow-hidden rounded-2xl border border-[#DADADA] bg-white shadow-[0px_8px_24px_rgba(0,0,0,0.12)]"
-          role="menu"
-          aria-label="Notifications"
-        >
+  // A dropdown menu at every size: anchored under the bell on desktop, and
+  // spanning the screen width just under the header on a phone.
+  const panel = (
+    <>
           <div className="flex items-center justify-between gap-3 border-b border-[#F4F4F4] px-4 py-4">
             <div className="flex min-w-0 items-center gap-2">
               <p className="text-base font-semibold text-[#121111]">
@@ -326,7 +301,7 @@ export default function NotificationsMenu() {
                 aria-label="Mark all as read"
                 disabled={isBulkBusy || unreadCount === 0}
                 onClick={() => markAllRead.mutate()}
-                className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-[#083F92] shadow-[0px_2px_4px_rgba(6,62,145,0.25)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-10 w-10 md:h-[34px] md:w-[34px] items-center justify-center rounded-full bg-[#083F92] shadow-[0px_2px_4px_rgba(6,62,145,0.25)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <CheckCheck className="h-4 w-4 text-white" />
               </button>
@@ -336,7 +311,7 @@ export default function NotificationsMenu() {
                 aria-label="Clear all notifications"
                 disabled={isBulkBusy || notifications.length === 0}
                 onClick={() => clearAll.mutate()}
-                className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-[#083F92] shadow-[0px_2px_4px_rgba(6,62,145,0.25)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-10 w-10 md:h-[34px] md:w-[34px] items-center justify-center rounded-full bg-[#083F92] shadow-[0px_2px_4px_rgba(6,62,145,0.25)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Trash2 className="h-4 w-4 text-white" />
               </button>
@@ -345,7 +320,7 @@ export default function NotificationsMenu() {
 
           <div
             ref={scrollRef}
-            className="max-h-[440px] overflow-y-auto overscroll-contain"
+            className="max-h-[min(440px,calc(100dvh-9rem))] overflow-y-auto overscroll-contain"
           >
             {isLoading ? (
               <div className="flex items-center justify-center gap-2 py-12 text-sm font-medium text-[#636363]">
@@ -395,6 +370,41 @@ export default function NotificationsMenu() {
               </>
             )}
           </div>
+    </>
+  );
+
+  return (
+    <div ref={menuRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className={cn(
+          "relative flex h-11 w-11 items-center justify-center rounded-full bg-[#083F92] shadow-[0px_4px_8px_rgba(6,62,145,0.25)] transition-opacity md:h-[42px] md:w-[42px]",
+          open && "opacity-90",
+        )}
+        aria-label={
+          unreadCount > 0
+            ? `Notifications, ${unreadCount} unread`
+            : "Notifications"
+        }
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        <Bell className="h-[18px] w-[18px] text-white" />
+        {unreadCount > 0 ? (
+          <span className="absolute -right-1 -top-1 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#D92D20] px-1 text-[10px] font-bold leading-none text-white">
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
+        ) : null}
+      </button>
+
+      {open ? (
+        <div
+          className="fixed inset-x-3 top-[calc(env(safe-area-inset-top)+3.75rem)] z-[60] overflow-hidden rounded-2xl border border-[#DADADA] bg-white shadow-[0px_8px_24px_rgba(0,0,0,0.12)] md:absolute md:inset-x-auto md:right-0 md:top-[calc(100%+10px)] md:w-[400px]"
+          role="menu"
+          aria-label="Notifications"
+        >
+          {panel}
         </div>
       ) : null}
     </div>

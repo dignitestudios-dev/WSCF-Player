@@ -27,6 +27,12 @@ import {
   parseCalendarDate,
   toCalendarDateString,
 } from "@/lib/calendar-date";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogTitle,
+} from "@/components/ui/responsive-dialog";
 
 const inputClassName =
   "h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none placeholder:text-[#181818]/60 focus:ring-2 focus:ring-[#083F92]/15";
@@ -97,23 +103,27 @@ export default function ChildProfileDialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <button
-        type="button"
-        aria-label="Close"
-        className="absolute inset-0 cursor-default bg-black/40"
-        onClick={onClose}
-      />
-
-      <div className="relative z-10 max-h-[90vh] w-full max-w-[560px] overflow-y-auto rounded-[24px] bg-white p-6 shadow-xl sm:p-8">
+    // Mounted by its parent only while open. It is drawn in a portal, so it is
+    // not inside the signup <form> in the DOM: Enter in a field cannot submit
+    // the outer form, which is what the "div, not a form" note below guards.
+    <ResponsiveDialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <ResponsiveDialogContent
+        className="flex max-w-[560px] flex-col gap-0 rounded-[24px] bg-white p-6 sm:p-8"
+        mobileClassName="pt-1"
+      >
         <div className="mb-6 flex flex-col gap-1">
-          <h2 className="text-xl font-semibold leading-7 text-[#083F92]">
+          <ResponsiveDialogTitle className="text-xl font-semibold leading-7 text-[#083F92]">
             {initialValue ? "Edit Player" : "Add Player Profile"}
-          </h2>
-          <p className="text-sm leading-5 text-[#565656]">
+          </ResponsiveDialogTitle>
+          <ResponsiveDialogDescription className="text-sm leading-5 text-[#565656]">
             Enter your child&apos;s details. Each player gets their own
             membership.
-          </p>
+          </ResponsiveDialogDescription>
         </div>
 
         {/* Nested inside the signup form, so this is a div, not a <form>:
@@ -315,7 +325,7 @@ export default function ChildProfileDialog({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

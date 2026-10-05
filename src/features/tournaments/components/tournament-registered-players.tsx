@@ -6,6 +6,7 @@ import { useTournamentRegisteredPlayers } from "@/features/tournaments/hooks/use
 import { useTournamentParticipantsQuery, useTournamentDetailsQuery } from "@/features/tournaments/api/tournaments.queries";
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import ParticipantCards from "@/features/tournaments/components/participant-cards";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 import {
   getDivisionCell,
@@ -70,7 +71,7 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
 
   if (isDetailsPending) {
     return (
-      <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+      <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
         <div className="mb-6 flex flex-col gap-3">
           <Skeleton className="h-6 w-24 rounded" />
           <Skeleton className="h-[44px] w-64 rounded lg:h-[61px] lg:w-96" />
@@ -81,10 +82,10 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
 
   if (!tournament) {
     return (
-      <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+      <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
         <Link
           href={backHref}
-          className="mb-6 inline-flex items-center gap-3 text-lg font-medium leading-6 text-[#083F92]"
+          className="mb-6 inline-flex min-h-11 items-center gap-2 pr-3 text-base font-medium leading-6 text-[#083F92] md:gap-3 md:pr-0 md:text-lg"
         >
           <BackIcon />
           Back
@@ -95,11 +96,11 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
   }
 
   return (
-    <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+    <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
       <div className="mb-6 flex flex-col gap-3">
         <Link
           href={backHref}
-          className="inline-flex items-center gap-3 text-lg font-medium leading-6 text-[#083F92]"
+          className="inline-flex min-h-11 items-center gap-2 pr-3 text-base font-medium leading-6 text-[#083F92] md:gap-3 md:pr-0 md:text-lg"
         >
           <BackIcon />
           Back
@@ -136,7 +137,8 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
       </div>
 
       <div className="relative">
-        <div className="overflow-x-auto">
+        {/* The table is for md and up; a phone gets the cards below. */}
+        <div className="hidden overflow-x-auto md:block">
           <div className="min-w-[1100px]">
             <div
               className={`${GRID_COLS} h-[47px] items-center rounded-t-[12px] bg-[#083F92] px-5 text-base font-semibold text-white`}
@@ -208,9 +210,16 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
           </div>
         </div>
 
+        <ParticipantCards
+          participants={apiParticipants}
+          isPending={isPending}
+          startIndex={((pagination?.currentPage ?? 1) - 1) * 10}
+          skeletonCount={6}
+        />
+
         {pagination && pagination.totalPages > 0 && (
-          <div className="mt-8 flex items-center justify-between">
-            <p className="text-base text-[#083F92]">
+          <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:items-center md:justify-between">
+            <p className="hidden text-base text-[#083F92] md:block">
               You are on page {pagination.currentPage} of {pagination.totalPages} Pages
             </p>
             <CustomPagination

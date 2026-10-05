@@ -4,7 +4,7 @@ import type { UseFormRegister } from "react-hook-form";
 import { EyeIcon } from "@/features/auth/components/set-new-password-icons";
 import PasswordUpdatedModal from "@/features/dashboard/components/password-updated-modal";
 import { useChangePassword } from "@/features/dashboard/hooks/use-change-password";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 interface ChangePasswordModalProps {
   onClose: () => void;
@@ -54,7 +54,7 @@ function PasswordField({
         <button
           type="button"
           onClick={onToggle}
-          className="absolute right-4 top-1/2 -translate-y-1/2"
+          className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center"
           aria-label={visible ? "Hide password" : "Show password"}
         >
           <EyeIcon hidden={!visible} />
@@ -94,9 +94,10 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
 
   return (
     <>
-      <Dialog open={!isSuccessOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
-        <DialogContent 
+      <ResponsiveDialog open={!isSuccessOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <ResponsiveDialogContent 
           showCloseButton={false}
+          mobileClassName="pt-8"
           className="w-full max-w-[588px] rounded-[12px] px-[60px] pb-[60px] pt-[60px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
           style={{
             background:
@@ -114,16 +115,16 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
 
             <h2
               id="change-password-title"
-              className="mb-1 text-center text-[32px] font-bold capitalize leading-[43px] tracking-[-0.018em] text-[#181818]"
+              className="mb-1 text-center text-2xl font-bold capitalize leading-8 tracking-[-0.018em] text-[#181818] sm:text-[32px] sm:leading-[43px]"
             >
               Change Password
             </h2>
 
-            <p className="mb-7 text-base leading-[22px] tracking-[-0.014em] text-[#565656]">
+            <p className="mb-5 text-base leading-[22px] tracking-[-0.014em] text-[#565656] sm:mb-7">
               You must enter current password in order to update password.
             </p>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[33px]">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 sm:gap-[33px]">
         {/* Locked while the request is in flight: disabling only the
             submit button leaves every field editable after the values
             have already been sent. `contents` keeps the fieldset out
@@ -171,8 +172,8 @@ export default function ChangePasswordModal({ onClose }: ChangePasswordModalProp
               </button>
             </fieldset>
         </form>
-          </DialogContent>
-      </Dialog>
+          </ResponsiveDialogContent>
+      </ResponsiveDialog>
 
       {isSuccessOpen ? <PasswordUpdatedModal onClose={handleSuccessClose} /> : null}
     </>

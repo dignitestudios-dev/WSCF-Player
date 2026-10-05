@@ -2,10 +2,16 @@
 
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogTitle,
+} from "@/components/ui/responsive-dialog";
 
 /**
  * A single confirmation panel, so every "are you sure?" in the app looks and
- * behaves the same.
+ * behaves the same. A bottom drawer on a phone, a centred dialog from `md` up.
  *
  * Mounted only while open — the caller renders it conditionally.
  */
@@ -31,15 +37,19 @@ export default function ConfirmDialog({
   onCancel: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
-      <button
-        type="button"
-        aria-label="Close"
-        className="absolute inset-0 cursor-default bg-black/40"
-        onClick={onCancel}
-      />
-
-      <div className="relative z-10 w-full max-w-[440px] rounded-[24px] bg-white p-6 text-center shadow-xl sm:p-8">
+    // Not dismissible mid-request: backing out while the action runs would leave
+    // the person guessing whether it happened.
+    <ResponsiveDialog
+      open
+      onOpenChange={(open) => {
+        if (!open && !isLoading) onCancel();
+      }}
+      dismissible={!isLoading}
+    >
+      <ResponsiveDialogContent
+        className="rounded-[24px] p-6 text-center sm:max-w-[440px] sm:p-8"
+        mobileClassName="text-center"
+      >
         {Icon && (
           <div
             className={cn(
@@ -51,12 +61,16 @@ export default function ConfirmDialog({
           </div>
         )}
 
-        <h2 className="text-xl font-semibold leading-7 text-[#083F92]">
+        <ResponsiveDialogTitle className="text-xl font-semibold leading-7 text-[#083F92]">
           {title}
-        </h2>
-        <div className="mt-2 text-sm leading-5 text-[#565656]">
+        </ResponsiveDialogTitle>
+        {/* A div, not the default <p>: callers pass rich content. */}
+        <ResponsiveDialogDescription
+          render={<div />}
+          className="mt-2 text-sm leading-5 text-[#565656]"
+        >
           {description}
-        </div>
+        </ResponsiveDialogDescription>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <button
@@ -81,7 +95,7 @@ export default function ConfirmDialog({
             {isLoading ? "Working..." : confirmText}
           </button>
         </div>
-      </div>
-    </div>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

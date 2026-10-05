@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Controller } from "react-hook-form";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 import type { UseFormRegister, Control } from "react-hook-form";
 import CouponField from "@/features/tournaments/components/coupon-field";
 import type { AppliedCoupon } from "@/features/tournaments/api/coupons.service";
@@ -184,10 +184,11 @@ export default function TournamentRegistrationModal({
   // rather than shown and then refused.
   const canUseCoupon = entryFee > 0 && Boolean(onCouponApplied);
   return (
-    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent
+    <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <ResponsiveDialogContent
         showCloseButton={false}
-        className="flex max-h-[90vh] w-full max-w-[626px]! flex-col gap-[42px] overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        className="flex max-h-[90dvh] w-full max-w-[626px]! flex-col gap-[42px] overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="gap-5 pt-8"
       >
         <button
           type="button"
@@ -200,20 +201,17 @@ export default function TournamentRegistrationModal({
 
         <h2
           id="tournament-registration-title"
-          className="text-center text-[32px] font-semibold leading-[43px] text-[#181818]"
+          className="text-center text-2xl sm:text-[32px] font-semibold leading-8 sm:leading-[43px] text-[#181818]"
         >
           Tournament Registration
         </h2>
 
         {isDivisionsPending ? (
           <div className="flex flex-col gap-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[22px] gap-y-8">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex min-w-0 flex-1 flex-col gap-2">
-                  <Skeleton className="h-[19px] w-24" />
-                  <Skeleton className="h-11 w-full rounded-[24px]" />
-                </div>
-              ))}
+            {/* One division select, so one field's worth of placeholder. */}
+            <div className="flex flex-col gap-2" aria-hidden="true">
+              <Skeleton className="h-[19px] w-24" />
+              <Skeleton className="h-11 w-full rounded-[24px]" />
             </div>
             <Skeleton className="h-12 w-full rounded-[24px]" />
           </div>
@@ -302,7 +300,7 @@ export default function TournamentRegistrationModal({
             </button>
           </form>
         )}
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

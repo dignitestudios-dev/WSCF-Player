@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 interface DeleteAccountConfirmModalProps {
   onClose: () => void;
@@ -12,10 +12,11 @@ export default function DeleteAccountConfirmModal({
   onConfirm,
 }: DeleteAccountConfirmModalProps) {
   return (
-    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent 
+    <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <ResponsiveDialogContent 
         showCloseButton={false}
         className="flex w-full max-w-[462px] flex-col items-center justify-center gap-[26px] rounded-[12px] px-5 py-[50px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="items-center justify-center gap-5"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
@@ -24,7 +25,7 @@ export default function DeleteAccountConfirmModal({
         <div className="flex w-full max-w-[422px] flex-col items-center gap-2 text-center">
           <h2
             id="delete-account-confirm-title"
-            className="w-full text-[32px] font-bold capitalize leading-[43px] tracking-[-0.0041em] text-[#181818]"
+            className="w-full text-2xl sm:text-[32px] font-bold capitalize leading-8 sm:leading-[43px] tracking-[-0.0041em] text-[#181818]"
           >
             Delete Account
           </h2>
@@ -49,7 +50,7 @@ export default function DeleteAccountConfirmModal({
             Delete
           </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

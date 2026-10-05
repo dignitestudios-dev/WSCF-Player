@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTournamentsQuery } from "@/features/tournaments/api/tournaments.queries";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 
@@ -59,10 +59,11 @@ export default function UpcomingTournamentsModal({
   const pagination = data?.pagination;
 
   return (
-    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent 
+    <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <ResponsiveDialogContent 
         showCloseButton={false}
-        className="flex max-h-[90vh] w-full max-w-[800px] flex-col gap-6 overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        className="flex max-h-[90dvh] w-full max-w-[800px] flex-col gap-6 overflow-y-auto rounded-[12px] bg-white px-6 py-[42px] sm:px-[52px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="gap-5 pt-8"
       >
         <button
           type="button"
@@ -75,7 +76,7 @@ export default function UpcomingTournamentsModal({
 
         <h2
           id="upcoming-tournaments-title"
-          className="text-center text-[32px] font-semibold leading-[43px] text-[#181818]"
+          className="text-center text-2xl sm:text-[32px] font-semibold leading-8 sm:leading-[43px] text-[#181818]"
         >
           Upcoming Tournaments
         </h2>
@@ -151,7 +152,7 @@ export default function UpcomingTournamentsModal({
             />
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

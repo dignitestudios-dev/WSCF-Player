@@ -67,7 +67,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-[#F7F6FF]">
+      <div className="flex h-dvh w-full items-center justify-center bg-[#F7F6FF]">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#083F92] border-t-transparent" />
       </div>
     );
@@ -77,7 +77,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   // page render against the wrong player and then swap.
   if (shouldRedirect) {
     return (
-      <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-[#F7F6FF]">
+      <div className="flex h-dvh w-full flex-col items-center justify-center gap-4 bg-[#F7F6FF]">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#083F92] border-t-transparent" />
         <p className="text-lg font-medium text-[#083F92]">
           {needsMembershipPayment

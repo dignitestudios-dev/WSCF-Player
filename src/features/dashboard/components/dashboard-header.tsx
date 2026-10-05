@@ -25,9 +25,15 @@ export default function DashboardHeader() {
     "";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#DADADA] bg-white">
-      <div className="mx-auto flex h-[104px] max-w-[1240px] items-center justify-between gap-4 px-6 lg:px-0">
-        <Link href="/dashboard" className="relative h-[68px] w-[134px] shrink-0">
+    // Padded by the notch inset so that when the app is installed (no browser
+    // bar) the status bar never sits on top of the logo.
+    <header className="sticky top-0 z-40 border-b border-[#DADADA] bg-white pt-[env(safe-area-inset-top)]">
+      <div className="mx-auto flex h-14 max-w-[1240px] items-center justify-between gap-4 px-4 md:h-[104px] md:px-6 lg:px-0">
+        <Link
+          href="/dashboard"
+          aria-label="WSCF home"
+          className="relative h-10 w-[96px] shrink-0 md:h-[68px] md:w-[134px]"
+        >
           <Image
             src="/images/logo.png"
             alt="WSCF - Wisconsin Scholastic Chess Federation"

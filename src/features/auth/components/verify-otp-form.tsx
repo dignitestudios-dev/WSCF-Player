@@ -66,7 +66,7 @@ export default function VerifyOtpForm() {
               type="button"
               onClick={handleResend}
               disabled={!canResend || isLocked || isResending}
-              className="font-medium text-[#083F92] hover:underline disabled:cursor-not-allowed disabled:text-[#565656] disabled:no-underline"
+              className="-my-3 inline-block py-3 font-medium text-[#083F92] hover:underline disabled:cursor-not-allowed disabled:text-[#565656] disabled:no-underline"
             >
               {isResending
                 ? "Sending..."

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon } from "@/features/auth/components/set-new-password-icons";
 import { setNewPasswordSchema } from "@/features/auth/schemas/set-new-password.schema";
 import { useAuth } from "@/hooks/use-auth";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
 interface DeleteAccountPasswordModalProps {
   onClose: () => void;
@@ -43,7 +43,7 @@ function PasswordField({
         <button
           type="button"
           onClick={onToggle}
-          className="absolute right-4 top-1/2 -translate-y-1/2"
+          className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center"
           aria-label={visible ? "Hide password" : "Show password"}
         >
           <EyeIcon hidden={!visible} />
@@ -75,10 +75,11 @@ export default function DeleteAccountPasswordModal({ onClose }: DeleteAccountPas
   }
 
   return (
-    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent 
+    <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <ResponsiveDialogContent 
         showCloseButton={false}
         className="flex w-full max-w-[515px] flex-col gap-[26px] rounded-[12px] p-[60px] border-none shadow-[0px_4px_4px_rgba(0,0,0,0.25)] !outline-none"
+        mobileClassName="gap-5"
         style={{
           background:
             "linear-gradient(0deg, rgba(61, 55, 117, 0.2) -11.33%, rgba(61, 55, 117, 0) 32.37%), #FFFFFF",
@@ -86,7 +87,7 @@ export default function DeleteAccountPasswordModal({ onClose }: DeleteAccountPas
       >
         <h2
           id="delete-account-password-title"
-          className="text-center text-[32px] font-bold capitalize leading-[43px] tracking-[-0.018em] text-[#181818]"
+          className="text-center text-2xl sm:text-[32px] font-bold capitalize leading-8 sm:leading-[43px] tracking-[-0.018em] text-[#181818]"
         >
           Add Password
         </h2>
@@ -117,7 +118,7 @@ export default function DeleteAccountPasswordModal({ onClose }: DeleteAccountPas
             Submit
           </button>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

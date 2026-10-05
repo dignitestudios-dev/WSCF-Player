@@ -18,16 +18,16 @@ function BackIcon() {
 
 export default function DashboardChangePasswordContent() {
   return (
-    <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+    <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
       <Link
         href={SETTINGS_ROUTE}
-        className="mb-6 inline-flex items-center gap-3 text-lg font-medium leading-6 text-[#083F92]"
+        className="mb-6 inline-flex min-h-11 items-center gap-2 pr-3 text-base font-medium leading-6 text-[#083F92] md:gap-3 md:pr-0 md:text-lg"
       >
         <BackIcon />
         Back
       </Link>
 
-      <h1 className="mb-8 text-[45px] font-bold leading-[61px] text-[#083F92]">Change Password</h1>
+      <h1 className="mb-8 text-3xl font-bold leading-10 md:text-[45px] md:leading-[61px] text-[#083F92]">Change Password</h1>
 
       <div className="mx-auto max-w-[420px] rounded-[12px] bg-white p-8">
         <SetNewPasswordForm />

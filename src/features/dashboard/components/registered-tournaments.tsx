@@ -1,5 +1,6 @@
 "use client";
 
+import TournamentCardSkeleton from "@/features/tournaments/components/tournament-card-skeleton";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -7,7 +8,6 @@ import PaymentResultDialog from "@/features/tournaments/components/payment-resul
 import { usePaypalCapture } from "@/features/payment/use-paypal-capture";
 import { getTournamentDetailsRoute } from "@/config/routes";
 import { useRegisteredTournaments } from "@/features/dashboard/hooks/use-registered-tournaments";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 
 function BackIcon() {
@@ -70,45 +70,52 @@ function DivisionIcon() {
 }
 
 function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTournament }) {
-  return (
-    <div className="relative group flex min-h-[108px] items-center rounded-[12px] border border-[#083F92] bg-white px-8 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer">
-      <Link href={getTournamentDetailsRoute(tournament.id, "registered")} className="absolute inset-0 z-0" aria-label={`View details for ${tournament.title}`} />
-      <div className="relative z-10 flex h-[53px] w-[53px] shrink-0 items-center justify-center rounded-full bg-[#083F92] pointer-events-none">
-        <ChessIcon className="text-white" />
-      </div>
+  const detailsHref = getTournamentDetailsRoute(tournament.id, "registered");
 
-      <div className="relative z-10 ml-4 min-w-0 flex-1 pr-36 sm:pr-44 pointer-events-none">
-        <div className="flex items-center gap-3 min-w-0">
-          <h3 className="text-lg font-bold leading-6 text-[#083F92] group-hover:underline truncate" title={tournament.title}>
-            {tournament.title}
-          </h3>
-          {tournament.paymentStatus === "pending" && (
-            <span className="shrink-0 inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">
-              Not Paid
-            </span>
-          )}
+  return (
+    <div className="relative group rounded-[12px] border border-[#083F92] bg-white p-4 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 cursor-pointer md:flex md:min-h-[108px] md:items-center md:px-8 md:py-4">
+      <Link href={detailsHref} className="absolute inset-0 z-0" aria-label={`View details for ${tournament.title}`} />
+
+      {/* Icon + details. Under md the button drops below, full width; from md
+          it floats to the right edge, so the text reserves room for it. */}
+      <div className="pointer-events-none relative z-10 flex min-w-0 items-start gap-4 md:flex-1 md:items-center md:pr-44">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#083F92] md:h-[53px] md:w-[53px]">
+          <ChessIcon className="text-white" />
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          {tournament.divisionLabel && tournament.divisionLabel !== "-" && (
-            <div className="flex items-center gap-1.5 mr-2 min-w-0 max-w-[200px]" title={tournament.divisionLabel}>
-              <DivisionIcon />
-              <span className="text-sm font-medium leading-[19px] text-[#151515] truncate">{tournament.divisionLabel}</span>
-            </div>
-          )}
-          <div className="flex items-center gap-1.5 mr-2 min-w-0 max-w-[200px] sm:max-w-[260px]" title={tournament.location}>
-            <LocationIcon />
-            <span className="text-sm font-medium leading-[19px] text-[#151515] truncate">{tournament.location}</span>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 items-center gap-2 md:gap-3">
+            <h3 className="line-clamp-2 min-w-0 text-base font-bold leading-5 text-[#083F92] group-hover:underline md:truncate md:text-lg md:leading-6" title={tournament.title}>
+              {tournament.title}
+            </h3>
+            {tournament.paymentStatus === "pending" && (
+              <span className="shrink-0 inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">
+                Not Paid
+              </span>
+            )}
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <CalendarIcon />
-            <span className="text-sm font-medium leading-[19px] text-[#151515]">{tournament.date}</span>
+          <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 md:mt-4 md:gap-2">
+            {tournament.divisionLabel && tournament.divisionLabel !== "-" && (
+              <div className="flex min-w-0 max-w-full items-center gap-1.5 md:mr-2 md:max-w-[200px]" title={tournament.divisionLabel}>
+                <span className="shrink-0"><DivisionIcon /></span>
+                <span className="truncate text-sm font-medium leading-[19px] text-[#151515]">{tournament.divisionLabel}</span>
+              </div>
+            )}
+            <div className="flex min-w-0 max-w-full items-center gap-1.5 md:mr-2 md:max-w-[200px] lg:max-w-[260px]" title={tournament.location}>
+              <span className="shrink-0"><LocationIcon /></span>
+              <span className="truncate text-sm font-medium leading-[19px] text-[#151515]">{tournament.location}</span>
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <CalendarIcon />
+              <span className="text-sm font-medium leading-[19px] text-[#151515]">{tournament.date}</span>
+            </div>
           </div>
         </div>
       </div>
 
       <Link
-        href={getTournamentDetailsRoute(tournament.id, "registered")}
-        className="absolute right-8 top-1/2 z-10 flex h-12 w-[136px] -translate-y-1/2 items-center justify-center rounded-full bg-[#083F92] text-sm font-medium leading-[19px] text-white"
+        href={detailsHref}
+        className="relative z-10 mt-4 flex h-12 w-full items-center justify-center rounded-full bg-[#083F92] text-sm font-medium leading-[19px] text-white active:bg-[#063875] md:absolute md:right-8 md:top-1/2 md:mt-0 md:w-[136px] md:-translate-y-1/2"
       >
         View Details
       </Link>
@@ -151,7 +158,7 @@ function RegisteredTournamentsContent() {
   const awaitingCapture = isCapturing;
 
   return (
-    <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-8 lg:px-0">
+    <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
       {paymentOutcome && !awaitingCapture ? (
         <PaymentResultDialog
           // The dialog reports what our server confirmed, not what the URL
@@ -171,7 +178,7 @@ function RegisteredTournamentsContent() {
 
       <Link
         href={backHref}
-        className="mb-[27px] inline-flex items-center gap-3 text-lg font-medium leading-6 text-[#083F92]"
+        className="mb-[27px] inline-flex min-h-11 items-center gap-2 pr-3 text-base font-medium leading-6 text-[#083F92] md:gap-3 md:pr-0 md:text-lg"
       >
         <BackIcon />
         Back
@@ -184,22 +191,7 @@ function RegisteredTournamentsContent() {
 
         <div className="mt-[41px] flex flex-col gap-4">
           {isPending || isCapturing ? (
-            [...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="relative flex min-h-[108px] items-center rounded-[12px] border border-[#083F92] bg-white px-8 shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
-              >
-                <Skeleton className="h-[53px] w-[53px] shrink-0 rounded-full" />
-                <div className="ml-4 min-w-0 flex-1 pr-36 sm:pr-44">
-                  <Skeleton className="mb-2 h-6 w-64" />
-                  <div className="mt-4 flex flex-wrap items-center gap-4">
-                    <Skeleton className="h-5 w-24" />
-                    <Skeleton className="h-5 w-32" />
-                  </div>
-                </div>
-                <Skeleton className="absolute right-8 top-1/2 h-12 w-[136px] -translate-y-1/2 rounded-full" />
-              </div>
-            ))
+            [...Array(3)].map((_, i) => <TournamentCardSkeleton key={i} />)
           ) : tournaments.length > 0 ? (
             tournaments.map((tournament) => (
               <RegisteredTournamentCard key={tournament.id} tournament={tournament} />
@@ -210,8 +202,8 @@ function RegisteredTournamentsContent() {
         </div>
 
         {pagination && pagination.totalPages > 0 && (
-          <div className="mt-8 flex items-center justify-between">
-            <p className="text-base text-[#083F92]">
+          <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:items-center md:justify-between">
+            <p className="hidden text-base text-[#083F92] md:block">
               You are on page {pagination.currentPage} of {pagination.totalPages} Pages
             </p>
             <CustomPagination
