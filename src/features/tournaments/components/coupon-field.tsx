@@ -38,7 +38,8 @@ export default function CouponField({
   const [error, setError] = useState<string | null>(null);
 
   const { mutate: apply, isPending } = useMutation({
-    mutationFn: () => validateCoupon({ code: code.trim(), tournamentId }),
+    mutationFn: () =>
+      validateCoupon({ code: code.trim().toUpperCase(), tournamentId }),
     onMutate: () => onCheckingChange?.(true),
     onSettled: () => onCheckingChange?.(false),
     onSuccess: (coupon) => {
@@ -73,12 +74,12 @@ export default function CouponField({
 
           <div className="flex min-w-0 flex-1 flex-col">
             <span className="truncate text-sm font-semibold text-[#0F5132]">
-              Coupon {applied.code} applied
+              {applied.organizationName} code applied
             </span>
             <span className="text-xs text-[#0F5132]/80">
               {applied.coversFullFee
-                ? "This tournament is now free"
-                : `You save $${applied.amountDiscounted.toFixed(2)}`}
+                ? `${applied.organizationName} is covering your entry`
+                : `You save ${applied.amountDiscounted.toFixed(2)}`}
             </span>
           </div>
 
@@ -125,7 +126,8 @@ export default function CouponField({
           placeholder="Enter code"
           disabled={disabled || isPending}
           onChange={(event) => {
-            setCode(event.target.value);
+            // Codes are upper case; shown that way as it is typed.
+            setCode(event.target.value.toUpperCase());
             if (error) setError(null);
           }}
           // Enter applies the coupon rather than submitting the registration,
@@ -136,7 +138,7 @@ export default function CouponField({
               submit();
             }
           }}
-          className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 font-mono text-sm tracking-wide text-[#181818] outline-none placeholder:font-sans placeholder:tracking-normal placeholder:text-[#181818]/50 focus:ring-2 focus:ring-[#083F92]/15 disabled:opacity-60"
+          className="h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 font-mono text-sm uppercase tracking-wide text-[#181818] outline-none placeholder:font-sans placeholder:tracking-normal placeholder:text-[#181818]/50 focus:ring-2 focus:ring-[#083F92]/15 disabled:opacity-60"
         />
 
         <button
@@ -152,7 +154,7 @@ export default function CouponField({
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
 
       <p className="text-xs leading-4 text-[#8C8C8C]">
-        Codes are case sensitive. Each code can be used once per player.
+        Your school or club may give you a code that covers the entry fee.
       </p>
     </div>
   );

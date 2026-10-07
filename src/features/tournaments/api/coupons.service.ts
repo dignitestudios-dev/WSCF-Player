@@ -2,6 +2,8 @@ import axiosInstance from "@/lib/axios";
 
 export interface AppliedCoupon {
   code: string;
+  /** The school, club or district this code belongs to. */
+  organizationName: string;
   entryFee: number;
   amountDiscounted: number;
   payableAmount: number;
