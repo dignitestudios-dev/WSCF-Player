@@ -6,20 +6,6 @@ import LoginBackButton from "@/features/auth/components/login-back-button";
 import { usePlayersRatingLookup } from "@/features/auth/hooks/use-players-rating-lookup";
 import { getPlayerProfileRoute } from "@/config/routes";
 
-function CrossIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M18 6L6 18M6 6L18 18"
-        stroke="#EE3131"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function SearchIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
@@ -42,38 +28,30 @@ export default function PlayersRatingLookup() {
         <div className="mb-2">
           <LoginBackButton href={backHref} />
         </div>
-        <div className="flex h-[70px] w-full items-center justify-between gap-4 rounded-[24px] border border-[#3D3775] bg-white px-5">
-          <div className="flex min-w-0 flex-1 items-center gap-3">
-            <Link href={backHref} aria-label="Back" className="shrink-0">
-              <CrossIcon />
-            </Link>
-            <div className="h-[15px] shrink-0 border-l-2 border-[#083F92]" />
-            <div className="flex min-w-0 flex-1 items-center gap-3">
-              <SearchIcon />
-              <input
-                type="text"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search by first name, last name or member ID"
-                className="min-w-0 flex-1 bg-transparent text-base font-normal text-[#151515] outline-none placeholder:text-[#808080]"
-              />
-              {query ? (
-                <button
-                  type="button"
-                  aria-label="Clear search"
-                  onMouseDown={(event) => {
-                    event.preventDefault();
-                    setQuery('');
-                  }}
-                  className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[#ADADAD] transition-colors hover:bg-[#F2F2F2] hover:text-[#151515]"
-                >
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                    <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </button>
-              ) : null}
-            </div>
-          </div>
+        <div className="flex h-[70px] w-full items-center gap-3 rounded-[24px] border border-[#3D3775] bg-white px-5">
+          <SearchIcon />
+          <input
+            type="text"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search by first name, last name or member ID"
+            className="min-w-0 flex-1 bg-transparent text-base font-normal text-[#151515] outline-none placeholder:text-[#808080]"
+          />
+          {query ? (
+            <button
+              type="button"
+              aria-label="Clear search"
+              onMouseDown={(event) => {
+                event.preventDefault();
+                setQuery('');
+              }}
+              className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[#ADADAD] transition-colors hover:bg-[#F2F2F2] hover:text-[#151515]"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          ) : null}
         </div>
 
         <div className="overflow-hidden rounded-[12px] border border-[#DADADA] bg-white">

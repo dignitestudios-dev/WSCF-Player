@@ -162,7 +162,7 @@ export default function DashboardOverview() {
         </div>
 
         <div className="rounded-[24px] border border-[#083F92] bg-white p-[22px]">
-          <h2 className="text-[22px] font-semibold leading-[30px] text-[#083F92]">Upcoming Tournaments</h2>
+          <h2 className="text-[22px] font-semibold leading-[30px] text-[#083F92]">My Tournaments</h2>
           {isSummaryLoading ? (
             <Skeleton className="mt-2 h-[54px] w-16" />
           ) : (

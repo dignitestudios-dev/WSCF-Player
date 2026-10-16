@@ -11,7 +11,6 @@ import {
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 function Calendar({
   className,
@@ -52,17 +51,20 @@ function Calendar({
         ),
         month: cn("flex w-full flex-col gap-4", defaultClassNames.month),
         nav: cn(
-          "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
+          // The strip spans the whole caption so the arrows can sit at its two
+          // ends, which also put it on top of the month and year buttons in the
+          // middle. It lets clicks through; only the arrows themselves take them.
+          "pointer-events-none absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
           defaultClassNames.nav
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+          "pointer-events-auto size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
           defaultClassNames.button_previous
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+          "pointer-events-auto size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
           defaultClassNames.button_next
         ),
         month_caption: cn(
@@ -70,22 +72,27 @@ function Calendar({
           defaultClassNames.month_caption
         ),
         dropdowns: cn(
-          "flex items-center justify-center gap-2",
+          "relative flex items-center justify-center gap-2",
           defaultClassNames.dropdowns
         ),
+        // The real control is a native <select>, laid invisibly over its label
+        // (see `dropdown`). Native, on purpose: the list opens in the browser's
+        // own picker, not in a portal of our own. A portal inside a popover
+        // inside a dialog is a click that no longer belongs to either of them,
+        // which is how choosing a month could close the form.
         dropdown_root: cn(
-          "relative",
+          "relative rounded-md border border-input bg-background shadow-xs has-focus:border-ring has-focus:ring-[3px] has-focus:ring-ring/50",
           defaultClassNames.dropdown_root
         ),
         dropdown: cn(
-          "flex h-8 w-full items-center justify-between rounded-md border border-input bg-background px-2 py-1 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer appearance-none",
+          "absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0",
           defaultClassNames.dropdown
         ),
         caption_label: cn(
           "font-medium select-none",
           captionLayout === "label"
             ? "text-sm"
-            : "flex items-center gap-1 rounded-(--cell-radius) text-sm [&>svg]:size-3.5 [&>svg]:text-muted-foreground",
+            : "flex h-8 items-center gap-1 rounded-(--cell-radius) pr-1 pl-2 text-sm [&>svg]:size-3.5 [&>svg]:text-muted-foreground",
           defaultClassNames.caption_label
         ),
         month_grid: cn("w-full border-collapse", defaultClassNames.month_grid),
@@ -160,34 +167,6 @@ function Calendar({
 
           return (
             <ChevronDownIcon className={cn("size-4", className)} {...props} />
-          )
-        },
-        Dropdown: ({ value, onChange, options, ...props }: any) => {
-          const selected = options?.find((child: any) => child.value === value)
-          const handleChange = (value: string) => {
-            const changeEvent = {
-              target: { value }
-            } as React.ChangeEvent<HTMLSelectElement>
-            onChange?.(changeEvent)
-          }
-          return (
-            <Select
-              value={value?.toString()}
-              onValueChange={(value) => {
-                handleChange(value)
-              }}
-            >
-              <SelectTrigger className="h-8 w-fit gap-1 border-none bg-transparent p-0 px-2 font-medium shadow-none focus:ring-0">
-                <SelectValue>{selected?.label}</SelectValue>
-              </SelectTrigger>
-              <SelectContent position="popper" className="max-h-[200px]">
-                {options?.map((option: any) => (
-                  <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString() ?? ""} disabled={option.disabled}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           )
         },
         DayButton: ({ ...props }) => (

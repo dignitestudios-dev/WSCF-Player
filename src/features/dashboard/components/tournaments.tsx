@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
 import MembershipRequiredDialog from "@/features/tournaments/components/membership-required-dialog";
+import { BackLink } from "@/components/ui/back-link";
+import { DEFAULT_REDIRECT } from "@/config/routes";
 
 function SearchIcon() {
   return (
@@ -66,6 +68,12 @@ export default function Tournaments() {
   return (
     <>
       <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
+        {/* The tournaments list is reached from the dashboard and from the bottom
+            bar, but on a desktop there is no bar: this is the way back. */}
+        <BackLink href={DEFAULT_REDIRECT} className="mb-2 md:mb-3">
+          Back to Home
+        </BackLink>
+
         <div className="mb-6 flex max-w-[736px] flex-col gap-3">
           <h1 className="text-3xl font-bold leading-10 md:text-[45px] md:leading-[61px] text-[#083F92]">Tournaments</h1>
           <p className="text-[22px] leading-[30px] text-[#151515]">
