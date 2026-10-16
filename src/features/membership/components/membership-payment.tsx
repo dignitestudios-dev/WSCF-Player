@@ -11,19 +11,11 @@ import {
 } from "@/features/players/routes";
 import { useMembershipCheckout } from "@/features/membership/hooks/use-membership-checkout";
 import { useMembershipQuoteQuery } from "@/features/membership/api/membership.mutations";
+import { validateMembershipCoupon } from "@/features/membership/api/membership.service";
+import CouponField from "@/features/tournaments/components/coupon-field";
+import type { AppliedCoupon } from "@/features/tournaments/api/coupons.service";
 import { useAuth } from "@/hooks/use-auth";
 import LogoutConfirmModal from "@/features/dashboard/components/logout-confirm-modal";
-
-function getMembershipValidUntil(now = new Date()): string {
-  let targetYear = now.getFullYear();
-  // Month is 0-indexed: 7 is August.
-  // Before August 31, valid until August 31 of the current year.
-  // On or after August 31, valid until August 31 of next year.
-  if (now.getMonth() > 7 || (now.getMonth() === 7 && now.getDate() >= 31)) {
-    targetYear += 1;
-  }
-  return `August 31, ${targetYear}`;
-}
 
 function SummaryRow({
   label,
@@ -59,7 +51,11 @@ function SummaryRow({
 }
 
 /**
- * The bill, before PayPal.
+ * The membership payment page: the bill, before PayPal.
+ *
+ * It is where signup, adding a player and renewing all end up, so an
+ * organization's coupon code is entered here, once. A code that covers the bill
+ * skips PayPal entirely.
  *
  * A membership is per player, so an account with five children owes five of
  * them. Every player is listed by name and the arithmetic is shown in full —
@@ -68,18 +64,24 @@ function SummaryRow({
  * The figures come from the API rather than being computed here, so what is
  * displayed is exactly what is charged.
  */
-export default function MembershipValidation() {
+export default function MembershipPayment() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { logout } = useAuth();
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+  const [isCheckingCoupon, setIsCheckingCoupon] = useState(false);
   const { handleProceedToPayment, isPending } = useMembershipCheckout();
   const { data: quote, isLoading } = useMembershipQuoteQuery();
   const { children, needsMasterFileCheck } = useActivePlayer();
 
   const players = quote?.players ?? [];
   const unitPrice = quote?.unitPrice ?? 5;
-  const validUntil = getMembershipValidUntil();
+  // Worked out by the API in Wisconsin time, so this page and the date the
+  // membership actually gets can never disagree around 31 August.
+  const validUntil = quote?.validUntilLabel;
+  const totalAmount = quote?.totalAmount ?? 0;
+  const isFree = Boolean(appliedCoupon?.coversFullFee);
 
   // Nothing owed — every player on the account is already covered.
   const nothingToPay = !isLoading && players.length === 0;
@@ -131,7 +133,7 @@ export default function MembershipValidation() {
   return (
     <div className="flex w-full max-w-[398px] flex-col gap-[15px]">
       <h1 className="text-center text-[32px] font-semibold leading-[43px] text-[#083F92]">
-        Membership Validation
+        Membership Payment
       </h1>
 
       <div className="rounded-[12px] border border-[#DADADA] bg-white p-3">
@@ -151,7 +153,9 @@ export default function MembershipValidation() {
         ) : (
           <div className="mb-6 flex flex-col gap-[19px]">
             <SummaryRow label="Annual Membership" boldLabel />
-            <SummaryRow label="Valid Until" value={validUntil} />
+            {validUntil ? (
+              <SummaryRow label="Valid Until" value={validUntil} />
+            ) : null}
 
             <div className="h-px w-full bg-[#F0F0F0]" />
 
@@ -175,20 +179,52 @@ export default function MembershipValidation() {
               <span className="text-sm font-semibold leading-5 text-[#181818]">
                 Total
               </span>
-              <span className="text-lg font-semibold leading-6 text-[#083F92]">
-                ${(quote?.totalAmount ?? 0).toFixed(2)}
+              <span className="flex items-baseline gap-2">
+                {isFree ? (
+                  <span className="text-sm text-[#565656] line-through">
+                    ${totalAmount.toFixed(2)}
+                  </span>
+                ) : null}
+                <span className="text-lg font-semibold leading-6 text-[#083F92]">
+                  ${(isFree ? 0 : totalAmount).toFixed(2)}
+                </span>
               </span>
             </div>
           </div>
         )}
 
+        {/* Between the bill and the pay button, so the total above is already
+            the final one by the time someone presses it. */}
+        {!isLoading ? (
+          <div className="mb-5">
+            <CouponField
+              entryFee={totalAmount}
+              validate={validateMembershipCoupon}
+              coveringText="is covering your membership"
+              hint="Your school or club may give you a code that covers the membership."
+              showTotals={false}
+              applied={appliedCoupon}
+              onApplied={setAppliedCoupon}
+              onCleared={() => setAppliedCoupon(null)}
+              disabled={isPending}
+              onCheckingChange={setIsCheckingCoupon}
+            />
+          </div>
+        ) : null}
+
         <button
           type="button"
-          onClick={handleProceedToPayment}
-          disabled={isPending || isLoading}
+          onClick={() => handleProceedToPayment(appliedCoupon?.code)}
+          disabled={isPending || isLoading || isCheckingCoupon}
           className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-60 cursor-pointer"
         >
-          {isPending ? "Redirecting..." : "Proceed To Payment"}
+          {isPending
+            ? isFree
+              ? "Activating..."
+              : "Redirecting..."
+            : isFree
+              ? "Activate Membership"
+              : "Proceed To Payment"}
         </button>
       </div>
 

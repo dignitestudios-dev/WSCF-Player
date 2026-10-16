@@ -8,7 +8,8 @@ export const PUBLIC_ROUTES = [
   "/auth/set-new-password",
   "/auth/register",
   "/auth/email-verified",
-  "/auth/membership-validation",
+  "/auth/membership-validation", // redirects to the payment page
+  "/membership/payment",
   "/auth/tournament-participants",
   "/membership/success",
   "/membership/cancel",
@@ -36,7 +37,7 @@ export function getDashboardPlayerProfileRoute(id: string) {
 }
 export const VERIFY_OTP_ROUTE = "/auth/verify-otp";
 export const EMAIL_VERIFIED_ROUTE = "/auth/email-verified";
-export const MEMBERSHIP_VALIDATION_ROUTE = "/auth/membership-validation";
+export const MEMBERSHIP_PAYMENT_ROUTE = "/membership/payment";
 export {
   SELECT_PLAYER_ROUTE,
   ADD_PLAYER_ROUTE,

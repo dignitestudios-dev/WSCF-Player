@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { MEMBERSHIP_VALIDATION_ROUTE } from "@/config/routes";
+import { MEMBERSHIP_PAYMENT_ROUTE } from "@/config/routes";
 import { useAuth } from "@/hooks/use-auth";
 import { useMembershipQuoteQuery } from "@/features/membership/api/membership.mutations";
 import { useDiscardUnpaidChildrenMutation } from "@/features/players/api/children.queries";
@@ -85,7 +85,7 @@ export default function MembershipCancelContent() {
 
       <div className="flex w-full flex-col gap-3">
         <Link
-          href={MEMBERSHIP_VALIDATION_ROUTE}
+          href={MEMBERSHIP_PAYMENT_ROUTE}
           className="flex h-12 w-full items-center justify-center rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875]"
         >
           Pay for Membership

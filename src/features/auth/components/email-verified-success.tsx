@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { MEMBERSHIP_VALIDATION_ROUTE } from "@/config/routes";
+import { MEMBERSHIP_PAYMENT_ROUTE } from "@/config/routes";
 
 function SuccessCheckIcon() {
   return (
@@ -23,7 +23,7 @@ export default function EmailVerifiedSuccess() {
   const router = useRouter();
 
   function handleContinue() {
-    router.push(MEMBERSHIP_VALIDATION_ROUTE);
+    router.push(MEMBERSHIP_PAYMENT_ROUTE);
   }
 
   return (

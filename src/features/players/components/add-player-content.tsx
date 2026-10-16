@@ -10,7 +10,7 @@ import {
   useChildrenQuery,
   useCreateChildMutation,
 } from "@/features/players/api/children.queries";
-import { MEMBERSHIP_VALIDATION_ROUTE } from "@/config/routes";
+import { MEMBERSHIP_PAYMENT_ROUTE } from "@/config/routes";
 import { showApiErrorToast } from "@/lib/api-toast";
 import {
   MAX_PLAYERS_PER_ACCOUNT,
@@ -112,7 +112,7 @@ export default function AddPlayerContent() {
 
       // The same membership screen signup uses: it reads the quote from the
       // API, so the new players are already on the bill.
-      router.push(MEMBERSHIP_VALIDATION_ROUTE);
+      router.push(MEMBERSHIP_PAYMENT_ROUTE);
     } catch (error) {
       showApiErrorToast(error as Error, "Could not add the players.");
     }

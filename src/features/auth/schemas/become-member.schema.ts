@@ -13,7 +13,7 @@ import { childSchema } from "@/features/auth/schemas/child.schema";
 // A guardian's name takes letters and the punctuation real names carry --
 // apostrophes, hyphens, periods, accents -- but no digits. People do write
 // "O'Brien-Smith" and "Dr. J. Okonkwo"; nobody's name has a number in it.
-const guardianNameRegex = /^[a-zA-Z'.-]+(?: [a-zA-Z'.-]+)*$/;
+const guardianNameRegex = /^[a-zA-Z'.-]+(?: +[a-zA-Z'.-]+)*$/;
 const guardianNameMessage = "Name can only contain letters, hyphens, periods, and apostrophes";
 
 export const becomeMemberSchema = z

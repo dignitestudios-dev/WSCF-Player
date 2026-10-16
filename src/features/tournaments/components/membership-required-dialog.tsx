@@ -1,7 +1,9 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useMembershipCheckoutMutation } from "@/features/membership/api/membership.mutations";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { MEMBERSHIP_PAYMENT_ROUTE } from "@/config/routes";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -19,22 +21,13 @@ export default function MembershipRequiredDialog({
   open,
   onOpenChange,
 }: MembershipRequiredDialogProps) {
-  const { mutate: checkout, isPending } = useMembershipCheckoutMutation();
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
 
+  // The payment page shows the combined bill and takes a coupon code.
   function handleConfirm() {
-    checkout(
-      {
-        successUrl: window.location.origin + "/membership/success",
-        cancelUrl: window.location.origin + "/membership/cancel",
-      },
-      {
-        onSuccess: (data) => {
-          if (data.url) {
-            window.location.href = data.url;
-          }
-        },
-      }
-    );
+    setIsPending(true);
+    router.push(MEMBERSHIP_PAYMENT_ROUTE);
   }
 
   return (

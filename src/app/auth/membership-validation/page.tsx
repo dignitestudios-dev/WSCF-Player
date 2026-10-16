@@ -1,17 +1,11 @@
-import { Suspense } from "react";
-import type { Metadata } from "next";
-import { createPageMetadata } from "@/config/site-metadata";
-import MembershipValidation from "@/features/auth/components/membership-validation";
-import LoginShell from "@/features/auth/components/login-shell";
+import { redirect } from "next/navigation";
+import { MEMBERSHIP_PAYMENT_ROUTE } from "@/config/routes";
 
-export const metadata: Metadata = createPageMetadata("membershipValidation");
-
-export default function MembershipValidationPage() {
-  return (
-    <LoginShell contentMaxWidth="max-w-[398px]" contentClassName="justify-start pt-16 lg:pt-20" hideLogo>
-      <Suspense fallback={null}>
-        <MembershipValidation />
-      </Suspense>
-    </LoginShell>
-  );
+/**
+ * This page used to be called Membership Validation and lived here. It is the
+ * membership payment page now; the old address stays so a bookmark or an old
+ * link still lands in the right place.
+ */
+export default function LegacyMembershipValidationPage() {
+  redirect(MEMBERSHIP_PAYMENT_ROUTE);
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { MEMBERSHIP_VALIDATION_ROUTE } from "@/config/routes";
+import { MEMBERSHIP_PAYMENT_ROUTE } from "@/config/routes";
 import { SELECT_PLAYER_ROUTE } from "@/features/players/routes";
 import { useActivePlayer } from "@/features/players/use-active-player";
 
@@ -42,7 +42,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   // restore needsMasterFileCheck in the API's account.helper.js, to return to
   // the parent-driven flow.
   const destination = needsMembershipPayment
-    ? MEMBERSHIP_VALIDATION_ROUTE
+    ? MEMBERSHIP_PAYMENT_ROUTE
     : needsSelection
       ? SELECT_PLAYER_ROUTE
       : null;

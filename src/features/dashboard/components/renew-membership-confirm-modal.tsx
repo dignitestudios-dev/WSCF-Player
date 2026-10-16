@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
-import { useMembershipCheckoutMutation } from "@/features/membership/api/membership.mutations";
+import { MEMBERSHIP_PAYMENT_ROUTE } from "@/config/routes";
 
 interface RenewMembershipConfirmModalProps {
   /** False when the account has never held a membership: buying, not renewing. */
@@ -22,19 +23,14 @@ export default function RenewMembershipConfirmModal({
   const confirmLabel = hasMembership ? "Renew Now" : "Buy Membership";
 
   const router = useRouter();
-  const { mutate: checkout, isPending } = useMembershipCheckoutMutation();
+  const [isPending, setIsPending] = useState(false);
 
+  // Renewing is paid on the same page as signing up: every player who needs a
+  // membership, combined into one bill, with the coupon box. Sending the parent
+  // straight to PayPal from here would skip both.
   function handleConfirm() {
-    checkout(
-      { successUrl: window.location.origin + "/membership/success", cancelUrl: window.location.origin + "/membership/cancel" },
-      {
-        onSuccess: (data) => {
-          if (data.url) {
-            window.location.href = data.url;
-          }
-        },
-      }
-    );
+    setIsPending(true);
+    router.push(MEMBERSHIP_PAYMENT_ROUTE);
   }
 
   return (

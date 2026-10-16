@@ -183,7 +183,7 @@ function ParentEmailField({
             id={id}
             type="email"
             maxLength={maxLength}
-            placeholder="designer@dignitestudios.com"
+            placeholder={id === "fatherEmail" ? "john.doe@example.com" : "jane.doe@example.com"}
             className={inputClassName}
             {...register(id)}
           />

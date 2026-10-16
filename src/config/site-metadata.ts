@@ -76,10 +76,10 @@ export const pageMetadata = {
     description:
       "Your email has been verified successfully. Continue setting up your WSCF member account.",
   },
-  membershipValidation: {
-    title: "Membership Validation",
+  membershipPayment: {
+    title: "Membership Payment",
     description:
-      "Review your WSCF membership summary and proceed to payment to activate your scholastic chess membership.",
+      "Review your WSCF membership summary, apply a coupon code if you have one, and pay to activate your scholastic chess membership.",
   },
   membershipSuccess: {
     title: "Membership Payment Success",

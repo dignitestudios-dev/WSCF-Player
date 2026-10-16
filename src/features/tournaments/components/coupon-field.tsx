@@ -18,6 +18,10 @@ import {
  */
 export default function CouponField({
   tournamentId,
+  validate,
+  coveringText = "is covering your entry",
+  hint = "Your school or club may give you a code that covers the entry fee.",
+  showTotals = true,
   entryFee,
   applied,
   onApplied,
@@ -25,7 +29,16 @@ export default function CouponField({
   disabled = false,
   onCheckingChange,
 }: {
-  tournamentId: string;
+  /** The tournament being registered for. Not needed when `validate` is given. */
+  tournamentId?: string;
+  /** Checks a code some other way — e.g. against a membership bill. */
+  validate?: (code: string) => Promise<AppliedCoupon>;
+  /** Finishes "<Organization> …" once a code covers everything. */
+  coveringText?: string;
+  /** The small line under the input. */
+  hint?: string;
+  /** False where the page already shows the new total itself. */
+  showTotals?: boolean;
   entryFee: number;
   applied: AppliedCoupon | null;
   onApplied: (coupon: AppliedCoupon) => void;
@@ -38,8 +51,12 @@ export default function CouponField({
   const [error, setError] = useState<string | null>(null);
 
   const { mutate: apply, isPending } = useMutation({
-    mutationFn: () =>
-      validateCoupon({ code: code.trim().toUpperCase(), tournamentId }),
+    mutationFn: () => {
+      const typed = code.trim().toUpperCase();
+      return validate
+        ? validate(typed)
+        : validateCoupon({ code: typed, tournamentId: tournamentId as string });
+    },
     onMutate: () => onCheckingChange?.(true),
     onSettled: () => onCheckingChange?.(false),
     onSuccess: (coupon) => {
@@ -78,7 +95,7 @@ export default function CouponField({
             </span>
             <span className="text-xs text-[#0F5132]/80">
               {applied.coversFullFee
-                ? `${applied.organizationName} is covering your entry`
+                ? `${applied.organizationName} ${coveringText}`
                 : `You save ${applied.amountDiscounted.toFixed(2)}`}
             </span>
           </div>
@@ -95,7 +112,9 @@ export default function CouponField({
         </div>
 
         {/* The arithmetic in full, so the new total is never a surprise. */}
-        <div className="flex items-center justify-between px-1 text-sm">
+        <div
+          className={`flex items-center justify-between px-1 text-sm ${showTotals ? "" : "hidden"}`}
+        >
           <span className="text-[#565656] line-through">
             ${entryFee.toFixed(2)}
           </span>
@@ -154,7 +173,7 @@ export default function CouponField({
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
 
       <p className="text-xs leading-4 text-[#8C8C8C]">
-        Your school or club may give you a code that covers the entry fee.
+        {hint}
       </p>
     </div>
   );

@@ -5,7 +5,7 @@ const phoneRegex = /^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/;
 
 // A guardian's name takes letters and the punctuation real names carry --
 // apostrophes, hyphens, periods, accents -- but no digits.
-const guardianNameRegex = /^[a-zA-Z'.-]+(?: [a-zA-Z'.-]+)*$/;
+const guardianNameRegex = /^[a-zA-Z'.-]+(?: +[a-zA-Z'.-]+)*$/;
 const guardianNameMessage = "Name can only contain letters, hyphens, periods, and apostrophes";
 
 export const editProfileSchema = z.object({
