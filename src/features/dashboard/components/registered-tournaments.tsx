@@ -94,14 +94,14 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
               </span>
             ) : tournament.coupon ? (
               <span
-                className="shrink-0 inline-flex items-center gap-1 rounded-full bg-[#FFF4E5] border border-[#FEDF89] px-2.5 py-0.5 text-xs font-semibold text-[#B54708]"
+                className="shrink-0 inline-flex items-center rounded-full bg-[#FFF4E5] border border-[#FEDF89] px-2.5 py-0.5 text-xs font-semibold text-[#B54708]"
                 title={`Covered by promo code ${tournament.coupon.code}${tournament.coupon.organizationName ? ` (${tournament.coupon.organizationName})` : ''}`}
               >
-                Promo Code: {tournament.coupon.code}
+                Promo: {tournament.coupon.code}
               </span>
             ) : tournament.payOnSite ? (
-              <span className="shrink-0 inline-flex items-center rounded-full bg-[#EFF8FF] border border-[#B2DDFF] px-2.5 py-0.5 text-xs font-semibold text-[#175CD3]">
-                Pay On-Site ({tournament.entryFee ? `$${Number(tournament.entryFee).toFixed(2)}` : 'Venue'})
+              <span className="shrink-0 inline-flex items-center rounded-full bg-[#083F92]/10 px-2.5 py-0.5 text-xs font-semibold text-[#083F92]">
+                Pay On-Site
               </span>
             ) : (
               <span className="shrink-0 inline-flex items-center rounded-full bg-[#E7F6EC] border border-[#A6F4C5] px-2.5 py-0.5 text-xs font-semibold text-[#036B26]">
@@ -125,15 +125,6 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
               <span className="text-sm font-medium leading-[19px] text-[#151515]">{tournament.date}</span>
             </div>
           </div>
-          {tournament.coupon ? (
-            <p className="mt-2 text-xs text-[#B54708] font-medium">
-              Entry fee covered by promo code ({tournament.coupon.code}). Nothing to pay on-site.
-            </p>
-          ) : tournament.payOnSite ? (
-            <p className="mt-2 text-xs text-[#175CD3] font-medium">
-              No online fee paid. Entry fee ({tournament.entryFee ? `$${Number(tournament.entryFee).toFixed(2)}` : 'amount'}) will be collected on-site at the venue.
-            </p>
-          ) : null}
         </div>
       </div>
 

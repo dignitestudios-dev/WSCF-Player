@@ -30,6 +30,53 @@ function BackIcon() {
   );
 }
 
+function LocationIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" className="shrink-0">
+      <path
+        d="M10 2C7.25 2 5 4.25 5 7C5 10.75 10 17 10 17C10 17 15 10.75 15 7C15 4.25 12.75 2 10 2Z"
+        fill="#083F92"
+      />
+      <circle cx="10" cy="7" r="2" fill="white" />
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" className="shrink-0">
+      <rect x="3" y="4" width="14" height="13" rx="2" fill="#083F92" />
+      <rect x="3" y="4" width="14" height="4" rx="2" fill="#083F92" />
+      <rect x="6" y="2" width="2" height="4" fill="#083F92" />
+      <rect x="12" y="2" width="2" height="4" fill="#083F92" />
+    </svg>
+  );
+}
+
+function MoneyIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" className="shrink-0">
+      <circle cx="10" cy="10" r="8" fill="#083F92" />
+      <path
+        d="M10 6V14M7.5 8.5C7.5 7.5 8.5 7 10 7C11.5 7 12.5 7.5 12.5 8.5C12.5 9.5 11.5 10 10 10C8.5 10 7.5 10.5 7.5 11.5C7.5 12.5 8.5 13 10 13C11.5 13 12.5 12.5 12.5 11.5"
+        stroke="white"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" className="shrink-0 mt-0.5 text-[#083F92]" aria-hidden="true">
+      <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.6" />
+      <line x1="10" y1="9" x2="10" y2="15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="10" cy="6" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
 // No | Player | User ID | Division | Team | Rating | Action
 const GRID_COLS = "grid grid-cols-[64px_1.2fr_1fr_1.3fr_1fr_100px_110px]";
 
@@ -97,48 +144,41 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
       </div>
 
       {tournament && (
-        <div className="mb-6 rounded-[16px] bg-white border border-[#E5E7EB] p-6 shadow-sm flex flex-col gap-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-gray-100 pb-4">
-            <div className="flex flex-col gap-1.5">
-              <h2 className="text-xl md:text-2xl font-bold text-[#083F92]">{tournament.title}</h2>
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[#555]">
-                <span>📍 {tournament.location}</span>
-                <span>📅 {new Date(tournament.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
-                <span className="font-semibold text-[#151515]">
-                  Entry Fee: {tournament.entryFee === 0 ? "Free" : `$${tournament.entryFee.toFixed(2)}`}
+        <div className="mb-6 rounded-[12px] border border-[#DADADA] bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-3.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F2F2F2] pb-3">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#083F92]">{tournament.title}</h2>
+              {tournament.payOnSite ? (
+                <span className="w-fit shrink-0 rounded-full bg-[#083F92]/10 px-3 py-1 text-xs font-semibold text-[#083F92]">
+                  Pay On-Site
                 </span>
+              ) : null}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[#151515]">
+              <div className="flex items-center gap-2">
+                <LocationIcon />
+                <span>{tournament.location}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CalendarIcon />
+                <span>{new Date(tournament.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+              </div>
+              <div className="flex items-center gap-2 font-medium">
+                <MoneyIcon />
+                <span>Entry Fee: {tournament.entryFee === 0 ? "Free" : `$${tournament.entryFee.toFixed(2)}`}</span>
               </div>
             </div>
 
-            {tournament.payOnSite ? (
-              <span className="inline-flex self-start md:self-center items-center rounded-full bg-[#EFF8FF] border border-[#B2DDFF] px-3.5 py-1 text-xs font-semibold text-[#175CD3]">
-                Pay On-Site
-              </span>
-            ) : (
-              <span className="inline-flex self-start md:self-center items-center rounded-full bg-[#E7F6EC] border border-[#A6F4C5] px-3.5 py-1 text-xs font-semibold text-[#036B26]">
-                Online Payment
-              </span>
+            {tournament.payOnSite && (
+              <div className="flex items-start gap-2.5 rounded-[8px] bg-[#F7F9FC] border border-[#E3E8F0] p-3 text-xs text-[#555] leading-relaxed">
+                <InfoIcon />
+                <p>
+                  <strong className="text-[#083F92]">Pay On-Site:</strong> Entry fee is collected at the venue on tournament day. No online payment is required during registration. Promo codes can still be applied if provided by your school or club.
+                </p>
+              </div>
             )}
           </div>
-
-          {tournament.payOnSite ? (
-            <div className="rounded-[12px] bg-[#F0F7FF] border border-[#B2DDFF] p-4 flex flex-col gap-1.5 text-xs text-[#1849A9] leading-relaxed">
-              <div className="flex items-center gap-1.5 font-bold text-[#175CD3]">
-                <span>ℹ️</span>
-                <span>Pay On-Site Tournament</span>
-              </div>
-              <p>
-                <strong>No online fee or registration payment is required today.</strong> The entry fee of <strong>${tournament.entryFee.toFixed(2)}</strong> will be collected in-person at the venue on tournament day.
-              </p>
-              <p className="text-[#175CD3]">
-                💡 <strong>Promo / Coupon Codes:</strong> If you have an organization or sponsor code, you can still apply it when registering to waive or discount your fee.
-              </p>
-            </div>
-          ) : (
-            <div className="rounded-[12px] bg-[#F9FAFB] border border-gray-200 p-3 text-xs text-[#555]">
-              Entry fee is paid securely online via PayPal during checkout.
-            </div>
-          )}
         </div>
       )}
 

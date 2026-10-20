@@ -91,17 +91,17 @@ export default function TournamentCard({ tournament, onRegister }: TournamentCar
                 {tournament.title}
               </h3>
               {tournament.payOnSite && (
-                <span className="shrink-0 inline-flex items-center rounded-full bg-[#EFF8FF] border border-[#B2DDFF] px-2.5 py-0.5 text-xs font-semibold text-[#175CD3]">
+                <span className="shrink-0 inline-flex items-center rounded-full bg-[#083F92]/10 px-2.5 py-0.5 text-xs font-semibold text-[#083F92]">
                   Pay On-Site
                 </span>
               )}
             </div>
-            <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 md:mt-3 md:gap-4">
+            <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 md:mt-4 md:gap-4">
               <div className="min-w-0 max-w-full truncate md:max-w-[200px]">
                 <MetaItem icon={<LocationIcon />} label={tournament.location} />
               </div>
               <MetaItem icon={<CalendarIcon />} label={tournament.date} />
-              <MetaItem icon={<MoneyIcon />} label={tournament.payOnSite ? `${tournament.price} (Pay at venue)` : tournament.price} />
+              <MetaItem icon={<MoneyIcon />} label={tournament.price} />
             </div>
           </div>
         </div>

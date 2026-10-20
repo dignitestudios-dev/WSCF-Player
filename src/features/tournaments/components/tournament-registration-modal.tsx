@@ -46,6 +46,16 @@ function ChevronDownIcon() {
   );
 }
 
+function InfoIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" className="shrink-0 mt-0.5 text-[#083F92]" aria-hidden="true">
+      <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.6" />
+      <line x1="10" y1="9" x2="10" y2="15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="10" cy="6" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
 function FormField({
   id,
   label,
@@ -244,33 +254,13 @@ export default function TournamentRegistrationModal({
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
 
             {tournament.payOnSite && (
-              <div className="rounded-[16px] bg-[#F0F7FF] border border-[#B2DDFF] p-4 flex flex-col gap-2.5 text-left -mb-2 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#175CD3] text-white">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="16" x2="12" y2="12" />
-                        <line x1="12" y1="8" x2="12.01" y2="8" />
-                      </svg>
-                    </span>
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#175CD3]">Pay On-Site Tournament</span>
-                  </div>
-                  <span className="inline-flex items-center rounded-full bg-[#175CD3] px-2.5 py-0.5 text-xs font-semibold text-white">
-                    No Online Payment
-                  </span>
-                </div>
-
-                <div className="text-xs text-[#1849A9] flex flex-col gap-1.5 leading-relaxed">
+              <div className="flex items-start gap-2.5 rounded-[12px] bg-[#F7F9FC] border border-[#E3E8F0] p-3 text-xs text-[#555] leading-relaxed -mb-2">
+                <InfoIcon />
+                <div>
+                  <p className="font-semibold text-[#083F92] mb-0.5">Pay On-Site Tournament</p>
                   <p>
-                    <strong>No registration fee will be charged online today.</strong> The tournament entry fee of <strong>${entryFee.toFixed(2)}</strong> will be collected in-person on-site at the venue on tournament day.
+                    Entry fee of <strong>${entryFee.toFixed(2)}</strong> will be collected at the venue on tournament day. No online payment is charged now. You can still apply a promo code below to discount or waive this fee.
                   </p>
-                  <div className="bg-white/80 rounded-lg p-2.5 border border-[#B2DDFF]/80 text-[#175CD3] flex items-start gap-2">
-                    <span className="text-sm">💡</span>
-                    <span>
-                      <strong>Have a promo / coupon code?</strong> You can still use it below! If your school or club provided a code that covers the fee, your on-site payment will be fully waived.
-                    </span>
-                  </div>
                 </div>
               </div>
             )}
@@ -303,17 +293,10 @@ export default function TournamentRegistrationModal({
             </div>
 
             {canUseCoupon && (
-              <div className="border-t border-[#EFEFEF] pt-5 flex flex-col gap-2">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-sm font-medium text-[#181818] capitalize">
-                    {tournament.payOnSite ? "Have a Promo / Coupon Code?" : "Promo Code"}
-                  </span>
-                  {tournament.payOnSite && (
-                    <p className="text-xs text-[#727272]">
-                      Apply your promo code below to discount or waive your on-site entry fee.
-                    </p>
-                  )}
-                </div>
+              <div className="border-t border-[#EFEFEF] pt-4 flex flex-col gap-1.5">
+                <span className="text-sm font-medium text-[#181818]">
+                  Promo Code
+                </span>
                 <CouponField
                   tournamentId={tournament.id}
                   entryFee={entryFee}
