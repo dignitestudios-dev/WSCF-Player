@@ -115,8 +115,9 @@ export function useTournamentRegistration(
 
     // A coupon that covers the whole fee turns this into a free registration,
     // so no checkout URLs are sent — there is nothing to check out.
+    const isPayOnSite = Boolean(tournament.payOnSite);
     const requiresPayment =
-      entryFee > 0 && !appliedCoupon?.coversFullFee;
+      entryFee > 0 && !appliedCoupon?.coversFullFee && !isPayOnSite;
 
     registerMutation.mutate(
       {

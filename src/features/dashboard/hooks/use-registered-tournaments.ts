@@ -27,6 +27,9 @@ export function useRegisteredTournaments() {
     }),
     paymentStatus: reg.paymentStatus,
     divisionLabel: reg.division?.label || "-",
+    entryFee: reg.tournament.entryFee,
+    payOnSite: Boolean(reg.tournament.payOnSite),
+    coupon: reg.coupon || null,
   }));
 
   return {

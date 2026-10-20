@@ -94,7 +94,7 @@ export default function TournamentCard({ tournament, onRegister }: TournamentCar
                 <MetaItem icon={<LocationIcon />} label={tournament.location} />
               </div>
               <MetaItem icon={<CalendarIcon />} label={tournament.date} />
-              <MetaItem icon={<MoneyIcon />} label={tournament.price} />
+              <MetaItem icon={<MoneyIcon />} label={tournament.payOnSite ? `${tournament.price} (Pay On-Site)` : tournament.price} />
             </div>
           </div>
         </div>

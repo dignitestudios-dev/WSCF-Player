@@ -46,8 +46,8 @@ export default function TournamentPaymentSuccessModal({
                 {isRegistrationOnly ? "Registered Successfully" : "Payment Successfully"}
               </h2>
               <p className="text-lg leading-7 tracking-[-0.014em] text-[#565656]">
-                {isRegistrationOnly 
-                  ? `You have successfully registered to ${tournament.title}` 
+                {isRegistrationOnly
+                  ? `You have successfully registered to ${tournament.title}.${tournament.payOnSite ? ' Please remember that your entry fee will be collected on-site at the venue.' : ''}`
                   : `You have paid ${tournament.price} USD To ${tournament.title}`}
               </p>
             </div>

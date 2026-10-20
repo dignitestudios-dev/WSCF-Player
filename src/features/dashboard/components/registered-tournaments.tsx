@@ -84,13 +84,28 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex min-w-0 items-center gap-2 md:gap-3">
+          <div className="flex min-w-0 items-center gap-2 md:gap-3 flex-wrap">
             <h3 className="line-clamp-2 min-w-0 text-base font-bold leading-5 text-[#083F92] group-hover:underline md:truncate md:text-lg md:leading-6" title={tournament.title}>
               {tournament.title}
             </h3>
-            {tournament.paymentStatus === "pending" && (
+            {tournament.paymentStatus === "pending" ? (
               <span className="shrink-0 inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">
                 Not Paid
+              </span>
+            ) : tournament.coupon ? (
+              <span
+                className="shrink-0 inline-flex items-center gap-1 rounded-full bg-[#FFF4E5] border border-[#FEDF89] px-2.5 py-0.5 text-xs font-semibold text-[#B54708]"
+                title={`Covered by promo code ${tournament.coupon.code}${tournament.coupon.organizationName ? ` (${tournament.coupon.organizationName})` : ''}`}
+              >
+                Promo Code: {tournament.coupon.code}
+              </span>
+            ) : tournament.payOnSite ? (
+              <span className="shrink-0 inline-flex items-center rounded-full bg-[#EFF8FF] border border-[#B2DDFF] px-2.5 py-0.5 text-xs font-semibold text-[#175CD3]">
+                Pay On-Site ({tournament.entryFee ? `$${Number(tournament.entryFee).toFixed(2)}` : 'Venue'})
+              </span>
+            ) : (
+              <span className="shrink-0 inline-flex items-center rounded-full bg-[#E7F6EC] border border-[#A6F4C5] px-2.5 py-0.5 text-xs font-semibold text-[#036B26]">
+                Paid Online
               </span>
             )}
           </div>

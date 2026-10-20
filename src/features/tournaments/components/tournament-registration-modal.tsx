@@ -242,6 +242,24 @@ export default function TournamentRegistrationModal({
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+
+            {tournament.payOnSite && (
+              <div className="rounded-[16px] bg-[#EFF8FF] border border-[#B2DDFF] p-4 flex flex-col gap-1.5 text-left -mb-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#175CD3]">Payment Method</span>
+                  <span className="inline-flex items-center rounded-full bg-[#175CD3] px-2.5 py-0.5 text-xs font-semibold text-white">
+                    Pay On-Site
+                  </span>
+                </div>
+                <p className="text-xs text-[#1849A9] leading-relaxed">
+                  {appliedCoupon?.coversFullFee ? (
+                    <span>Entry fee is <strong>100% covered</strong> by promo code <strong>{appliedCoupon.code}</strong>. You will not owe anything on-site!</span>
+                  ) : (
+                    <span>The tournament entry fee of <strong>${entryFee.toFixed(2)}</strong> will be collected on-site at the venue. No upfront payment is required now. You can still apply promo codes below if you have one.</span>
+                  )}
+                </p>
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[22px] gap-y-8">
               {divisions.length > 0 && (
                 <>
@@ -296,7 +314,9 @@ export default function TournamentRegistrationModal({
                 ? "Submitting..."
                 : appliedCoupon?.coversFullFee
                   ? "Register for Free"
-                  : "Submit"}
+                  : tournament.payOnSite
+                    ? "Register (Pay On-Site)"
+                    : "Submit"}
             </button>
           </form>
         )}

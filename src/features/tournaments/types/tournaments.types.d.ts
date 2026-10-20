@@ -4,6 +4,7 @@ interface TournamentApiData {
   date: string;
   location: string;
   entryFee: number;
+  payOnSite?: boolean;
   divisions: {
     _id: string;
     /** The name the admin gave the division. */
@@ -66,6 +67,7 @@ interface TournamentParticipantApiData {
     name: string | null;
     criteria: string | null;
   } | null;
+  coupon?: { _id: string; code: string; organizationName: string } | null;
   playerProfile?: {
     _id: string;
     grade: string;
@@ -120,6 +122,8 @@ interface TournamentRegistrationApiResponse {
       enrolledAt: string;
     };
     requiresPayment: boolean;
+    payOnSite?: boolean;
+    coupon?: { code: string; organizationName: string } | null;
     /** PayPal's approval link. Present only when requiresPayment is true. */
     checkoutUrl?: string;
     /** PayPal order id, echoed back to the success page as ?token=. */

@@ -5,4 +5,11 @@ interface RegisteredTournament {
   date: string;
   paymentStatus?: string;
   divisionLabel?: string;
+  entryFee?: number;
+  payOnSite?: boolean;
+  coupon?: {
+    _id?: string;
+    code: string;
+    organizationName?: string;
+  } | null;
 }
