@@ -125,6 +125,15 @@ function RegisteredTournamentCard({ tournament }: { tournament: RegisteredTourna
               <span className="text-sm font-medium leading-[19px] text-[#151515]">{tournament.date}</span>
             </div>
           </div>
+          {tournament.coupon ? (
+            <p className="mt-2 text-xs text-[#B54708] font-medium">
+              Entry fee covered by promo code ({tournament.coupon.code}). Nothing to pay on-site.
+            </p>
+          ) : tournament.payOnSite ? (
+            <p className="mt-2 text-xs text-[#175CD3] font-medium">
+              No online fee paid. Entry fee ({tournament.entryFee ? `$${Number(tournament.entryFee).toFixed(2)}` : 'amount'}) will be collected on-site at the venue.
+            </p>
+          ) : null}
         </div>
       </div>
 

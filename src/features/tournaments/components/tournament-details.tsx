@@ -96,6 +96,52 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
         </h1>
       </div>
 
+      {tournament && (
+        <div className="mb-6 rounded-[16px] bg-white border border-[#E5E7EB] p-6 shadow-sm flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-gray-100 pb-4">
+            <div className="flex flex-col gap-1.5">
+              <h2 className="text-xl md:text-2xl font-bold text-[#083F92]">{tournament.title}</h2>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[#555]">
+                <span>📍 {tournament.location}</span>
+                <span>📅 {new Date(tournament.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+                <span className="font-semibold text-[#151515]">
+                  Entry Fee: {tournament.entryFee === 0 ? "Free" : `$${tournament.entryFee.toFixed(2)}`}
+                </span>
+              </div>
+            </div>
+
+            {tournament.payOnSite ? (
+              <span className="inline-flex self-start md:self-center items-center rounded-full bg-[#EFF8FF] border border-[#B2DDFF] px-3.5 py-1 text-xs font-semibold text-[#175CD3]">
+                Pay On-Site
+              </span>
+            ) : (
+              <span className="inline-flex self-start md:self-center items-center rounded-full bg-[#E7F6EC] border border-[#A6F4C5] px-3.5 py-1 text-xs font-semibold text-[#036B26]">
+                Online Payment
+              </span>
+            )}
+          </div>
+
+          {tournament.payOnSite ? (
+            <div className="rounded-[12px] bg-[#F0F7FF] border border-[#B2DDFF] p-4 flex flex-col gap-1.5 text-xs text-[#1849A9] leading-relaxed">
+              <div className="flex items-center gap-1.5 font-bold text-[#175CD3]">
+                <span>ℹ️</span>
+                <span>Pay On-Site Tournament</span>
+              </div>
+              <p>
+                <strong>No online fee or registration payment is required today.</strong> The entry fee of <strong>${tournament.entryFee.toFixed(2)}</strong> will be collected in-person at the venue on tournament day.
+              </p>
+              <p className="text-[#175CD3]">
+                💡 <strong>Promo / Coupon Codes:</strong> If you have an organization or sponsor code, you can still apply it when registering to waive or discount your fee.
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-[12px] bg-[#F9FAFB] border border-gray-200 p-3 text-xs text-[#555]">
+              Entry fee is paid securely online via PayPal during checkout.
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="relative rounded-[12px] bg-white/50 p-6 lg:p-8">
         <div className="mb-8 flex flex-col gap-3">
           <h2 className="text-[30px] font-bold leading-[41px] text-[#083F92]">

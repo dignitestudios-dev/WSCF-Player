@@ -86,15 +86,22 @@ export default function TournamentCard({ tournament, onRegister }: TournamentCar
             <ChessIcon />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="line-clamp-2 text-base font-bold leading-5 text-[#083F92] group-hover:underline md:line-clamp-1 md:text-lg md:leading-6" title={tournament.title}>
-              {tournament.title}
-            </h3>
-            <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 md:mt-4 md:gap-4">
+            <div className="flex min-w-0 items-center gap-2 flex-wrap">
+              <h3 className="line-clamp-2 text-base font-bold leading-5 text-[#083F92] group-hover:underline md:line-clamp-1 md:text-lg md:leading-6" title={tournament.title}>
+                {tournament.title}
+              </h3>
+              {tournament.payOnSite && (
+                <span className="shrink-0 inline-flex items-center rounded-full bg-[#EFF8FF] border border-[#B2DDFF] px-2.5 py-0.5 text-xs font-semibold text-[#175CD3]">
+                  Pay On-Site
+                </span>
+              )}
+            </div>
+            <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 md:mt-3 md:gap-4">
               <div className="min-w-0 max-w-full truncate md:max-w-[200px]">
                 <MetaItem icon={<LocationIcon />} label={tournament.location} />
               </div>
               <MetaItem icon={<CalendarIcon />} label={tournament.date} />
-              <MetaItem icon={<MoneyIcon />} label={tournament.payOnSite ? `${tournament.price} (Pay On-Site)` : tournament.price} />
+              <MetaItem icon={<MoneyIcon />} label={tournament.payOnSite ? `${tournament.price} (Pay at venue)` : tournament.price} />
             </div>
           </div>
         </div>

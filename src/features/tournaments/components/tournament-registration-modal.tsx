@@ -244,20 +244,34 @@ export default function TournamentRegistrationModal({
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
 
             {tournament.payOnSite && (
-              <div className="rounded-[16px] bg-[#EFF8FF] border border-[#B2DDFF] p-4 flex flex-col gap-1.5 text-left -mb-2">
+              <div className="rounded-[16px] bg-[#F0F7FF] border border-[#B2DDFF] p-4 flex flex-col gap-2.5 text-left -mb-2 shadow-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#175CD3]">Payment Method</span>
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#175CD3] text-white">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="16" x2="12" y2="12" />
+                        <line x1="12" y1="8" x2="12.01" y2="8" />
+                      </svg>
+                    </span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#175CD3]">Pay On-Site Tournament</span>
+                  </div>
                   <span className="inline-flex items-center rounded-full bg-[#175CD3] px-2.5 py-0.5 text-xs font-semibold text-white">
-                    Pay On-Site
+                    No Online Payment
                   </span>
                 </div>
-                <p className="text-xs text-[#1849A9] leading-relaxed">
-                  {appliedCoupon?.coversFullFee ? (
-                    <span>Entry fee is <strong>100% covered</strong> by promo code <strong>{appliedCoupon.code}</strong>. You will not owe anything on-site!</span>
-                  ) : (
-                    <span>The tournament entry fee of <strong>${entryFee.toFixed(2)}</strong> will be collected on-site at the venue. No upfront payment is required now. You can still apply promo codes below if you have one.</span>
-                  )}
-                </p>
+
+                <div className="text-xs text-[#1849A9] flex flex-col gap-1.5 leading-relaxed">
+                  <p>
+                    <strong>No registration fee will be charged online today.</strong> The tournament entry fee of <strong>${entryFee.toFixed(2)}</strong> will be collected in-person on-site at the venue on tournament day.
+                  </p>
+                  <div className="bg-white/80 rounded-lg p-2.5 border border-[#B2DDFF]/80 text-[#175CD3] flex items-start gap-2">
+                    <span className="text-sm">💡</span>
+                    <span>
+                      <strong>Have a promo / coupon code?</strong> You can still use it below! If your school or club provided a code that covers the fee, your on-site payment will be fully waived.
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[22px] gap-y-8">
@@ -289,7 +303,17 @@ export default function TournamentRegistrationModal({
             </div>
 
             {canUseCoupon && (
-              <div className="border-t border-[#EFEFEF] pt-5">
+              <div className="border-t border-[#EFEFEF] pt-5 flex flex-col gap-2">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium text-[#181818] capitalize">
+                    {tournament.payOnSite ? "Have a Promo / Coupon Code?" : "Promo Code"}
+                  </span>
+                  {tournament.payOnSite && (
+                    <p className="text-xs text-[#727272]">
+                      Apply your promo code below to discount or waive your on-site entry fee.
+                    </p>
+                  )}
+                </div>
                 <CouponField
                   tournamentId={tournament.id}
                   entryFee={entryFee}
