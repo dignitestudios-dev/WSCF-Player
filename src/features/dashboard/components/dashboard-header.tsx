@@ -11,17 +11,18 @@ export default function DashboardHeader() {
   const { user } = useAuth();
   const { account, isLoading } = useActivePlayer();
 
+  const currentAccount = account ?? user;
+
   const primaryParent =
-    user?.parents?.father?.isPrimary ? user.parents.father :
-    user?.parents?.mother?.isPrimary ? user.parents.mother :
-    account?.parents?.father?.isPrimary ? account.parents.father :
-    account?.parents?.mother?.isPrimary ? account.parents.mother :
+    currentAccount?.parents?.father?.isPrimary ? currentAccount.parents.father :
+    currentAccount?.parents?.mother?.isPrimary ? currentAccount.parents.mother :
+    currentAccount?.parents?.father?.name ? currentAccount.parents.father :
+    currentAccount?.parents?.mother?.name ? currentAccount.parents.mother :
     null;
 
   const parentName =
     primaryParent?.name?.trim() ||
-    user?.name?.trim() ||
-    account?.name?.trim() ||
+    currentAccount?.name?.trim() ||
     "";
 
   return (

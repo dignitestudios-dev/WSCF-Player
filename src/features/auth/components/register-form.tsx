@@ -105,7 +105,7 @@ export default function RegisterForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" maxLength={50} {...register("password")} />
+            <Input id="password" type="password"  maxLength={50} {...register("password")} />
             {errors.password && (
               <p className="text-sm text-red-600">{errors.password.message}</p>
             )}
