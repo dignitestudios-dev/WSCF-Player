@@ -75,20 +75,20 @@ function FormField({
           onChange:
             type === "tel"
               ? (e) => {
-                  const value = e.target.value;
-                  const phoneNumber = value.replace(/[^\d]/g, "");
-                  if (phoneNumber.length < 4) {
-                    e.target.value = phoneNumber;
-                  } else if (phoneNumber.length < 7) {
-                    e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-                  } else {
-                    e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
-                  }
+                const value = e.target.value;
+                const phoneNumber = value.replace(/[^\d]/g, "");
+                if (phoneNumber.length < 4) {
+                  e.target.value = phoneNumber;
+                } else if (phoneNumber.length < 7) {
+                  e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+                } else {
+                  e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
                 }
+              }
               : numericOnly
                 ? (e) => {
-                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                  }
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                }
                 : undefined,
         })}
       />
@@ -128,6 +128,7 @@ function PasswordField({
       <div className="relative">
         <input
           id={id}
+          placeholder="••••••••"
           type={show ? "text" : "password"}
           maxLength={maxLength}
           className={`${inputClassName} pr-12`}
@@ -190,9 +191,8 @@ function ParentEmailField({
         </div>
 
         <div
-          className={`-mt-3 rounded-b-[12px] rounded-t-[24px] border border-t-0 border-[#3D3775] px-4 pb-3 pt-6 transition-colors ${
-            isPrimary ? "bg-[#ECEAFF]" : "bg-[#F7F6FF]"
-          }`}
+          className={`-mt-3 rounded-b-[12px] rounded-t-[24px] border border-t-0 border-[#3D3775] px-4 pb-3 pt-6 transition-colors ${isPrimary ? "bg-[#ECEAFF]" : "bg-[#F7F6FF]"
+            }`}
         >
           <input
             id={primaryInputId}
@@ -206,11 +206,10 @@ function ParentEmailField({
             className="relative z-20 flex cursor-pointer items-center gap-3"
           >
             <span
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
-                isPrimary
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${isPrimary
                   ? "border-[#083F92] bg-[#083F92]"
                   : "border-black/50 bg-white"
-              }`}
+                }`}
             >
               {isPrimary && <span className="h-2 w-2 rounded-full bg-white" />}
             </span>
@@ -398,6 +397,7 @@ export default function BecomeMemberForm() {
               id="password"
               required
               label="Password"
+
               show={showPassword}
               onToggle={togglePassword}
               error={errors.password?.message}
