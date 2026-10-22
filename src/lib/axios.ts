@@ -8,7 +8,7 @@ import {
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://416zwbs6-4000.inc1.devtunnels.ms/";
+  "https://api.wisconsinscholasticchess.org/";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
