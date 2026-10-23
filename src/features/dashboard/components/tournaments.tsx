@@ -63,6 +63,7 @@ export default function Tournaments() {
     date: new Date(t.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
     price: t.entryFee === 0 ? "Free" : `$${t.entryFee.toFixed(2)}`,
     payOnSite: Boolean(t.payOnSite),
+    registrationCutoff: t.registrationCutoff || null,
     divisions: t.divisions || [],
   }));
 

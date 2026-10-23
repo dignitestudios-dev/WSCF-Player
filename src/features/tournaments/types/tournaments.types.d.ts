@@ -5,6 +5,7 @@ interface TournamentApiData {
   location: string;
   entryFee: number;
   payOnSite?: boolean;
+  registrationCutoff?: string | null;
   divisions: {
     _id: string;
     /** The name the admin gave the division. */

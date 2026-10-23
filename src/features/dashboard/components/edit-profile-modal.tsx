@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type { UseFormRegister } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { useEditProfile } from "@/features/dashboard/hooks/use-edit-profile";
@@ -36,14 +35,16 @@ function CloseIcon() {
   );
 }
 
-
-
 function FormField({
   id,
   label,
   type = "text",
   error,
   disabled,
+  readOnly,
+  required,
+  badge,
+  helperText,
   register,
   onChange,
   maxLength,
@@ -53,6 +54,10 @@ function FormField({
   type?: string;
   error?: string;
   disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  badge?: React.ReactNode;
+  helperText?: string;
   register: UseFormRegister<EditProfileFields>;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   maxLength?: number;
@@ -60,21 +65,34 @@ function FormField({
   const registered = register(id);
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-2">
-      <label htmlFor={id} className={`text-sm font-medium capitalize leading-[19px] text-[#181818] ${disabled ? "opacity-50" : ""}`}>
-        {label}
+      <label
+        htmlFor={id}
+        className={`text-sm font-medium capitalize leading-[19px] text-[#181818] flex items-center flex-wrap gap-1 ${
+          disabled || readOnly ? "opacity-80" : ""
+        }`}
+      >
+        <span>{label}</span>
+        {required && <span className="text-red-500 font-bold">*</span>}
+        {badge}
       </label>
       <input
         id={id}
         type={type}
         disabled={disabled}
+        readOnly={readOnly}
         maxLength={maxLength}
-        className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`}
+        className={`${inputClassName} ${
+          readOnly
+            ? "cursor-not-allowed bg-[#F2F2F2] text-[#636363] border-gray-300 focus:ring-0"
+            : "disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50"
+        }`}
         {...registered}
         onChange={(e) => {
           if (onChange) onChange(e);
           registered.onChange(e);
         }}
       />
+      {helperText && <p className="text-[11px] text-[#636363]">{helperText}</p>}
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
     </div>
   );
@@ -103,13 +121,15 @@ function FormRow({ children }: { children: React.ReactNode }) {
 
 export default function EditProfileModal({ profile, isUpdating, onClose, onSave }: EditProfileModalProps) {
   const { form, onSubmit } = useEditProfile({ profile, onSave, onClose });
-  console.log(profile)
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
   } = form;
+
+  const isMotherPrimary = Boolean(profile.parents?.mother?.isPrimary);
+  const isFatherPrimary = !isMotherPrimary;
 
   return (
     <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open && !isUpdating) onClose(); }}>
@@ -140,199 +160,221 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
             >
               Edit Profile
             </h2>
-
-
           </div>
 
           <form onSubmit={handleSubmit(onSubmit as any)} className="flex w-full flex-col gap-[43px]">
-        {/* Locked while the request is in flight: disabling only the
-            submit button leaves every field editable after the values
-            have already been sent. `contents` keeps the fieldset out
-            of the layout. */}
-        <fieldset disabled={isUpdating} className="contents">
-            <div className="flex flex-col gap-6">
-              <FormSection title="Personal Information">
-                <FormRow>
-                  <FormField
-                    id="firstName"
-                    label="First Name"
-                    error={errors.firstName?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={30}
-                  />
-                  <FormField
-                    id="lastName"
-                    label="Last Name"
-                    error={errors.lastName?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={30}
-                  />
-                </FormRow>
-                <FormRow>
-                  <div className="flex min-w-0 flex-1 flex-col gap-2">
-                    <label htmlFor="gender" className={`text-sm font-medium capitalize leading-[19px] text-[#181818] ${isUpdating ? "opacity-50" : ""}`}>
-                      Gender
-                    </label>
-                    <Controller
-                      control={control}
-                      name="gender"
-                      render={({ field }) => (
-                        <Select onValueChange={field.onChange} value={field.value || ""} disabled={isUpdating}>
-                          <SelectTrigger id="gender" className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`}>
-                            <SelectValue placeholder="Select Gender" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
+            <fieldset disabled={isUpdating} className="contents">
+              <div className="flex flex-col gap-6">
+                <FormSection title="Personal Information">
+                  <FormRow>
+                    <FormField
+                      id="firstName"
+                      label="First Name"
+                      required
+                      error={errors.firstName?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={30}
                     />
-                    {errors.gender && <p className="text-xs text-red-600">{errors.gender.message as string}</p>}
-                  </div>
-                </FormRow>
-                <FormRow>
-                  <FormField
-                    id="email"
-                    label="Email"
-                    type="email"
-                    error={errors.email?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={254}
-                  />
-                  <div className="flex w-full flex-col gap-2 sm:w-[309px]">
-                    <label htmlFor="grade" className={`text-sm font-medium capitalize leading-[19px] text-[#181818] ${isUpdating ? "opacity-50" : ""}`}>
-                      Grade
-                    </label>
-                    <Controller
-                      control={control}
-                      name="grade"
-                      render={({ field }) => (
-                        <Select onValueChange={field.onChange} value={field.value || ""} disabled={isUpdating}>
-                          <SelectTrigger id="grade" className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`}>
-                            <SelectValue placeholder="Select Grade" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="K">K</SelectItem>
-                            {Array.from({ length: 12 }, (_, i) => String(i + 1)).map((g) => (
-                              <SelectItem key={g} value={g}>{g}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
+                    <FormField
+                      id="lastName"
+                      label="Last Name"
+                      required
+                      error={errors.lastName?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={30}
                     />
-                    {errors.grade && <p className="text-xs text-red-600">{errors.grade.message as string}</p>}
-                  </div>
-                </FormRow>
-              </FormSection>
+                  </FormRow>
+                  <FormRow>
+                    <div className="flex min-w-0 flex-1 flex-col gap-2">
+                      <label htmlFor="gender" className={`text-sm font-medium capitalize leading-[19px] text-[#181818] flex items-center gap-1 ${isUpdating ? "opacity-50" : ""}`}>
+                        <span>Gender</span>
+                        <span className="text-red-500 font-bold">*</span>
+                      </label>
+                      <Controller
+                        control={control}
+                        name="gender"
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} value={field.value || ""} disabled={isUpdating}>
+                            <SelectTrigger id="gender" className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`}>
+                              <SelectValue placeholder="Select Gender" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="male">Male</SelectItem>
+                              <SelectItem value="female">Female</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {errors.gender && <p className="text-xs text-red-600">{errors.gender.message as string}</p>}
+                    </div>
+                  </FormRow>
+                  <FormRow>
+                    <FormField
+                      id="email"
+                      label="Email (Primary)"
+                      type="email"
+                      readOnly={true}
+                      helperText="Primary email cannot be changed"
+                      error={errors.email?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={254}
+                    />
+                    <div className="flex w-full flex-col gap-2 sm:w-[309px]">
+                      <label htmlFor="grade" className={`text-sm font-medium capitalize leading-[19px] text-[#181818] flex items-center gap-1 ${isUpdating ? "opacity-50" : ""}`}>
+                        <span>Grade</span>
+                        <span className="text-red-500 font-bold">*</span>
+                      </label>
+                      <Controller
+                        control={control}
+                        name="grade"
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} value={field.value || ""} disabled={isUpdating}>
+                            <SelectTrigger id="grade" className={`${inputClassName} disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50`}>
+                              <SelectValue placeholder="Select Grade" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="K">K</SelectItem>
+                              {Array.from({ length: 12 }, (_, i) => String(i + 1)).map((g) => (
+                                <SelectItem key={g} value={g}>{g}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {errors.grade && <p className="text-xs text-red-600">{errors.grade.message as string}</p>}
+                    </div>
+                  </FormRow>
+                </FormSection>
 
-              <FormSection title="Address">
-                <FormRow>
-                  <FormField
-                    id="city"
-                    label="City"
-                    error={errors.city?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={30}
-                  />
-                </FormRow>
-              </FormSection>
+                <FormSection title="Address">
+                  <FormRow>
+                    <FormField
+                      id="city"
+                      label="City"
+                      error={errors.city?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={30}
+                    />
+                  </FormRow>
+                </FormSection>
 
-              <FormSection title="Parent Information">
-                <FormRow>
-                  <FormField
-                    id="fatherName"
-                    label="Father's Full Name"
-                    error={errors.fatherName?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={30}
-                  />
-                  <FormField
-                    id="motherName"
-                    label="Mother's Full Name"
-                    error={errors?.motherName?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={30}
-                  />
-                </FormRow>
-                <FormRow>
-                  <FormField
-                    id="fatherPhone"
-                    label="Father's Phone"
-                    error={errors.fatherPhone?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={14}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const phoneNumber = value.replace(/[^\d]/g, "");
-                      if (phoneNumber.length < 4) {
-                        e.target.value = phoneNumber;
-                      } else if (phoneNumber.length < 7) {
-                        e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-                      } else {
-                        e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+                <FormSection title="Parent Information">
+                  <FormRow>
+                    <FormField
+                      id="fatherName"
+                      label="Father's Full Name"
+                      required={isFatherPrimary}
+                      badge={
+                        isFatherPrimary ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#EBF3FC] text-[#083F92] border border-[#C9DFF8]">
+                            Primary Parent
+                          </span>
+                        ) : undefined
                       }
-                    }}
-                  />
-                  <FormField
-                    id="motherPhone"
-                    label="Mother's Phone"
-                    error={errors.motherPhone?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={14}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const phoneNumber = value.replace(/[^\d]/g, "");
-                      if (phoneNumber.length < 4) {
-                        e.target.value = phoneNumber;
-                      } else if (phoneNumber.length < 7) {
-                        e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-                      } else {
-                        e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+                      error={errors.fatherName?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={30}
+                    />
+                    <FormField
+                      id="motherName"
+                      label="Mother's Full Name"
+                      required={isMotherPrimary}
+                      badge={
+                        isMotherPrimary ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#EBF3FC] text-[#083F92] border border-[#C9DFF8]">
+                            Primary Parent
+                          </span>
+                        ) : undefined
                       }
-                    }}
-                  />
-                </FormRow>
-                <FormRow>
-                  <FormField
-                    id="fatherEmail"
-                    label="Father's Email"
-                    type="email"
-                    error={errors.fatherEmail?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={254}
-                  />
-                  <FormField
-                    id="motherEmail"
-                    label="Mother's Email"
-                    type="email"
-                    error={errors.motherEmail?.message}
-                    disabled={isUpdating}
-                    register={register}
-                    maxLength={254}
-                  />
-                </FormRow>
-              </FormSection>
-            </div>
+                      error={errors?.motherName?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={30}
+                    />
+                  </FormRow>
+                  <FormRow>
+                    <FormField
+                      id="fatherPhone"
+                      label="Father's Phone"
+                      required={isFatherPrimary}
+                      error={errors.fatherPhone?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={14}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const phoneNumber = value.replace(/[^\d]/g, "");
+                        if (phoneNumber.length < 4) {
+                          e.target.value = phoneNumber;
+                        } else if (phoneNumber.length < 7) {
+                          e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+                        } else {
+                          e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+                        }
+                      }}
+                    />
+                    <FormField
+                      id="motherPhone"
+                      label="Mother's Phone"
+                      required={isMotherPrimary}
+                      error={errors.motherPhone?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={14}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const phoneNumber = value.replace(/[^\d]/g, "");
+                        if (phoneNumber.length < 4) {
+                          e.target.value = phoneNumber;
+                        } else if (phoneNumber.length < 7) {
+                          e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+                        } else {
+                          e.target.value = `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+                        }
+                      }}
+                    />
+                  </FormRow>
+                  <FormRow>
+                    <FormField
+                      id="fatherEmail"
+                      label={isFatherPrimary ? "Father's Email (Primary)" : "Father's Email"}
+                      type="email"
+                      readOnly={isFatherPrimary}
+                      helperText={isFatherPrimary ? "Primary email cannot be changed" : undefined}
+                      error={errors.fatherEmail?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={254}
+                    />
+                    <FormField
+                      id="motherEmail"
+                      label={isMotherPrimary ? "Mother's Email (Primary)" : "Mother's Email"}
+                      type="email"
+                      readOnly={isMotherPrimary}
+                      helperText={isMotherPrimary ? "Primary email cannot be changed" : undefined}
+                      error={errors.motherEmail?.message}
+                      disabled={isUpdating}
+                      register={register}
+                      maxLength={254}
+                    />
+                  </FormRow>
+                </FormSection>
+              </div>
 
-            <button
-              type="submit"
-              disabled={isUpdating}
-              className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isUpdating ? "Saving..." : "Save Profile"}
-            </button>
-          </fieldset>
-        </form>
+              <button
+                type="submit"
+                disabled={isUpdating}
+                className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isUpdating ? "Saving..." : "Save Profile"}
+              </button>
+            </fieldset>
+          </form>
         </div>
       </ResponsiveDialogContent>
     </ResponsiveDialog>

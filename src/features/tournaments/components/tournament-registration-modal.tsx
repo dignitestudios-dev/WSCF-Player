@@ -187,6 +187,9 @@ export default function TournamentRegistrationModal({
 }: TournamentRegistrationModalProps) {
   const { activePlayer } = useActivePlayer();
   const isPendingRating = activePlayer?.ratingStatus === "pending";
+  const isCutoffPassed = tournament.registrationCutoff
+    ? new Date() > new Date(tournament.registrationCutoff)
+    : false;
 
   const [isCheckingCoupon, setIsCheckingCoupon] = useState(false);
 
@@ -224,6 +227,22 @@ export default function TournamentRegistrationModal({
               <Skeleton className="h-11 w-full rounded-[24px]" />
             </div>
             <Skeleton className="h-12 w-full rounded-[24px]" />
+          </div>
+        ) : isCutoffPassed ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center gap-3">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2 bg-red-50">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <h3 className="text-[20px] font-semibold text-[#181818] tracking-tight">
+              Registration Closed
+            </h3>
+            <p className="text-[14px] text-[#181818]/70 max-w-[320px]">
+              The registration deadline for this tournament has passed.
+            </p>
           </div>
         ) : divisions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center gap-3">

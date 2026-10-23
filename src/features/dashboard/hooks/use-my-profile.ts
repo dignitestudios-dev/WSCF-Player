@@ -24,7 +24,9 @@ export function useMyProfile() {
   const parentObj = user?.parents;
   const mother = parentObj?.mother;
   const father = parentObj?.father;
-  const parent = mother?.isPrimary ? mother : (father || mother);
+  const isMotherPrimary = Boolean(mother?.isPrimary);
+  const isFatherPrimary = Boolean(father?.isPrimary) || (!isMotherPrimary && Boolean(father));
+  const parent = isMotherPrimary ? mother : (father || mother);
 
   const profile: MyProfile = {
     name: playerProfile?.name || "N/A",
@@ -70,8 +72,9 @@ export function useMyProfile() {
         ? {
             father: {
               name: father.name || "",
-              email: father.email || "",
+              email: father.email || (isFatherPrimary ? (user?.email || "") : ""),
               phone: father.phone || "",
+              isPrimary: isFatherPrimary,
             },
           }
         : {}),
@@ -79,8 +82,9 @@ export function useMyProfile() {
         ? {
             mother: {
               name: mother.name || "",
-              email: mother.email || "",
+              email: mother.email || (isMotherPrimary ? (user?.email || "") : ""),
               phone: mother.phone || "",
+              isPrimary: isMotherPrimary,
             },
           }
         : {}),

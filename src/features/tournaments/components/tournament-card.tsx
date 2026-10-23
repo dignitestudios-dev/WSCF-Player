@@ -73,6 +73,10 @@ interface TournamentCardProps {
  * button sits above that link and handles its own click.
  */
 export default function TournamentCard({ tournament, onRegister }: TournamentCardProps) {
+  const isCutoffPassed = tournament.registrationCutoff
+    ? new Date() > new Date(tournament.registrationCutoff)
+    : false;
+
   return (
     <div className="group relative cursor-pointer overflow-hidden rounded-[12px] border border-[#083F92] bg-white p-4 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] transition-colors hover:bg-gray-50 md:h-[110px] md:p-6">
       <Link
@@ -102,6 +106,17 @@ export default function TournamentCard({ tournament, onRegister }: TournamentCar
               </div>
               <MetaItem icon={<CalendarIcon />} label={tournament.date} />
               <MetaItem icon={<MoneyIcon />} label={tournament.price} />
+              {tournament.registrationCutoff && (
+                <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+                  isCutoffPassed
+                    ? "text-[#B42318] bg-[#FDECEA]"
+                    : "text-[#083F92] bg-[#EBF3FC]"
+                }`}>
+                  {isCutoffPassed
+                    ? "Registration Closed"
+                    : `Apply before: ${new Date(tournament.registrationCutoff).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true })}`}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -109,12 +124,17 @@ export default function TournamentCard({ tournament, onRegister }: TournamentCar
 
       <button
         type="button"
+        disabled={isCutoffPassed}
         onClick={() => onRegister(tournament)}
         // Full width under the details on a phone; floated to the right edge of
         // the row from md up, exactly as before.
-        className="relative z-10 mt-4 h-12 w-full rounded-full bg-[#083F92] px-8 text-base font-semibold text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)] transition-colors hover:bg-[#063875] active:bg-[#063875] md:absolute md:right-6 md:top-1/2 md:mt-0 md:h-14 md:w-auto md:-translate-y-1/2"
+        className={`relative z-10 mt-4 h-12 w-full rounded-full px-8 text-base font-semibold md:absolute md:right-6 md:top-1/2 md:mt-0 md:h-14 md:w-auto md:-translate-y-1/2 ${
+          isCutoffPassed
+            ? "bg-[#E0E0E0] text-[#828282] cursor-not-allowed shadow-none"
+            : "bg-[#083F92] text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)] transition-colors hover:bg-[#063875] active:bg-[#063875]"
+        }`}
       >
-        Register Now
+        {isCutoffPassed ? "Registration Closed" : "Register Now"}
       </button>
     </div>
   );

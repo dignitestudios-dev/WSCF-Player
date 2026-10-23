@@ -2,6 +2,7 @@ interface MyProfileParentInfo {
   name: string;
   email: string;
   phone: string;
+  isPrimary?: boolean;
 }
 
 interface MyProfile {

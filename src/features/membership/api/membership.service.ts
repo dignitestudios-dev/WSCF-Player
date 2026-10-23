@@ -12,6 +12,7 @@ interface MembershipCheckoutApiResponse {
     checkoutUrl?: string;
     sessionUrl?: string;
     requiresPayment?: boolean;
+    playerCount?: number;
   };
 }
 
@@ -42,7 +43,7 @@ export async function createMembershipCheckout(
   // An organization's code covered the bill: the memberships are already
   // active, so there is no PayPal page to go to.
   if (data.data?.requiresPayment === false) {
-    return { requiresPayment: false, apiMessage: data.message };
+    return { requiresPayment: false, apiMessage: data.message, playerCount: data.data?.playerCount };
   }
 
   const checkoutUrl = getCheckoutUrl(data);

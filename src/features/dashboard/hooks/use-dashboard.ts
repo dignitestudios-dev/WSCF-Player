@@ -21,6 +21,7 @@ export interface DashboardTournament {
   date: string;
   price: string;
   payOnSite?: boolean;
+  registrationCutoff?: string | null;
   divisions: {
     _id: string;
     /** The name the admin gave the division. */

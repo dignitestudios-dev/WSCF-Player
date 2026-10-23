@@ -10,6 +10,7 @@ import {
   useTournamentRegistrationMutation,
 } from "@/features/tournaments/api/tournaments.queries";
 import type { AppliedCoupon } from "@/features/tournaments/api/coupons.service";
+import { showApiErrorToast } from "@/lib/api-toast";
 
 /** `price` arrives as a display string — "$5.00", or "Free". */
 function parseEntryFee(price: string): number {
@@ -145,8 +146,18 @@ export function useTournamentRegistration(
             completeRegistrationSuccess();
           }
         },
-        onError: (error) => {
-          console.error("Registration failed:", error);
+        onError: (error: any) => {
+          showApiErrorToast(error, "Registration could not be completed.");
+          queryClient.invalidateQueries({ queryKey: ["tournaments"] });
+          queryClient.invalidateQueries({ queryKey: ["myTournaments"] });
+          const msg = (error?.message || "").toLowerCase();
+          if (msg.includes("closed") || msg.includes("ongoing") || msg.includes("no longer")) {
+            setTimeout(() => {
+              if (typeof window !== "undefined") {
+                window.location.reload();
+              }
+            }, 1200);
+          }
         },
       }
     );

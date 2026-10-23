@@ -1,6 +1,9 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
+import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
+import TournamentRegistrationFlow from "@/features/tournaments/components/tournament-registration-flow";
+import MembershipRequiredDialog from "@/features/tournaments/components/membership-required-dialog";
 import Link from "next/link";
 import {
   getDashboardPlayerProfileRoute,
@@ -95,6 +98,42 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
   const showViewAll = (participantsData?.pagination?.totalPages ?? 0) > 1;
   const tournament = detailsData?.data.tournament;
 
+  const { data: authData } = useAuthUserQuery();
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [isMembershipRequiredOpen, setIsMembershipRequiredOpen] = useState(false);
+
+  const isCutoffPassed = tournament?.registrationCutoff
+    ? new Date() > new Date(tournament.registrationCutoff)
+    : false;
+
+  const isAlreadyRegistered = apiParticipants.some(
+    (p: any) =>
+      String(p.playerProfile?._id || p.playerProfileId || "") === String(activePlayer?._id || "")
+  );
+
+  const handleRegisterClick = () => {
+    if (authData?.data?.membership?.status !== "active") {
+      setIsMembershipRequiredOpen(true);
+      return;
+    }
+    setIsRegistering(true);
+  };
+
+  const registrationTournament = tournament ? {
+    id: tournament._id,
+    title: tournament.title,
+    location: tournament.location,
+    date: new Date(tournament.date).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    }),
+    price: tournament.entryFee === 0 ? "Free" : `${tournament.entryFee.toFixed(2)}`,
+    payOnSite: Boolean(tournament.payOnSite),
+    registrationCutoff: tournament.registrationCutoff || null,
+    divisions: tournament.divisions || [],
+  } : null;
+
   if (isDetailsPending) {
     return (
       <div className="mx-auto max-w-[1240px] px-4 pb-8 pt-4 md:px-6 md:pb-12 md:pt-8 lg:px-0">
@@ -146,13 +185,34 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
       {tournament && (
         <div className="mb-6 rounded-[12px] border border-[#DADADA] bg-white p-5 shadow-sm">
           <div className="flex flex-col gap-3.5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F2F2F2] pb-3">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#083F92]">{tournament.title}</h2>
-              {tournament.payOnSite ? (
-                <span className="w-fit shrink-0 rounded-full bg-[#083F92]/10 px-3 py-1 text-xs font-semibold text-[#083F92]">
-                  Pay On-Site
-                </span>
-              ) : null}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F2F2F2] pb-3">
+              <div className="flex items-center gap-2 flex-wrap min-w-0">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#083F92]">{tournament.title}</h2>
+                {tournament.payOnSite ? (
+                  <span className="w-fit shrink-0 rounded-full bg-[#083F92]/10 px-3 py-1 text-xs font-semibold text-[#083F92]">
+                    Pay On-Site
+                  </span>
+                ) : null}
+              </div>
+
+              <button
+                type="button"
+                disabled={isAlreadyRegistered || isCutoffPassed || tournament.status !== "upcoming"}
+                onClick={handleRegisterClick}
+                className={`h-11 px-6 rounded-full font-semibold text-sm sm:text-base shrink-0 transition-colors ${
+                  isAlreadyRegistered
+                    ? "bg-[#EBF3FC] text-[#083F92] border border-[#C9DFF8] cursor-default"
+                    : isCutoffPassed || tournament.status !== "upcoming"
+                      ? "bg-[#E0E0E0] text-[#828282] cursor-not-allowed shadow-none"
+                      : "bg-[#083F92] text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)] hover:bg-[#063875] cursor-pointer"
+                }`}
+              >
+                {isAlreadyRegistered
+                  ? "Registered"
+                  : isCutoffPassed || tournament.status !== "upcoming"
+                    ? "Registration Closed"
+                    : "Register Now"}
+              </button>
             </div>
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[#151515]">
@@ -168,6 +228,19 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
                 <MoneyIcon />
                 <span>Entry Fee: {tournament.entryFee === 0 ? "Free" : `$${tournament.entryFee.toFixed(2)}`}</span>
               </div>
+              {tournament.registrationCutoff && (
+                <div className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${
+                  new Date() > new Date(tournament.registrationCutoff)
+                    ? "text-[#B42318] bg-[#FDECEA]"
+                    : "text-[#083F92] bg-[#EBF3FC]"
+                }`}>
+                  <span>
+                    {new Date() > new Date(tournament.registrationCutoff)
+                      ? "Registration Closed"
+                      : `Apply before: ${new Date(tournament.registrationCutoff).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true })}`}
+                  </span>
+                </div>
+              )}
             </div>
 
             {tournament.payOnSite && (
@@ -293,6 +366,17 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
           </div>
         ) : null}
       </div>
+      {isRegistering && registrationTournament ? (
+        <TournamentRegistrationFlow
+          tournament={registrationTournament}
+          onClose={() => setIsRegistering(false)}
+        />
+      ) : null}
+
+      <MembershipRequiredDialog
+        open={isMembershipRequiredOpen}
+        onOpenChange={setIsMembershipRequiredOpen}
+      />
     </div>
   );
 }

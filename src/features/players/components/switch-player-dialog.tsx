@@ -53,7 +53,9 @@ export default function SwitchPlayerDialog({
 
     switchTo(selectedId);
     onClose();
-    router.refresh();
+    if (typeof window !== "undefined") {
+      window.location.reload();
+    }
   };
 
   return (

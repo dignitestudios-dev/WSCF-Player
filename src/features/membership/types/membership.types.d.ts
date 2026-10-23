@@ -12,4 +12,5 @@ interface MembershipCheckoutResponse {
   /** False when a coupon covered everything: there is no checkout to open. */
   requiresPayment?: boolean;
   apiMessage?: string;
+  playerCount?: number;
 }
