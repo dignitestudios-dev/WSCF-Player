@@ -60,10 +60,19 @@ export default function ToastProvider({
       const trimmedMessage = message.trim();
       if (!trimmedMessage) return;
 
-      const id = crypto.randomUUID();
+      setToasts((current) => {
+        // Prevent duplicate toasts with identical message and type
+        if (current.some((t) => t.type === type && t.message === trimmedMessage)) {
+          return current;
+        }
 
-      setToasts((current) => [...current, { id, type, message: trimmedMessage }]);
-      window.setTimeout(() => removeToast(id), TOAST_DURATION_MS);
+        const id = crypto.randomUUID();
+        window.setTimeout(() => removeToast(id), TOAST_DURATION_MS);
+
+        // Keep at most 2 toasts simultaneously to prevent vertical stacking/overlapping to top of screen
+        const capped = current.length >= 2 ? current.slice(current.length - 1) : current;
+        return [...capped, { id, type, message: trimmedMessage }];
+      });
     },
     [removeToast]
   );
