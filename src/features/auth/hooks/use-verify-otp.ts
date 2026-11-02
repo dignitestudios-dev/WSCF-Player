@@ -107,9 +107,13 @@ export function useVerifyOtp() {
           );
         },
         onError: (error) => {
-          // Left unlocked deliberately: a rejected code is the one case where
-          // the user needs the boxes back to correct it.
+          // Auto-clear OTP input fields on verification error so user can re-enter cleanly
           showApiErrorToast(error, "OTP verification failed. Please try again.");
+          setOtpDigits(Array.from({ length: 6 }, () => ""));
+          form.setValue("otp", "");
+          if (typeof document !== "undefined") {
+            document.getElementById("otp-0")?.focus();
+          }
         },
       }
     );
