@@ -3,6 +3,8 @@
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { DASHBOARD_PLAYERS_RATING_ROUTE, PLAYERS_RATING_ROUTE } from "@/config/routes";
 import { parseCalendarDate } from "@/lib/calendar-date";
+import { useAuth } from "@/hooks/use-auth";
+import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
 import {
   useUserProfileQuery,
   useUserTournamentHistoryQuery,
@@ -15,6 +17,9 @@ export function usePlayerProfile() {
   const playerId = params.id as string;
   const fromDashboard = pathname.startsWith("/dashboard/player-profile");
   const backHrefParam = searchParams.get("backHref");
+
+  const { user: authUser } = useAuth();
+  const { data: authUserData } = useAuthUserQuery();
 
   const { data: userProfileData, isLoading: isLoadingProfile } = useUserProfileQuery(playerId);
   const { data: historyData, isLoading: isLoadingHistory } = useUserTournamentHistoryQuery(
@@ -29,6 +34,30 @@ export function usePlayerProfile() {
   const account = userProfileData?.data?.user ?? profileData?.account;
   const history = historyData?.data?.history || [];
 
+  const currentAccount = authUserData?.data?.user ?? authUser;
+  const currentChildProfile = authUserData?.data?.playerProfile;
+  const currentChildren: PlayerChild[] = authUserData?.data?.children ?? authUser?.children ?? [];
+
+  // A user can only view their own (or their own children's) Date of Birth.
+  const isMine = Boolean(
+    currentAccount && (
+      (account?._id && String(account._id) === String(currentAccount._id)) ||
+      (typeof account === "string" && String(account) === String(currentAccount._id)) ||
+      (currentChildProfile?._id && String(currentChildProfile._id) === String(playerId)) ||
+      (currentChildProfile?.membershipId && String(currentChildProfile.membershipId) === String(playerId)) ||
+      (profileData?._id && currentChildProfile?._id && String(currentChildProfile._id) === String(profileData._id)) ||
+      (profileData?.membershipId && currentChildProfile?.membershipId && String(currentChildProfile.membershipId) === String(profileData.membershipId)) ||
+      currentChildren.some((child) =>
+        Boolean(
+          (child._id && String(child._id) === String(playerId)) ||
+          (child.membershipId && String(child.membershipId) === String(playerId)) ||
+          (profileData?._id && child._id && String(child._id) === String(profileData._id)) ||
+          (profileData?.membershipId && child.membershipId && String(child.membershipId) === String(profileData.membershipId))
+        )
+      )
+    )
+  );
+
   const fallbackAvatar = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ADADAD"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
 
   const player = {
@@ -38,9 +67,9 @@ export function usePlayerProfile() {
     gender: profileData?.gender || "-",
     // One address per household, held on the account.
     city: account?.address?.city || "-",
-    dateOfBirth: profileData?.dob
+    dateOfBirth: isMine && profileData?.dob
       ? (parseCalendarDate(profileData.dob)?.toLocaleDateString() ?? "-")
-      : "-",
+      : null,
     currentRating: profileData?.rating || 0,
     grade: profileData?.grade || "-",
     status: profileData?.status || "-",
@@ -80,6 +109,7 @@ export function usePlayerProfile() {
 
   return {
     player,
+    isMine,
     isLoading: isLoadingProfile || isLoadingHistory,
     backHref: backHrefParam || (fromDashboard ? DASHBOARD_PLAYERS_RATING_ROUTE : PLAYERS_RATING_ROUTE),
   };

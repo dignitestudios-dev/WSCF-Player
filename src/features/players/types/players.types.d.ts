@@ -12,7 +12,7 @@ interface PlayerProfile {
   userId: string;
   gender: string;
   city: string;
-  dateOfBirth: string;
+  dateOfBirth?: string | null;
   currentRating: number;
   status: string;
   avatarUrl: string;

@@ -20,7 +20,7 @@ function RatingStarIcon({ className }: { className?: string }) {
 
 function PlayerProfileContent() {
   const router = useRouter();
-  const { player, isLoading } = usePlayerProfile();
+  const { player, isMine, isLoading } = usePlayerProfile();
 
   if (isLoading) {
     return (
@@ -75,7 +75,9 @@ function PlayerProfileContent() {
     { label: "USER ID", value: player.userId },
     { label: "Grade", value: player.grade },
     { label: "City", value: player.city },
-    { label: "Date Of Birth", value: player.dateOfBirth },
+    ...(isMine && player.dateOfBirth
+      ? [{ label: "Date Of Birth", value: player.dateOfBirth }]
+      : []),
     {
       label: "Team",
       value:
