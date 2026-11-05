@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { ExternalLink } from "lucide-react";
 import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 
@@ -14,28 +15,57 @@ const SCHOOL_TEAM_FORM_URL =
 const CLUB_TEAM_FORM_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSdAgoAfIHHyHCanU0rHj0OhCRQBLWEjc7icw9mJZX7q6gz3Hw/viewform?usp=dialog";
 
-const SCHOOL_STEPS = [
+const SCHOOL_SAFE_PLAY_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSdMrkzNUdLdyPBkwZEnvK9pg5C7EHqr7fthpcmkQN3sLvY14A/viewform";
+const CLUB_SAFE_PLAY_URL =
+  "https://docs.google.com/spreadsheets/u/0/d/1ywo-2dUN7ghGY4Ye0c3rGYKEItAV_93avLzpCxwNvew/edit";
+const PARENT_CONFIRMATION_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSdDqJ7skncnaMLmC2hc53ScLj79e4joiHQwCPmipZlIb0dgEQ/viewform";
+
+function InlineLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-semibold text-[#083F92] underline underline-offset-2 hover:text-[#063875]"
+    >
+      {children}
+    </a>
+  );
+}
+
+const SCHOOL_STEPS: ReactNode[] = [
   "Have each of your parents go to WSCF registration sign up and register as a parent. Then have them sign up for their child as a player.",
   "Send a list of players in your club to your principal who will then verify them with an email to us with the list that those students attend that school.",
   "Once our admin receives this list they will add team code to your player’s profile.",
   "Parents will get an email confirming that your player(s) has been added to your team.",
-  "You then submit the Safe Play document",
+  <span>
+    You then submit the{" "}
+    <InlineLink href={SCHOOL_SAFE_PLAY_URL}>Safe Play document</InlineLink>.
+  </span>,
 ];
 
-const CLUB_STEPS = [
+const CLUB_STEPS: ReactNode[] = [
   "Have each of your parents go to WSCF registration sign up and register as a parent. Then have them sign up for their child as a player.",
-  "You submit to Admin the Safe Play document",
+  <span>
+    You submit to Admin the{" "}
+    <InlineLink href={CLUB_SAFE_PLAY_URL}>Safe Play document</InlineLink>.
+  </span>,
   "You submit to Admin the list of your students.",
-  "Direct your parents to the Parent Confirmation letter.",
+  <span>
+    Direct your parents to complete the{" "}
+    <InlineLink href={PARENT_CONFIRMATION_URL}>Parent Confirmation</InlineLink>.
+  </span>,
   "You submit a picture of the players at your first four sessions with (Left to right name designation)",
   "Once Admin receives these three documents then those players in both pictures and have parent commitments admin will assign team code to each of your players’ profile. (please note players must attend at least two sessions in a month before they can be added to a team)",
 ];
 
-function Steps({ items }: { items: string[] }) {
+function Steps({ items }: { items: ReactNode[] }) {
   return (
     <ol className="flex list-decimal flex-col gap-2 pl-6 text-base leading-[22px] tracking-[-0.014em] text-black marker:font-semibold">
-      {items.map((item) => (
-        <li key={item} className="pl-1">
+      {items.map((item, index) => (
+        <li key={index} className="pl-1">
           {item}
         </li>
       ))}
