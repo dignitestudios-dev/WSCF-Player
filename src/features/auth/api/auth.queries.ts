@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMe, updateProfile, UpdateUserProfilePayload } from "@/features/auth/api/auth.service";
 
-export function useAuthUserQuery() {
+export function useAuthUserQuery(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["authUser"],
     queryFn: () => getMe(),
     staleTime: 5 * 60 * 1000,
+    ...options,
   });
 }
 

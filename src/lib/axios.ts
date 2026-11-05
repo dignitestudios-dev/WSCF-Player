@@ -40,7 +40,10 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem(AUTH_USER_KEY);
         clearActiveProfileId();
         document.cookie = `${AUTH_TOKEN_KEY}=; path=/; max-age=0`;
-        window.location.href = AUTH_REDIRECT;
+        const currentPath = window.location.pathname;
+        if (!currentPath.startsWith("/auth")) {
+          window.location.href = AUTH_REDIRECT;
+        }
       }
     }
 

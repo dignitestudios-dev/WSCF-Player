@@ -18,8 +18,12 @@ export function usePlayerProfile() {
   const fromDashboard = pathname.startsWith("/dashboard/player-profile");
   const backHrefParam = searchParams.get("backHref");
 
-  const { user: authUser } = useAuth();
-  const { data: authUserData } = useAuthUserQuery();
+  const { isAuthenticated, user: authUser } = useAuth();
+  // Only query /user/me when authenticated; unauthenticated visitors (e.g. on
+  // /auth/player-profile/[id]) would otherwise trigger a 401 response and redirect.
+  const { data: authUserData } = useAuthUserQuery({
+    enabled: Boolean(isAuthenticated),
+  });
 
   const { data: userProfileData, isLoading: isLoadingProfile } = useUserProfileQuery(playerId);
   const { data: historyData, isLoading: isLoadingHistory } = useUserTournamentHistoryQuery(
@@ -40,6 +44,7 @@ export function usePlayerProfile() {
 
   // A user can only view their own (or their own children's) Date of Birth.
   const isMine = Boolean(
+    isAuthenticated &&
     currentAccount && (
       (account?._id && String(account._id) === String(currentAccount._id)) ||
       (typeof account === "string" && String(account) === String(currentAccount._id)) ||
