@@ -20,6 +20,8 @@ interface MyProfile {
   team: string;
   city: string;
   dateOfBirth: string;
+  /** The same day as "YYYY-MM-DD", for the edit form. Empty when none is stored. */
+  birthDate?: string;
   email?: string;
   grade?: string;
   division?: string;

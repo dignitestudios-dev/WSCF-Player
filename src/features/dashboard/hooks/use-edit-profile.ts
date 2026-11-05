@@ -19,6 +19,7 @@ function profileToFormValues(profile: MyProfile): EditProfileFields {
       profile.gender === "male" || profile.gender === "female"
         ? profile.gender
         : ("" as any),
+    dob: profile.birthDate ?? "",
     email: profile.email ?? "",
     grade: profile.grade ?? "",
     city: profile.city ?? "",

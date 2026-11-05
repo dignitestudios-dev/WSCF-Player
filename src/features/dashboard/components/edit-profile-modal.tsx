@@ -1,7 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import type { UseFormRegister } from "react-hook-form";
 import { Controller } from "react-hook-form";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { parseCalendarDate, toCalendarDateString } from "@/lib/calendar-date";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useEditProfile } from "@/features/dashboard/hooks/use-edit-profile";
 import { ResponsiveDialog, ResponsiveDialogContent } from "@/components/ui/responsive-dialog";
 import {
@@ -21,6 +28,21 @@ interface EditProfileModalProps {
 
 const inputClassName =
   "h-11 w-full rounded-[24px] border border-[#3D3775] bg-white px-4 text-sm text-[#181818] outline-none placeholder:text-[#181818]/60 focus:ring-2 focus:ring-[#083F92]/15";
+
+/**
+ * The birth dates the picker offers: a player is at least 4 and not yet 21, so
+ * the year dropdown never lists a year nobody could have been born in. The
+ * schema is what actually decides; this only keeps the picker honest.
+ */
+function getBirthDateRange() {
+  const latest = new Date();
+  latest.setFullYear(latest.getFullYear() - 4);
+
+  const earliest = new Date();
+  earliest.setFullYear(earliest.getFullYear() - 21);
+
+  return { earliest, latest };
+}
 
 function CloseIcon() {
   return (
@@ -131,6 +153,9 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
   const isMotherPrimary = Boolean(profile.parents?.mother?.isPrimary);
   const isFatherPrimary = !isMotherPrimary;
 
+  const [isDobOpen, setIsDobOpen] = useState(false);
+  const birthDateRange = getBirthDateRange();
+
   return (
     <ResponsiveDialog open={true} onOpenChange={(open) => { if (!open && !isUpdating) onClose(); }}>
       <ResponsiveDialogContent
@@ -208,6 +233,52 @@ export default function EditProfileModal({ profile, isUpdating, onClose, onSave 
                         )}
                       />
                       {errors.gender && <p className="text-xs text-red-600">{errors.gender.message as string}</p>}
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col gap-2">
+                      <label htmlFor="dob" className={`text-sm font-medium capitalize leading-[19px] text-[#181818] flex items-center gap-1 ${isUpdating ? "opacity-50" : ""}`}>
+                        <span>Birth Date</span>
+                        {profile.birthDate && <span className="text-red-500 font-bold">*</span>}
+                      </label>
+                      <Controller
+                        control={control}
+                        name="dob"
+                        render={({ field }) => (
+                          <Popover open={isDobOpen} onOpenChange={setIsDobOpen}>
+                            <PopoverTrigger
+                              id="dob"
+                              disabled={isUpdating}
+                              className={cn(
+                                inputClassName,
+                                "flex items-center justify-between text-left disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50",
+                                !field.value && "text-[#181818]/60",
+                              )}
+                            >
+                              {field.value
+                                ? format(parseCalendarDate(field.value)!, "PPP")
+                                : "Select birth date"}
+                              <CalendarIcon className="h-4 w-4 opacity-60" />
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                captionLayout="dropdown"
+                                startMonth={birthDateRange.earliest}
+                                endMonth={birthDateRange.latest}
+                                defaultMonth={parseCalendarDate(field.value) ?? birthDateRange.latest}
+                                selected={parseCalendarDate(field.value) ?? undefined}
+                                onSelect={(date) => {
+                                  field.onChange(toCalendarDateString(date));
+                                  setIsDobOpen(false);
+                                }}
+                                disabled={(date) =>
+                                  date > birthDateRange.latest || date < birthDateRange.earliest
+                                }
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        )}
+                      />
+                      {errors.dob && <p className="text-xs text-red-600">{errors.dob.message as string}</p>}
                     </div>
                   </FormRow>
                   <FormRow>

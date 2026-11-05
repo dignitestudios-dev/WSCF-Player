@@ -1,4 +1,15 @@
 import { z } from "zod";
+import { differenceInYears } from "date-fns";
+import { parseCalendarDate } from "@/lib/calendar-date";
+
+// The same window signup enforces (child.schema.ts): 4 to 20 whole years old.
+const MIN_PLAYER_AGE = 4;
+const MAX_PLAYER_AGE = 20;
+
+const ageOf = (value: string) => {
+  const date = parseCalendarDate(value);
+  return date ? differenceInYears(new Date(), date) : null;
+};
 
 const nameRegex = /^[a-zA-Z'.-]+(?: [a-zA-Z'.-]+)*$/;
 const phoneRegex = /^(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})?$/;
@@ -24,6 +35,20 @@ export const editProfileSchema = z.object({
   gender: z.enum(["male", "female"], {
     errorMap: () => ({ message: "Please select a valid gender" }),
   }),
+  // Empty only for a player who never had one stored; the picker cannot clear
+  // a date that is there, so for everyone else this is effectively required.
+  dob: z
+    .string()
+    .optional()
+    .refine((value) => !value || ageOf(value) !== null, "Please select a valid birth date")
+    .refine((value) => {
+      const age = value ? ageOf(value) : null;
+      return age === null || age >= MIN_PLAYER_AGE;
+    }, "Player must be at least 4 years old")
+    .refine((value) => {
+      const age = value ? ageOf(value) : null;
+      return age === null || age <= MAX_PLAYER_AGE;
+    }, "Player must be 20 years old or younger"),
   sigma: z.string().optional(),
   email: z
     .string()

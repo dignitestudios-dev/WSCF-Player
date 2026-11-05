@@ -5,7 +5,7 @@ import { useAuthUserQuery, useUpdateProfileMutation } from "@/features/auth/api/
 import { uploadProfileImage } from "@/features/auth/api/auth.service";
 import { useUpdateChildMutation } from "@/features/players/api/children.queries";
 import { showApiSuccessToast, showApiErrorToast } from "@/lib/api-toast";
-import { parseCalendarDate } from "@/lib/calendar-date";
+import { parseCalendarDate, toCalendarDateString } from "@/lib/calendar-date";
 
 export function useMyProfile() {
   const { data, isPending } = useAuthUserQuery();
@@ -47,6 +47,7 @@ export function useMyProfile() {
           year: "numeric",
         }) ?? "N/A")
       : "N/A",
+    birthDate: toCalendarDateString(parseCalendarDate(playerProfile?.dob)),
     // The account email: a child has none of their own.
     email: user?.email || "N/A",
     division: playerProfile?.division || "N/A",
@@ -127,6 +128,8 @@ export function useMyProfile() {
             lastName: values.lastName,
             grade: values.grade,
             ...(values.gender ? { gender: values.gender } : {}),
+            // Only when there is one: an empty box means "leave it as it is".
+            ...(values.dob ? { dob: values.dob } : {}),
           },
         });
       }
