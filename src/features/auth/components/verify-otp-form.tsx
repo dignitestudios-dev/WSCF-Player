@@ -37,6 +37,9 @@ export default function VerifyOtpForm() {
           <p className="text-base leading-[22px] tracking-[-0.014em] text-[#565656]">
             The code was sent to {displayEmail}
           </p>
+          <p className="text-xs font-normal text-[#727272]">
+            Valid for 10 minutes
+          </p>
         </div>
 
         <div className="flex flex-col gap-[26px]">
