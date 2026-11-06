@@ -75,7 +75,6 @@ const defaultTournaments: DashboardTournament[] = [
 export function useDashboard() {
   const { data: authData, isLoading } = useAuthUserQuery();
 
-  const user = authData?.data?.user;
   const membership = authData?.data?.membership;
   const profile = authData?.data?.playerProfile;
   const upcomingCount = authData?.data?.upcomingTournamentCount || 0;
@@ -116,7 +115,9 @@ export function useDashboard() {
           : "Expired",
     hasMembership: Boolean(membership),
     validTill: validTillDate,
-    userId: profile?.membershipId || user?._id || "N/A",
+    // Issued with the first membership. Never the database id: shown as an ID
+    // it would look real but identify nothing.
+    userId: profile?.membershipId || "N/A",
     currentRating: profile?.rating || 0,
     ratingStatus: profile?.ratingStatus,
     lastUpdate: lastUpdateDate,

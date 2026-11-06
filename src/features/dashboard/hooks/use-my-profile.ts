@@ -33,7 +33,9 @@ export function useMyProfile() {
     // The stored halves, not the joined string. `name` is only for display.
     firstName: playerProfile?.firstName || "",
     lastName: playerProfile?.lastName || "",
-    userId: playerProfile?.membershipId || playerProfile?._id || "N/A",
+    // Issued with the first membership. Never the database id: shown as an ID
+    // it would look real but identify nothing.
+    userId: playerProfile?.membershipId || "N/A",
     gender: playerProfile?.gender || "N/A",
     // /user/me returns a team object, or null when the player is on no team.
     team: playerProfile?.team?.name || "N/A",

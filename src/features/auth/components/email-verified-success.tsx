@@ -36,8 +36,8 @@ export default function EmailVerifiedSuccess() {
             You&apos;re All Set!
           </h1>
           <p className="text-lg leading-6 text-black">
-            Your email has been verified successfully, and your User ID has been sent to your email
-            address.
+            Your email has been verified successfully. Your player&apos;s membership ID will be
+            issued once you purchase their membership.
           </p>
         </div>
 
