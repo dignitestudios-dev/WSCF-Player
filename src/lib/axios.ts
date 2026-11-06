@@ -6,9 +6,11 @@ import {
   clearActiveProfileId,
 } from "@/features/players/active-profile";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://api.wisconsinscholasticchess.org/";
+// const BASE_URL =
+//   process.env.NEXT_PUBLIC_API_URL ||
+//   "https://api.wisconsinscholasticchess.org/";
+
+const BASE_URL = "https://api.staging.wisconsinscholasticchess.org/";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
