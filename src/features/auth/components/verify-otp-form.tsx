@@ -38,7 +38,7 @@ export default function VerifyOtpForm() {
             The code was sent to {displayEmail}
           </p>
           <p className="text-xs font-normal text-[#727272]">
-            Valid for 10 minutes
+            Valid for 8 hours
           </p>
         </div>
 
@@ -77,6 +77,10 @@ export default function VerifyOtpForm() {
                   ? `Resend in ${resendTimer}s`
                   : "Resend"}
             </button>
+          </p>
+
+          <p className="text-center text-xs text-[#727272]">
+            Not receiving the email? Please check your Spam or Junk folder.
           </p>
         </div>
       </div>
