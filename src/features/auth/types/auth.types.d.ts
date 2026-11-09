@@ -46,6 +46,9 @@ interface RegisterMemberPayload {
 interface RegisterMemberResponse {
   message?: string;
   apiMessage?: string;
+  /** Signing up signs the parent in. */
+  accessToken?: string;
+  user?: User;
 }
 
 /**
@@ -139,30 +142,19 @@ interface ForgotPasswordFormData {
   email: string;
 }
 
-interface ResendOtpPayload {
+interface ResendVerificationPayload {
   email: string;
-  type: "email";
-  // Chooses the wording of the mail. The same code is issued either way.
-  purpose?: "verify" | "reset";
 }
 
-interface VerifyOtpFormData {
+interface ChangeEmailPayload {
   email: string;
-  otp: string;
-}
-
-interface VerifyOtpResponse {
-  message?: string;
-  apiMessage?: string;
-  accessToken?: string;
-  user?: User;
 }
 
 interface SetNewPasswordFormData {
-  email: string;
   password: string;
   confirmPassword: string;
-  token?: string;
+  /** From the emailed reset link. */
+  token: string;
 }
 
 interface SetNewPasswordFields {

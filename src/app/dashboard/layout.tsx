@@ -1,4 +1,5 @@
 import DashboardHeader from "@/features/dashboard/components/dashboard-header";
+import EmailVerificationBanner from "@/features/dashboard/components/email-verification-banner";
 import PendingRatingBanner from "@/features/dashboard/components/pending-rating-banner";
 import BottomNav from "@/features/dashboard/components/bottom-nav";
 import AuthGuard from "@/components/shared/auth-guard";
@@ -18,6 +19,7 @@ export default function DashboardLayout({
         }}
       >
         <DashboardHeader />
+        <EmailVerificationBanner />
         <PendingRatingBanner />
         {/* On a phone the bottom bar floats over the page, so the page leaves
             exactly its height (plus the home-bar inset) free at the bottom. */}

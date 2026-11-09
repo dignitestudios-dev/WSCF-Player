@@ -12,6 +12,7 @@ export default function SetNewPasswordForm() {
     form,
     onSubmit,
     isPending,
+    hasToken,
     error,
     showPassword,
     showConfirmPassword,
@@ -52,6 +53,12 @@ export default function SetNewPasswordForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <fieldset disabled={isPending} className="flex w-full flex-col gap-[26px] border-0 p-0 m-0">
+            {!hasToken && (
+              <p className="text-center text-sm text-red-600" role="alert">
+                This reset link is incomplete. Please use the button in your
+                email, or request a new link from the Forgot Password page.
+              </p>
+            )}
             {error && (
               <p className="text-center text-sm text-red-600" role="alert">
                 {error}

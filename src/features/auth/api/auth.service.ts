@@ -29,7 +29,7 @@ interface SignInApiResponse {
  * The account, as the app holds it.
  *
  * The signed-in person is the parent; the players are the children on
- * `children`. Both entry points — signing in and verifying the OTP — return
+ * `children`. Both entry points — signing in and signing up — return
  * the same shape from the API, so both map through here.
  */
 function mapAccount(
@@ -53,7 +53,6 @@ function mapAccount(
   };
 }
 
-const mapOtpVerifiedUser = mapAccount;
 const mapSignInUser = mapAccount;
 
 export async function signInMember(
@@ -113,7 +112,22 @@ export async function registerMember(
     throw new Error(data.message ?? "Registration failed");
   }
 
-  return { message: data.message, apiMessage: data.message };
+  // Signing up signs you in: the account works immediately, and the rest of
+  // onboarding (paying for the players) runs behind that session.
+  const accessToken =
+    data.data?.token ?? data.token ?? data.accessToken ?? data.data?.accessToken;
+  const userPayload = (data.data?.user ?? data.user) as
+    | Record<string, unknown>
+    | undefined;
+
+  return {
+    message: data.message,
+    apiMessage: data.message,
+    accessToken,
+    user: userPayload
+      ? mapAccount(userPayload, String(userPayload.email ?? ""))
+      : undefined,
+  };
 }
 
 export async function registerUser(
@@ -135,70 +149,88 @@ export async function forgotPassword(
   );
 
   if (data.success === false) {
-    throw new Error(data.message ?? "Failed to send OTP");
+    throw new Error(data.message ?? "Failed to send the reset link");
   }
-
-  return { message: data.message ?? "OTP Sent Successfully" };
-}
-
-export async function verifyOtp(
-  payload: VerifyOtpFormData
-): Promise<VerifyOtpResponse> {
-  const { data } = await axiosInstance.post<SignInApiResponse>(
-    "/auth/verify-otp",
-    {
-      email: payload.email,
-      otp: payload.otp,
-      type: "email",
-    }
-  );
-
-  if (data.success === false) {
-    throw new Error(data.message ?? "OTP verification failed");
-  }
-
-  const accessToken =
-    data.data?.token ?? data.token ?? data.accessToken ?? data.data?.accessToken;
-  const userPayload = (data.data?.user ?? data.user) as
-    | Record<string, unknown>
-    | undefined;
 
   return {
-    message: data.message,
-    apiMessage: data.message,
-    accessToken,
-    user: userPayload
-      ? mapOtpVerifiedUser(userPayload, payload.email)
-      : undefined,
+    message: data.message ?? "We sent a password reset link to your email.",
   };
 }
 
-export async function resendOtp(
-  payload: ResendOtpPayload
-): Promise<{ message?: string; apiMessage?: string }> {
+/** Confirms the address from the emailed link. Needs no login. */
+export async function verifyEmailLink(
+  token: string
+): Promise<{ message: string }> {
   const { data } = await axiosInstance.post<SignInApiResponse>(
-    "/auth/resend-otp",
+    "/auth/verify-email-link",
+    { token }
+  );
+
+  if (data.success === false) {
+    throw new Error(data.message ?? "This link is invalid or has expired.");
+  }
+
+  return { message: data.message ?? "Your email has been verified." };
+}
+
+/** Asks for a verification link for the signed-in parent. */
+export async function sendVerificationLink(): Promise<{ message: string }> {
+  const { data } = await axiosInstance.post<SignInApiResponse>(
+    "/auth/send-verification-link"
+  );
+
+  if (data.success === false) {
+    throw new Error(data.message ?? "Failed to send the verification link");
+  }
+
+  return {
+    message: data.message ?? "We sent a verification link to your email.",
+  };
+}
+
+/** The same, by address, for someone who is not signed in. */
+export async function resendVerificationLink(
+  payload: ResendVerificationPayload
+): Promise<{ message: string }> {
+  const { data } = await axiosInstance.post<SignInApiResponse>(
+    "/auth/resend-verification-link",
     payload
   );
 
   if (data.success === false) {
-    throw new Error(data.message ?? "Failed to resend OTP");
+    throw new Error(data.message ?? "Failed to send the verification link");
   }
 
-  return { message: data.message, apiMessage: data.message };
+  return {
+    message: data.message ?? "We sent a verification link to your email.",
+  };
 }
 
+/** Corrects the sign-in email on an account that is not verified yet. */
+export async function changeEmail(
+  payload: ChangeEmailPayload
+): Promise<{ message: string; email: string }> {
+  const { data } = await axiosInstance.post<
+    SignInApiResponse & { data?: { email?: string } }
+  >("/auth/change-email", payload);
+
+  if (data.success === false) {
+    throw new Error(data.message ?? "Failed to change your email");
+  }
+
+  return {
+    message: data.message ?? "Your email was changed.",
+    email: data.data?.email ?? payload.email,
+  };
+}
+
+/** Sets a new password using the emailed link. Needs no login. */
 export async function setNewPassword(
   payload: SetNewPasswordFormData
 ): Promise<{ message: string }> {
   const { data } = await axiosInstance.post<SignInApiResponse>(
-    "/auth/reset-password",
-    { password: payload.password },
-    {
-      headers: {
-        ...(payload.token ? { Authorization: `Bearer ${payload.token}` } : {}),
-      },
-    }
+    "/auth/reset-password-link",
+    { token: payload.token, password: payload.password }
   );
 
   if (data.success === false) {

@@ -11,7 +11,8 @@ import { AUTH_REDIRECT } from "@/config/routes";
 export function useSetNewPassword() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") ?? "";
+  // The link in the reset email carries everything: the token is the proof,
+  // so there is no email to pass along and no login to hold.
   const token = searchParams.get("token") ?? "";
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -25,10 +26,10 @@ export function useSetNewPassword() {
   });
 
   function onSubmit(data: SetNewPasswordFields) {
-    if (!email) return;
+    if (!token) return;
 
     updatePassword(
-      { email, password: data.password, confirmPassword: data.confirmPassword, token },
+      { password: data.password, confirmPassword: data.confirmPassword, token },
       {
         onSuccess: () => {
           setIsSuccessModalOpen(true);
@@ -58,6 +59,7 @@ export function useSetNewPassword() {
     form,
     onSubmit,
     isPending,
+    hasToken: Boolean(token),
     error: error?.message ?? null,
     showPassword,
     showConfirmPassword,

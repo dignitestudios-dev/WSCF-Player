@@ -4,10 +4,10 @@ export const PUBLIC_ROUTES = [
   "/auth/member-login",
   "/auth/forgot-password",
   "/auth/players-rating-lookup",
-  "/auth/verify-otp",
+  "/auth/verify-email",
+  "/auth/verify-email-prompt",
   "/auth/set-new-password",
   "/auth/register",
-  "/auth/email-verified",
   "/auth/membership-validation", // redirects to the payment page
   "/membership/payment",
   "/auth/tournament-participants",
@@ -35,8 +35,10 @@ export function getPlayerProfileRoute(id: string) {
 export function getDashboardPlayerProfileRoute(id: string) {
   return `${DASHBOARD_PLAYER_PROFILE_ROUTE}/${id}`;
 }
-export const VERIFY_OTP_ROUTE = "/auth/verify-otp";
-export const EMAIL_VERIFIED_ROUTE = "/auth/email-verified";
+// Where the link in the verification email lands, signed in or not.
+export const VERIFY_EMAIL_ROUTE = "/auth/verify-email";
+// The skippable "verify your email" step shown once, after the first payment.
+export const VERIFY_EMAIL_PROMPT_ROUTE = "/auth/verify-email-prompt";
 export const MEMBERSHIP_PAYMENT_ROUTE = "/membership/payment";
 export {
   SELECT_PLAYER_ROUTE,
@@ -75,14 +77,6 @@ export function getTournamentRegisteredPlayersRoute(tournamentId: string) {
 export function getDashboardTournamentParticipantsRoute(tournamentId?: string) {
   if (!tournamentId) return DASHBOARD_TOURNAMENT_PARTICIPANTS_ROUTE;
   return getTournamentRegisteredPlayersRoute(tournamentId);
-}
-
-export function getVerifyOtpRoute(
-  email: string,
-  from: "register" | "forgot-password" = "forgot-password"
-) {
-  const params = new URLSearchParams({ email, from });
-  return `${VERIFY_OTP_ROUTE}?${params.toString()}`;
 }
 
 // Add as the project grows:

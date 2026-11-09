@@ -61,20 +61,20 @@ export const pageMetadata = {
     description:
       "Reset your WSCF account password and regain access to your member dashboard and tournament tools.",
   },
-  verifyOtp: {
-    title: "Verify OTP",
+  verifyEmail: {
+    title: "Verify Your Email",
     description:
-      "Verify your one-time password to continue your WSCF account registration or password reset securely.",
+      "Confirm your email address to receive WSCF updates about your players, memberships and tournaments.",
+  },
+  verifyEmailPrompt: {
+    title: "Verify Your Email",
+    description:
+      "Verify your email to receive WSCF updates. You can skip this and do it any time.",
   },
   setNewPassword: {
     title: "Set New Password",
     description:
       "Create a new password for your Wisconsin Scholastic Chess Federation account.",
-  },
-  emailVerified: {
-    title: "Email Verified",
-    description:
-      "Your email has been verified successfully. Continue setting up your WSCF member account.",
   },
   membershipPayment: {
     title: "Membership Payment",

@@ -4,12 +4,50 @@ import { useForgotPassword } from "@/features/auth/hooks/use-forgot-password";
 import { ForgotPasswordIcon } from "@/features/auth/components/forgot-password-icons";
 
 export default function ForgotPasswordForm() {
-  const { form, onSubmit, isPending, error } = useForgotPassword();
+  const {
+    form,
+    onSubmit,
+    isPending,
+    error,
+    sentTo,
+    needsVerification,
+    sendVerificationLink,
+    isSendingVerification,
+    verificationSentTo,
+    tryAnotherEmail,
+  } = useForgotPassword();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = form;
+
+  if (sentTo) {
+    return (
+      <div className="flex w-full flex-col items-center gap-[26px] text-center">
+        <div className="flex h-[146px] w-[146px] items-center justify-center rounded-full bg-[rgba(8,63,146,0.1)]">
+          <ForgotPasswordIcon />
+        </div>
+        <div className="flex flex-col gap-3">
+          <h1 className="text-[28px] font-semibold leading-9 tracking-[-0.008em] text-[#083F92]">
+            Check Your Email
+          </h1>
+          <p className="text-base leading-[22px] text-[#565656]">
+            We sent a password reset link to{" "}
+            <strong className="break-all text-[#181818]">{sentTo}</strong>. It
+            works once and expires in 1 hour.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={tryAnotherEmail}
+          className="text-sm font-semibold text-[#083F92] underline"
+        >
+          Use a different email
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full flex-col items-center gap-[26px]">
@@ -23,7 +61,8 @@ export default function ForgotPasswordForm() {
             Forgot Password
           </h1>
           <p className="text-base leading-[22px] tracking-[-0.014em] text-[#565656]">
-            Please enter your details to log in.
+            Enter your email and we will send you a link to choose a new
+            password.
           </p>
         </div>
 
@@ -34,6 +73,29 @@ export default function ForgotPasswordForm() {
                 {error}
               </p>
             )}
+
+            {needsVerification &&
+              (verificationSentTo ? (
+                <p
+                  className="text-center text-sm text-[#083F92]"
+                  role="status"
+                >
+                  If that account exists, we sent a verification link to{" "}
+                  <strong className="break-all">{verificationSentTo}</strong>.
+                  Open it, then come back to reset your password.
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={sendVerificationLink}
+                  disabled={isSendingVerification}
+                  className="h-11 w-full rounded-[24px] border border-[#083F92] bg-white text-sm font-semibold text-[#083F92] transition-colors hover:bg-[#F5F7FB] disabled:opacity-60"
+                >
+                  {isSendingVerification
+                    ? "Sending..."
+                    : "Send me a verification link"}
+                </button>
+              ))}
 
             <div className="flex flex-col gap-1.5">
               <label

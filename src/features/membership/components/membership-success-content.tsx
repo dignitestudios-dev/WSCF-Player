@@ -6,7 +6,8 @@ import {
   CLAIM_RATINGS_ROUTE,
   SELECT_PLAYER_ROUTE,
 } from "@/features/players/routes";
-import { DEFAULT_REDIRECT } from "@/config/routes";
+import { DEFAULT_REDIRECT, VERIFY_EMAIL_PROMPT_ROUTE } from "@/config/routes";
+import { shouldShowVerifyPrompt } from "@/features/auth/verify-prompt";
 import { usePaypalCapture } from "@/features/payment/use-paypal-capture";
 
 /**
@@ -20,12 +21,20 @@ import { usePaypalCapture } from "@/features/payment/use-paypal-capture";
  */
 export default function MembershipSuccessContent() {
   const router = useRouter();
-  const { children, needsMasterFileCheck, isLoading } = useActivePlayer();
+  const { account, children, needsMasterFileCheck, isLoading } = useActivePlayer();
   const { state, message, retry } = usePaypalCapture();
 
   const playerCount = children.length;
 
   const handleContinue = () => {
+    // First time through, offer to verify the email. It is skippable and
+    // nothing depends on it; the prompt itself continues to ratings / the
+    // player picker / the dashboard.
+    if (shouldShowVerifyPrompt(account)) {
+      router.push(VERIFY_EMAIL_PROMPT_ROUTE);
+      return;
+    }
+
     // Ratings first: every player has to be answered for before the app can
     // meaningfully show any of them.
     if (needsMasterFileCheck) {

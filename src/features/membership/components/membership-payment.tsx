@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { DEFAULT_REDIRECT } from "@/config/routes";
+import { DEFAULT_REDIRECT, VERIFY_EMAIL_PROMPT_ROUTE } from "@/config/routes";
+import { shouldShowVerifyPrompt } from "@/features/auth/verify-prompt";
 import { useActivePlayer } from "@/features/players/use-active-player";
 import {
   CLAIM_RATINGS_ROUTE,
@@ -73,7 +74,7 @@ export default function MembershipPayment() {
   const [isCheckingCoupon, setIsCheckingCoupon] = useState(false);
   const { handleProceedToPayment, isPending } = useMembershipCheckout();
   const { data: quote, isLoading } = useMembershipQuoteQuery();
-  const { children, needsMasterFileCheck } = useActivePlayer();
+  const { account, children, needsMasterFileCheck } = useActivePlayer();
 
   const players = quote?.players ?? [];
   const unitPrice = quote?.unitPrice ?? 5;
@@ -110,14 +111,16 @@ export default function MembershipPayment() {
 
     queryClient.invalidateQueries({ queryKey: ["authUser"] });
 
-    const destination = needsMasterFileCheck
-      ? CLAIM_RATINGS_ROUTE
-      : children.length > 1
-        ? SELECT_PLAYER_ROUTE
-        : DEFAULT_REDIRECT;
+    const destination = shouldShowVerifyPrompt(account)
+      ? VERIFY_EMAIL_PROMPT_ROUTE
+      : needsMasterFileCheck
+        ? CLAIM_RATINGS_ROUTE
+        : children.length > 1
+          ? SELECT_PLAYER_ROUTE
+          : DEFAULT_REDIRECT;
 
     router.replace(destination);
-  }, [nothingToPay, needsMasterFileCheck, children.length, router, queryClient]);
+  }, [nothingToPay, needsMasterFileCheck, children.length, account, router, queryClient]);
 
   if (nothingToPay) {
     // Everything is covered; the redirect above is already running. Showing a

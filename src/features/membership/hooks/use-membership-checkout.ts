@@ -1,7 +1,8 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { DEFAULT_REDIRECT } from "@/config/routes";
+import { DEFAULT_REDIRECT, VERIFY_EMAIL_PROMPT_ROUTE } from "@/config/routes";
+import { shouldShowVerifyPrompt } from "@/features/auth/verify-prompt";
 import { useMembershipCheckoutMutation } from "@/features/membership/api/membership.mutations";
 import {
   MEMBERSHIP_CANCEL_ROUTE,
@@ -17,7 +18,7 @@ import {
 
 export function useMembershipCheckout() {
   const queryClient = useQueryClient();
-  const { children } = useActivePlayer();
+  const { account, children } = useActivePlayer();
   const { mutate: startCheckout, isPending } = useMembershipCheckoutMutation();
 
   /**
@@ -54,7 +55,9 @@ export function useMembershipCheckout() {
                 : authData?.data?.children || [];
             const playerCount = response.playerCount ?? allChildren.length;
 
-            if (playerCount > 1 || allChildren.length > 1) {
+            if (shouldShowVerifyPrompt(account)) {
+              window.location.href = VERIFY_EMAIL_PROMPT_ROUTE;
+            } else if (playerCount > 1 || allChildren.length > 1) {
               window.location.href = SELECT_PLAYER_ROUTE;
             } else if (allChildren.length === 1) {
               setActiveProfileId(allChildren[0]._id);

@@ -10,10 +10,10 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("auth-token")?.value;
 
-  // Verifying an email and the screen confirming it are onboarding steps, not
-  // sign-in pages: you are already authenticated by then and still need to see
-  // them, so they are deliberately absent from the list below — bouncing a
-  // signed-in user away from those two would break signup.
+  // The email-verification screens (the link's landing page and the post-payment
+  // step) and the password-reset page are deliberately absent from the list
+  // below. Verification works signed in or out, and a reset link is its own
+  // proof: bouncing a signed-in user to the dashboard would swallow the link.
   const isProtected = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
   const isAuthPage =
     [
@@ -21,7 +21,6 @@ export function proxy(request: NextRequest) {
       "/auth/member-login",
       "/auth/forgot-password",
       "/auth/players-rating-lookup",
-      "/auth/set-new-password",
       "/auth/register",
       "/auth/tournament-participants",
     ].includes(pathname) || pathname.startsWith("/auth/player-profile/");

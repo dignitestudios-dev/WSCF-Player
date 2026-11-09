@@ -4,11 +4,13 @@ import {
   loginUser,
   registerMember,
   registerUser,
-  resendOtp,
+  resendVerificationLink,
+  sendVerificationLink,
+  verifyEmailLink,
+  changeEmail,
   changePassword,
   setNewPassword,
   signInMember,
-  verifyOtp,
 } from "@/features/auth/api/auth.service";
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
 
@@ -43,15 +45,28 @@ export function useForgotPasswordMutation() {
   });
 }
 
-export function useVerifyOtpMutation() {
+export function useVerifyEmailLinkMutation() {
   return useMutation({
-    mutationFn: (payload: VerifyOtpFormData) => verifyOtp(payload),
+    mutationFn: (token: string) => verifyEmailLink(token),
   });
 }
 
-export function useResendOtpMutation() {
+export function useSendVerificationLinkMutation() {
   return useMutation({
-    mutationFn: (payload: ResendOtpPayload) => resendOtp(payload),
+    mutationFn: () => sendVerificationLink(),
+  });
+}
+
+export function useResendVerificationLinkMutation() {
+  return useMutation({
+    mutationFn: (payload: ResendVerificationPayload) =>
+      resendVerificationLink(payload),
+  });
+}
+
+export function useChangeEmailMutation() {
+  return useMutation({
+    mutationFn: (payload: ChangeEmailPayload) => changeEmail(payload),
   });
 }
 
