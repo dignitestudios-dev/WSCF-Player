@@ -1,5 +1,6 @@
 "use client";
 
+import { TeamText } from "./team-text";
 import { Suspense, useState } from "react";
 import { useAuthUserQuery } from "@/features/auth/api/auth.queries";
 import TournamentRegistrationFlow from "@/features/tournaments/components/tournament-registration-flow";
@@ -328,7 +329,7 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
                     </span>
                     <span className="truncate pr-2 min-w-0" title={userId}>{userId}</span>
                     <span className="truncate pr-2 min-w-0" title={division.hint ?? division.label}>{division.label}</span>
-                    <span className="truncate pr-2 min-w-0" title={team}>{team}</span>
+                    <TeamText team={team} className="pr-2" />
                     <span className="min-w-0 pr-2">
                       <span
                         className="inline-flex h-8 max-w-full min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white"

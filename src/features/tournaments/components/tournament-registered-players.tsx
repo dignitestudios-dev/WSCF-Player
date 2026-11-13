@@ -1,5 +1,6 @@
 "use client";
 
+import { TeamText } from "./team-text";
 import Link from "next/link";
 import { getDashboardPlayerProfileRoute } from "@/config/routes";
 import { useTournamentRegisteredPlayers } from "@/features/tournaments/hooks/use-tournament-registered-players";
@@ -189,7 +190,7 @@ export default function TournamentRegisteredPlayers({ tournamentId }: Tournament
                     <span className="truncate pr-2 min-w-0" title={participant.user.name}>{participant.user.name}</span>
                     <span className="truncate pr-2 min-w-0" title={userId}>{userId}</span>
                     <span className="truncate pr-2 min-w-0" title={division.hint ?? division.label}>{division.label}</span>
-                    <span className="truncate pr-2 min-w-0" title={team}>{team}</span>
+                    <TeamText team={team} className="pr-2" />
                     <span>
                       <span className="inline-flex h-8 min-w-[78px] items-center justify-center rounded-[22px] bg-[#083F92] px-3 text-base font-medium text-white">
                         {rating}
