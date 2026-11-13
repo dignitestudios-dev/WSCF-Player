@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getTournaments, getTournamentParticipants, getTournamentDetails, getEligibleDivisions, getMyTournaments, registerForTournament } from "@/features/tournaments/api/tournaments.service";
+import { getTournaments, getTournamentParticipants, getTournamentDetails, getEligibleDivisions, getMyTournaments, registerForTournament, getMyTournamentRegistration } from "@/features/tournaments/api/tournaments.service";
 
 export function useTournamentsQuery(params: GetTournamentsParams) {
   return useQuery({
@@ -51,5 +51,19 @@ export function useMyTournamentsQuery(params: { page: number; limit: number; sea
   return useQuery({
     queryKey: ["myTournaments", params],
     queryFn: () => getMyTournaments(params),
+  });
+}
+
+/**
+ * Whether the selected player is in this tournament, and with which division and
+ * team. Always refetched on open (staleTime 0): a registration made a moment ago
+ * must not read as "not registered" from a cached answer.
+ */
+export function useMyTournamentRegistrationQuery(tournamentId: string, playerId?: string) {
+  return useQuery({
+    queryKey: ["myTournamentRegistration", tournamentId, playerId ?? null],
+    queryFn: () => getMyTournamentRegistration(tournamentId),
+    enabled: !!tournamentId && !!playerId,
+    staleTime: 0,
   });
 }

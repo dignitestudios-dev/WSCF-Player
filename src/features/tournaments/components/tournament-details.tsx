@@ -11,7 +11,7 @@ import {
   getDashboardTournamentParticipantsRoute,
 } from "@/config/routes";
 import { useTournamentDetails } from "@/features/tournaments/hooks/use-tournament-details";
-import { useTournamentParticipantsQuery, useTournamentDetailsQuery } from "@/features/tournaments/api/tournaments.queries";
+import { useTournamentParticipantsQuery, useTournamentDetailsQuery, useMyTournamentRegistrationQuery } from "@/features/tournaments/api/tournaments.queries";
 import { useActivePlayer } from "@/features/players/use-active-player";
 import { Skeleton } from "@/components/ui/skeleton";
 import ParticipantCards from "@/features/tournaments/components/participant-cards";
@@ -107,10 +107,13 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
     ? new Date() > new Date(tournament.registrationCutoff)
     : false;
 
-  const isAlreadyRegistered = apiParticipants.some(
-    (p: any) =>
-      String(p.playerProfile?._id || p.playerProfileId || "") === String(activePlayer?._id || "")
-  );
+  // Asked of the player's own entry, not looked for in the list above: that is
+  // paged to ten, so anyone further down would be told they are not registered.
+  const { data: myRegistrationData, isPending: isMyRegistrationPending } =
+    useMyTournamentRegistrationQuery(tournamentId, activePlayer?._id);
+  const myRegistration = myRegistrationData?.data.registration ?? null;
+  const isAlreadyRegistered = Boolean(myRegistration);
+  const isCheckingRegistration = Boolean(activePlayer?._id) && isMyRegistrationPending;
 
   const handleRegisterClick = () => {
     if (authData?.data?.membership?.status !== "active") {
@@ -196,24 +199,28 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
                 ) : null}
               </div>
 
-              <button
-                type="button"
-                disabled={isAlreadyRegistered || isCutoffPassed || tournament.status !== "upcoming"}
-                onClick={handleRegisterClick}
-                className={`h-11 px-6 rounded-full font-semibold text-sm sm:text-base shrink-0 transition-colors ${
-                  isAlreadyRegistered
-                    ? "bg-[#EBF3FC] text-[#083F92] border border-[#C9DFF8] cursor-default"
-                    : isCutoffPassed || tournament.status !== "upcoming"
+              {isCheckingRegistration ? (
+                <Skeleton className="h-11 w-[140px] shrink-0 rounded-full" />
+              ) : isAlreadyRegistered ? (
+                <span className="inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-[#C9DFF8] bg-[#EBF3FC] px-6 text-sm font-semibold text-[#083F92] sm:text-base">
+                  Registered
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  disabled={isCutoffPassed || tournament.status !== "upcoming"}
+                  onClick={handleRegisterClick}
+                  className={`h-11 px-6 rounded-full font-semibold text-sm sm:text-base shrink-0 transition-colors ${
+                    isCutoffPassed || tournament.status !== "upcoming"
                       ? "bg-[#E0E0E0] text-[#828282] cursor-not-allowed shadow-none"
                       : "bg-[#083F92] text-white shadow-[0px_4px_4px_rgba(6,62,145,0.25)] hover:bg-[#063875] cursor-pointer"
-                }`}
-              >
-                {isAlreadyRegistered
-                  ? "Registered"
-                  : isCutoffPassed || tournament.status !== "upcoming"
+                  }`}
+                >
+                  {isCutoffPassed || tournament.status !== "upcoming"
                     ? "Registration Closed"
                     : "Register Now"}
-              </button>
+                </button>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[#151515]">
@@ -243,6 +250,33 @@ function TournamentDetailsContent({ tournamentId }: TournamentDetailsProps) {
                 </div>
               )}
             </div>
+
+            {myRegistration ? (
+              <div className="rounded-[8px] border border-[#C9DFF8] bg-[#F3F8FE] p-4">
+                <p className="mb-3 text-sm font-semibold text-[#083F92]">Your entry</p>
+                <dl className="grid gap-3 sm:grid-cols-2">
+                  <div className="min-w-0">
+                    <dt className="text-xs font-medium uppercase tracking-wide text-[#636363]">Division</dt>
+                    <dd className="mt-0.5 break-words text-base font-semibold text-[#151515] [overflow-wrap:anywhere]">
+                      {myRegistration.division?.label || myRegistration.division?.criteria || "—"}
+                    </dd>
+                    {myRegistration.division?.label && myRegistration.division?.criteria ? (
+                      <dd className="text-xs text-[#636363]">{myRegistration.division.criteria}</dd>
+                    ) : null}
+                  </div>
+                  <div className="min-w-0">
+                    <dt className="text-xs font-medium uppercase tracking-wide text-[#636363]">Team</dt>
+                    <dd className="mt-0.5 text-base text-[#151515]">
+                      {myRegistration.team ? (
+                        <TeamText team={myRegistration.team.name} mode="wrap" />
+                      ) : (
+                        <span className="text-[#636363]">No team</span>
+                      )}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            ) : null}
 
             {tournament.payOnSite && (
               <div className="flex items-start gap-2.5 rounded-[8px] bg-[#F7F9FC] border border-[#E3E8F0] p-3 text-xs text-[#555] leading-relaxed">

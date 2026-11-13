@@ -135,6 +135,7 @@ export function useTournamentRegistration(
         onSuccess: (response) => {
           queryClient.invalidateQueries({ queryKey: ["authUser"] });
           queryClient.invalidateQueries({ queryKey: ["myTournaments"] });
+          queryClient.invalidateQueries({ queryKey: ["myTournamentRegistration"] });
           if (
             response.data?.requiresPayment &&
             response.data?.checkoutUrl
@@ -150,6 +151,7 @@ export function useTournamentRegistration(
           showApiErrorToast(error, "Registration could not be completed.");
           queryClient.invalidateQueries({ queryKey: ["tournaments"] });
           queryClient.invalidateQueries({ queryKey: ["myTournaments"] });
+          queryClient.invalidateQueries({ queryKey: ["myTournamentRegistration"] });
           const msg = (error?.message || "").toLowerCase();
           if (msg.includes("closed") || msg.includes("ongoing") || msg.includes("no longer")) {
             setTimeout(() => {
