@@ -155,17 +155,6 @@ export default function AddPlayerContent() {
             />
           ))}
 
-          {!isAtLimit && (
-            <button
-              type="button"
-              onClick={openAddChild}
-              className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
-            >
-              <UserPlus className="h-4 w-4" />
-              Add another player
-            </button>
-          )}
-
           <div className="flex items-center justify-between rounded-[24px] border border-[#D8D4FF] bg-white px-4 py-3">
             <span className="text-sm leading-5 text-[#565656]">
               {children.length} {children.length === 1 ? "player" : "players"} ×
@@ -178,8 +167,19 @@ export default function AddPlayerContent() {
         </div>
       )}
 
-      {/* Sticky so the payment button stays reachable with a long list. */}
-      <div className="sticky bottom-0 mt-6 flex w-full flex-col gap-3 bg-white pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      {/* Sticky so adding another player and paying both stay in view with a
+          long list. */}
+      <div className="sticky bottom-0 mt-6 flex w-full flex-col gap-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        {children.length > 0 && !isAtLimit && (
+          <button
+            type="button"
+            onClick={openAddChild}
+            className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-[#3D3775]/40 bg-[#F7F6FF] px-4 py-4 text-sm font-semibold text-[#083F92] transition-colors hover:border-[#3D3775] hover:bg-[#ECEAFF]"
+          >
+            <UserPlus className="h-4 w-4" />
+            Add another player
+          </button>
+        )}
         <button
           type="button"
           onClick={continueToPayment}

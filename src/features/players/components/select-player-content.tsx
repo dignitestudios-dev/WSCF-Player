@@ -101,11 +101,12 @@ export default function SelectPlayerContent() {
             onSelect={() => setSelectedId(player._id)}
           />
         ))}
+      </div>
 
-        {/* The same dashed tile the switch-player dialog uses, so adding a
-            player looks the same wherever a parent is choosing between them.
-            Without it, this screen is a dead end for anyone who realises here
-            that a child is missing. */}
+      {/* Sticky so adding a player and Continue both stay in view however many
+          players the list has. The dashed tile matches the switch-player dialog,
+          and keeps this screen from being a dead end when a child is missing. */}
+      <div className="sticky bottom-0 mt-4 flex w-full flex-col gap-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {!isAtPlayerLimit && (
           <button
             type="button"
@@ -116,10 +117,6 @@ export default function SelectPlayerContent() {
             Add another player
           </button>
         )}
-      </div>
-
-      {/* Sticky so Continue stays reachable however many players the list has. */}
-      <div className="sticky bottom-0 mt-4 w-full bg-white pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={openDashboard}
