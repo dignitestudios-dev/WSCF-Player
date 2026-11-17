@@ -12,10 +12,7 @@ import {
 } from "@/features/players/api/children.queries";
 import { MEMBERSHIP_PAYMENT_ROUTE } from "@/config/routes";
 import { showApiErrorToast } from "@/lib/api-toast";
-import {
-  MAX_PLAYERS_PER_ACCOUNT,
-  PLAYER_LIMIT_MESSAGE,
-} from "@/config/limits";
+import { MAX_PLAYERS_PER_ACCOUNT } from "@/config/limits";
 
 /** What one membership costs, per player. */
 const MEMBERSHIP_UNIT_PRICE = 5;
@@ -133,20 +130,7 @@ export default function AddPlayerContent() {
         </p>
       </div>
 
-      {hasNoSlots ? (
-        /* The account is full. Nothing to add, so the screen says so instead of
-           offering a form that cannot be submitted. */
-        <div className="flex w-full flex-col items-center gap-2 rounded-[24px] border border-[#D8D4FF] bg-[#F7F6FF] px-4 py-8 text-center">
-          <UserPlus className="h-6 w-6 text-[#083F92]" />
-          <span className="text-sm font-semibold text-[#083F92]">
-            {PLAYER_LIMIT_MESSAGE}
-          </span>
-          <span className="text-xs text-[#565656]">
-            Your account already has {existingCount}{" "}
-            {existingCount === 1 ? "player" : "players"}.
-          </span>
-        </div>
-      ) : children.length === 0 ? (
+      {children.length === 0 ? (
         <button
           type="button"
           onClick={openAddChild}
@@ -171,15 +155,7 @@ export default function AddPlayerContent() {
             />
           ))}
 
-          {/* The button goes entirely at the limit; the message stands in its
-              place so the list does not simply end without explanation. */}
-          {isAtLimit ? (
-            <p className="rounded-[24px] bg-[#F7F6FF] px-4 py-4 text-center text-xs leading-4 text-[#565656]">
-              {existingCount > 0
-                ? `That is all ${MAX_PLAYERS_PER_ACCOUNT} players your account can hold.`
-                : PLAYER_LIMIT_MESSAGE}
-            </p>
-          ) : (
+          {!isAtLimit && (
             <button
               type="button"
               onClick={openAddChild}
@@ -202,7 +178,8 @@ export default function AddPlayerContent() {
         </div>
       )}
 
-      <div className="mt-6 flex w-full flex-col gap-3">
+      {/* Sticky so the payment button stays reachable with a long list. */}
+      <div className="sticky bottom-0 mt-6 flex w-full flex-col gap-3 bg-white pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={continueToPayment}
