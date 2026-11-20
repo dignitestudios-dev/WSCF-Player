@@ -1,5 +1,6 @@
 "use client";
 
+import { TeamText } from "./team-text";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
@@ -192,7 +193,7 @@ function TournamentParticipantsContent({
                     {participant.grade}
                   </span>
                   <span className="font-semibold">{participant.rating}</span>
-                  <span className="font-semibold tracking-[-0.02em] break-words [overflow-wrap:anywhere] pr-2">{participant.team}</span>
+                  <TeamText team={participant.team} mode="wrap" className="font-semibold tracking-[-0.02em] pr-2" />
                   <span className="font-semibold break-words [overflow-wrap:anywhere] pr-2">{participant.division}</span>
                   <Link
                     href={`${getProfileRoute(participant.id)}?backHref=${encodeURIComponent(currentUrl)}`}
@@ -254,8 +255,8 @@ function TournamentParticipantsContent({
                             <Badge variant="outline" className="max-w-full truncate">
                               {participant.division}
                             </Badge>
-                            <Badge variant="outline" className="max-w-full truncate">
-                              {participant.team}
+                            <Badge variant="outline" className="max-w-full">
+                              <TeamText team={participant.team} />
                             </Badge>
                           </div>
                         </div>

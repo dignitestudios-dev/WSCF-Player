@@ -69,3 +69,19 @@ export async function getMyTournaments(params: { page: number; limit: number; se
   const { data } = await axiosInstance.get("/tournament/my-tournaments", { params });
   return data;
 }
+
+/** The selected player's own entry in a tournament (division, team), or null. */
+export interface MyTournamentRegistration {
+  _id: string;
+  enrolledAt: string;
+  paymentStatus: string;
+  division: { label?: string; criteria?: string } | null;
+  team: { _id: string; name: string; code: string | null } | null;
+}
+
+export async function getMyTournamentRegistration(tournamentId: string) {
+  const { data } = await axiosInstance.get<{
+    data: { registration: MyTournamentRegistration | null };
+  }>(`/tournament/${tournamentId}/my-registration`);
+  return data;
+}

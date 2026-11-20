@@ -12,10 +12,7 @@ import {
   ResponsiveDialogDescription,
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
-import {
-  MAX_PLAYERS_PER_ACCOUNT,
-  PLAYER_LIMIT_MESSAGE,
-} from "@/config/limits";
+import { MAX_PLAYERS_PER_ACCOUNT } from "@/config/limits";
 
 /**
  * Switching the app to another child.
@@ -33,7 +30,7 @@ export default function SwitchPlayerDialog({
   const router = useRouter();
   const { children, activePlayer, switchTo } = useActivePlayer();
 
-  // Same limit as everywhere else: at four, adding is closed off here too.
+  // Same ceiling as everywhere else; adding is simply not offered past it.
   const isAtPlayerLimit = children.length >= MAX_PLAYERS_PER_ACCOUNT;
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -97,11 +94,7 @@ export default function SwitchPlayerDialog({
             below the fold, so the one action that adds a player was the one you
             had to scroll to find. */}
         <div className="shrink-0 px-6 pb-4">
-          {isAtPlayerLimit ? (
-            <p className="rounded-[24px] bg-[#F7F6FF] px-4 py-4 text-center text-xs leading-4 text-[#565656]">
-              {PLAYER_LIMIT_MESSAGE}
-            </p>
-          ) : (
+          {!isAtPlayerLimit && (
             <button
               type="button"
               onClick={() => {

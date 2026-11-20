@@ -1,5 +1,6 @@
 "use client";
 
+import { TeamText } from "./team-text";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -110,8 +111,8 @@ export default function ParticipantCards({
                     >
                       {division.label}
                     </Badge>
-                    <Badge variant="outline" className="max-w-full truncate">
-                      {team}
+                    <Badge variant="outline" className="max-w-full">
+                      <TeamText team={team} />
                     </Badge>
                   </div>
                 </div>

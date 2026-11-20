@@ -17,7 +17,9 @@ export function useMyProfile() {
   // household's.
   const user = data?.data?.user;
   const playerProfile = data?.data?.playerProfile;
-  const upcomingCount = data?.data?.upcomingTournamentCount || 0;
+  // Counted by the API with the same rules as the lists the two cards open.
+  const enrolledCount = data?.data?.enrolledTournamentCount || 0;
+  const historyCount = data?.data?.historyTournamentCount || 0;
 
   // Guardians live on the account. Prefer the primary, otherwise whichever
   // one was given.
@@ -62,8 +64,8 @@ export function useMyProfile() {
       "/images/images.png",
     currentRating: playerProfile?.rating || 0,
     ratingStatus: playerProfile?.ratingStatus,
-    enrolledTournaments: upcomingCount,
-    historyScore: String(playerProfile?.totalTournaments || 0).padStart(2, "0"),
+    enrolledTournaments: enrolledCount,
+    historyScore: String(historyCount).padStart(2, "0"),
     parent: {
       name: parent?.name || user?.name || "N/A",
       email: parent?.email || user?.email || "N/A",

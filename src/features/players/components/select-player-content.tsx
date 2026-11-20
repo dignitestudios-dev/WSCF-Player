@@ -7,10 +7,7 @@ import PlayerCard from "@/features/players/components/player-card";
 import { useActivePlayer } from "@/features/players/use-active-player";
 import { DEFAULT_REDIRECT } from "@/config/routes";
 import { ADD_PLAYER_ROUTE } from "@/features/players/routes";
-import {
-  MAX_PLAYERS_PER_ACCOUNT,
-  PLAYER_LIMIT_MESSAGE,
-} from "@/config/limits";
+import { MAX_PLAYERS_PER_ACCOUNT } from "@/config/limits";
 
 /**
  * Which of your children am I opening?
@@ -30,8 +27,7 @@ export default function SelectPlayerContent() {
     switchTo,
   } = useActivePlayer();
 
-  // Four players is the account limit, so this tile stops offering a screen
-  // that would only refuse them.
+  // Past the ceiling the tile is not offered, rather than leading to a refusal.
   const isAtPlayerLimit = children.length >= MAX_PLAYERS_PER_ACCOUNT;
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -105,16 +101,13 @@ export default function SelectPlayerContent() {
             onSelect={() => setSelectedId(player._id)}
           />
         ))}
+      </div>
 
-        {/* The same dashed tile the switch-player dialog uses, so adding a
-            player looks the same wherever a parent is choosing between them.
-            Without it, this screen is a dead end for anyone who realises here
-            that a child is missing. */}
-        {isAtPlayerLimit ? (
-          <p className="rounded-[24px] bg-[#F7F6FF] px-4 py-4 text-center text-xs leading-4 text-[#565656]">
-            {PLAYER_LIMIT_MESSAGE}
-          </p>
-        ) : (
+      {/* Sticky so adding a player and Continue both stay in view however many
+          players the list has. The dashed tile matches the switch-player dialog,
+          and keeps this screen from being a dead end when a child is missing. */}
+      <div className="sticky bottom-0 mt-4 flex w-full flex-col gap-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        {!isAtPlayerLimit && (
           <button
             type="button"
             onClick={() => router.push(ADD_PLAYER_ROUTE)}
@@ -124,16 +117,15 @@ export default function SelectPlayerContent() {
             Add another player
           </button>
         )}
+        <button
+          type="button"
+          onClick={openDashboard}
+          disabled={!selectedId}
+          className="h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-50"
+        >
+          Continue
+        </button>
       </div>
-
-      <button
-        type="button"
-        onClick={openDashboard}
-        disabled={!selectedId}
-        className="mt-6 h-12 w-full rounded-[24px] bg-[#083F92] text-sm font-semibold capitalize text-white shadow-[0px_4px_4px_rgba(61,55,117,0.25)] transition-colors hover:bg-[#063875] disabled:opacity-50"
-      >
-        Continue
-      </button>
     </div>
   );
 }

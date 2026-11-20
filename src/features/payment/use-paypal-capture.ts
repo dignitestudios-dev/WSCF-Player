@@ -115,6 +115,7 @@ export function usePaypalCapture(): CaptureResult {
         queryClient.invalidateQueries({ queryKey: ["authUser"] });
         queryClient.invalidateQueries({ queryKey: ["membership"] });
         queryClient.invalidateQueries({ queryKey: ["myTournaments"] });
+        queryClient.invalidateQueries({ queryKey: ["myTournamentRegistration"] });
         queryClient.invalidateQueries({ queryKey: ["tournaments"] });
         queryClient.invalidateQueries({ queryKey: ["tournamentParticipants"] });
         queryClient.invalidateQueries({ queryKey: ["tournamentDetails"] });

@@ -41,10 +41,10 @@ function SummaryRow({
 
   return (
     <div className="flex w-full items-center justify-between gap-4">
-      <span className="text-xs font-medium leading-4 text-[#181818]">
+      <span className="min-w-0 break-words text-xs font-medium leading-4 text-[#181818] [overflow-wrap:anywhere]">
         {label}
       </span>
-      <span className="text-right text-xs font-normal leading-4 text-[#181818]">
+      <span className="shrink-0 text-right text-xs font-normal leading-4 text-[#181818]">
         {value}
       </span>
     </div>

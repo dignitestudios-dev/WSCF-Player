@@ -12,7 +12,7 @@ import { useBecomeMember } from "@/features/auth/hooks/use-become-member";
 import type { BecomeMemberFormData } from "@/features/auth/schemas/become-member.schema";
 import type { ChildFormData } from "@/features/auth/schemas/child.schema";
 import { MEMBER_LOGIN_ROUTE } from "@/config/routes";
-import { MAX_PLAYERS_PER_ACCOUNT, PLAYER_LIMIT_MESSAGE } from "@/config/limits";
+import { MAX_PLAYERS_PER_ACCOUNT } from "@/config/limits";
 
 /** What one membership costs, per player. */
 const MEMBERSHIP_UNIT_PRICE = 5;
@@ -287,8 +287,7 @@ export default function BecomeMemberForm() {
 
   const total = children.length * MEMBERSHIP_UNIT_PRICE;
 
-  // An account holds four players, so the form stops at four rather than
-  // letting a parent fill in a fifth profile the server is going to refuse.
+  // A safety ceiling only; the add button is not offered past it.
   const isAtPlayerLimit = children.length >= MAX_PLAYERS_PER_ACCOUNT;
 
   return (
@@ -492,8 +491,6 @@ export default function BecomeMemberForm() {
               </p>
             </div>
 
-            {/* At the limit the button goes rather than greying out, and the
-              message below carries the explanation on its own. */}
             {!isAtPlayerLimit && (
               <button
                 type="button"
@@ -543,14 +540,6 @@ export default function BecomeMemberForm() {
                 </span>
               </div>
             </div>
-          )}
-
-          {/* Stands in for the button that is no longer there, so the screen
-            explains itself rather than simply lacking a way forward. */}
-          {isAtPlayerLimit && (
-            <p className="rounded-[16px] bg-[#F7F6FF] px-4 py-3 text-center text-xs leading-4 text-[#565656]">
-              {PLAYER_LIMIT_MESSAGE}
-            </p>
           )}
 
           {errors.children && (
